@@ -1,0 +1,133 @@
+{
+  "name": "GuyShore site contact form",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "guyshore-contact",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "a1000000-0000-4000-8000-000000000001",
+      "name": "Contact form webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [-220, 0],
+      "webhookId": "guyshore-contact"
+    },
+    {
+      "parameters": {
+        "jsCode": "// The site posts JSON; n8n nests it under `body` for webhook calls.\nconst raw = $input.first().json;\nconst b = raw.body ?? raw;\nconst str = (v) => (v ?? '').toString().trim();\n\nreturn [\n  {\n    json: {\n      name: str(b.name),\n      email: str(b.email),\n      company: str(b.company),\n      need: str(b.need),\n      message: str(b.message),\n      source: str(b.source) || 'unknown',\n      submittedAt: str(b.submittedAt) || new Date().toISOString(),\n    },\n  },\n];"
+      },
+      "id": "a1000000-0000-4000-8000-000000000002",
+      "name": "Normalise fields",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [0, 0]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "has-email",
+              "leftValue": "={{ $json.email }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            },
+            {
+              "id": "has-message",
+              "leftValue": "={{ $json.message }}",
+              "rightValue": "",
+              "operator": {
+                "type": "string",
+                "operation": "notEmpty",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a1000000-0000-4000-8000-000000000003",
+      "name": "Valid submission?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [220, 0]
+    },
+    {
+      "parameters": {
+        "fromEmail": "site@guyshore.com",
+        "toEmail": "business@guyshore.com",
+        "subject": "=New contact from {{ $json.name || 'unknown' }} ({{ $json.source }})",
+        "emailFormat": "html",
+        "html": "=<h2>New contact form submission</h2>\n<table cellpadding=\"6\" style=\"border-collapse:collapse;font-family:sans-serif\">\n  <tr><td><strong>Name</strong></td><td>{{ $json.name }}</td></tr>\n  <tr><td><strong>Email</strong></td><td>{{ $json.email }}</td></tr>\n  <tr><td><strong>Company</strong></td><td>{{ $json.company || '(not given)' }}</td></tr>\n  <tr><td><strong>Needs</strong></td><td>{{ $json.need || '(not given)' }}</td></tr>\n  <tr><td><strong>Source</strong></td><td>{{ $json.source }}</td></tr>\n  <tr><td><strong>Submitted</strong></td><td>{{ $json.submittedAt }}</td></tr>\n</table>\n<h3>Message</h3>\n<p style=\"white-space:pre-wrap;font-family:sans-serif\">{{ $json.message }}</p>",
+        "options": {
+          "replyTo": "={{ $json.email }}"
+        }
+      },
+      "id": "a1000000-0000-4000-8000-000000000004",
+      "name": "Email the team",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [460, -110]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ ok: true }) }}",
+        "options": {}
+      },
+      "id": "a1000000-0000-4000-8000-000000000005",
+      "name": "Respond 200",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [700, -110]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseCode": 400,
+        "responseBody": "={{ JSON.stringify({ ok: false, error: 'email and message are required' }) }}",
+        "options": {}
+      },
+      "id": "a1000000-0000-4000-8000-000000000006",
+      "name": "Respond 400",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [460, 120]
+    }
+  ],
+  "connections": {
+    "Contact form webhook": {
+      "main": [[{ "node": "Normalise fields", "type": "main", "index": 0 }]]
+    },
+    "Normalise fields": {
+      "main": [[{ "node": "Valid submission?", "type": "main", "index": 0 }]]
+    },
+    "Valid submission?": {
+      "main": [
+        [{ "node": "Email the team", "type": "main", "index": 0 }],
+        [{ "node": "Respond 400", "type": "main", "index": 0 }]
+      ]
+    },
+    "Email the team": {
+      "main": [[{ "node": "Respond 200", "type": "main", "index": 0 }]]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}

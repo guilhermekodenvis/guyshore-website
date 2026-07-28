@@ -1,65 +1,187 @@
-import Image from "next/image";
+import { ContactForm } from "@/components/contact-form";
+import { FaqList } from "@/components/faq-list";
+import { Hero } from "@/components/hero";
+import { ServiceCard } from "@/components/service-card";
+import { ServiceMarquee } from "@/components/service-marquee";
+import { method, serviceGroups } from "@/lib/services";
+import { founder } from "@/lib/team";
+import { site, stats } from "@/lib/site";
 
-export default function Home() {
+export default function HomePage() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
-          </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+    <>
+      <Hero />
+
+      <ServiceMarquee />
+
+      {/* Numbers */}
+      <section className="border-b border-[var(--color-line)] bg-foam">
+        <dl className="mx-auto grid max-w-[76rem] grid-cols-2 gap-y-10 px-6 py-14 lg:grid-cols-4 lg:px-10">
+          {stats.map((stat) => (
+            <div key={stat.label}>
+              <dt className="sr-only">{stat.label}</dt>
+              <dd>
+                <span className="block font-display text-4xl font-bold tracking-[-0.04em] lg:text-5xl">
+                  {stat.value}
+                </span>
+                <span className="mt-2 block font-mono text-xs tracking-[0.08em] text-surf uppercase">
+                  {stat.label}
+                </span>
+              </dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+
+      {/* Our services */}
+      <section
+        id="services"
+        className="mx-auto max-w-[76rem] scroll-mt-24 px-6 py-24 lg:px-10 lg:py-32"
+      >
+        <p className="eyebrow text-surf">Our services</p>
+        <h2 className="mt-5 max-w-[24ch] text-title">
+          We are a software, app and automation development company.
+        </h2>
+        <p className="mt-7 max-w-[68ch] text-lead text-tide">
+          We use the most advanced technologies on the market, which is how we
+          build high-quality products. Our solutions range from the most basic,
+          such as websites and landing pages optimized to be found by Google and
+          by AI, to the most complex, such as custom software, automations and
+          apps built around each client&rsquo;s individual needs and goals.
+        </p>
+
+        {serviceGroups.map((group) => (
+          <div key={group.id} className="mt-20">
+            <div className="flex items-center gap-6">
+              <h3 className="eyebrow shrink-0 text-noon">{group.label}</h3>
+              <div className="tick-rule flex-1" />
+            </div>
+
+            <div className="mt-10 space-y-6">
+              {group.items.map((service) => (
+                <ServiceCard key={service.slug} service={service} />
+              ))}
+            </div>
+          </div>
+        ))}
+      </section>
+
+      {/* Our method */}
+      <section className="border-y border-[var(--color-line)] bg-foam">
+        <div className="mx-auto max-w-[76rem] px-6 py-24 lg:px-10 lg:py-32">
+          <p className="eyebrow text-surf">Our method</p>
+          <h2 className="mt-5 max-w-[24ch] text-title">
+            How do we build your software or MVP?
+          </h2>
+          <p className="mt-7 max-w-[64ch] text-lead text-tide">
+            You need your SaaS, software, app or automation delivered quickly
+            and done well. That is why we created our five-step method, which
+            has already satisfied countless clients.
           </p>
+
+          <ol className="mt-16 border-t border-[var(--color-line)]">
+            {method.map((item) => (
+              <li
+                key={item.step}
+                className="grid gap-4 border-b border-[var(--color-line)] py-8 lg:grid-cols-[5rem_16rem_1fr] lg:gap-10"
+              >
+                <span className="font-mono text-sm text-noon">{item.step}</span>
+                <h3 className="text-xl tracking-[-0.025em]">{item.title}</h3>
+                <p className="max-w-[62ch] text-tide">{item.body}</p>
+              </li>
+            ))}
+          </ol>
         </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
+      </section>
+
+      {/* Who we are */}
+      <section className="mx-auto max-w-[76rem] px-6 py-24 lg:px-10 lg:py-32">
+        <p className="eyebrow text-surf">Who we are</p>
+        <h2 className="mt-5 max-w-[24ch] text-title">
+          We are a custom software development company.
+        </h2>
+        <p className="mt-7 max-w-[66ch] text-lead text-tide">
+          {site.name} is a custom software development company. We have more
+          than 10 years in the market and countless satisfied clients. Our
+          method has been validated by clients who today have real results
+          thanks to our high-standard delivery.
+        </p>
+
+        <div className="mt-16 grid gap-10 border-t border-[var(--color-line)] pt-12 lg:grid-cols-[20rem_1fr] lg:gap-16">
+          {/*
+            Founder portrait. Drop the photo at `public/team/guy-sartori.jpg`
+            and swap the placeholder for:
+              <Image src={founder.photo} alt={founder.name} fill className="object-cover" />
+          */}
+          <div className="relative aspect-[4/5] overflow-hidden rounded-[2px] bg-deep">
+            <div
+              aria-hidden
+              className="absolute inset-0"
+              style={{
+                background:
+                  "radial-gradient(120% 90% at 30% 20%, #2e6e7e 0%, transparent 58%), radial-gradient(100% 80% at 80% 95%, #12495a 0%, transparent 60%)",
+              }}
             />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
+            <div
+              aria-hidden
+              className="absolute inset-0 opacity-[0.13]"
+              style={{
+                backgroundImage:
+                  "repeating-linear-gradient(to right, #e7edee 0 1px, transparent 1px 40px), repeating-linear-gradient(to bottom, #e7edee 0 1px, transparent 1px 40px)",
+              }}
+            />
+          </div>
+
+          <div>
+            <p className="eyebrow text-noon">{founder.role}</p>
+            <h3 className="mt-4 text-3xl tracking-[-0.03em]">{founder.name}</h3>
+            <p className="mt-6 max-w-[54ch] text-lead text-tide">
+              {founder.bio}
+            </p>
+          </div>
         </div>
-      </main>
-    </div>
+      </section>
+
+      {/* FAQ */}
+      <section className="border-t border-[var(--color-line)] bg-foam">
+        <div className="mx-auto max-w-[76rem] px-6 py-24 lg:px-10 lg:py-32">
+          <p className="eyebrow text-surf">FAQ</p>
+          <h2 className="mt-5 max-w-[20ch] text-title">
+            Questions we get asked most.
+          </h2>
+
+          <div className="mt-14">
+            <FaqList />
+          </div>
+        </div>
+      </section>
+
+      {/* Contact */}
+      <section
+        id="contact"
+        className="mx-auto max-w-[76rem] scroll-mt-24 px-6 py-24 lg:px-10 lg:py-32"
+      >
+        <div className="grid gap-14 lg:grid-cols-[1fr_1.15fr] lg:gap-24">
+          <div>
+            <p className="eyebrow text-surf">Contact</p>
+            <h2 className="mt-5 max-w-[16ch] text-title">
+              Tell us about your project.
+            </h2>
+            <p className="mt-7 max-w-[44ch] text-lead text-tide">
+              Send us the short version and we will come back to you within one
+              working day.
+            </p>
+            <a
+              href={`mailto:${site.email}`}
+              className="mt-8 inline-block font-display text-lg font-semibold tracking-[-0.02em] text-tide transition-colors hover:text-deep"
+            >
+              {site.email}
+            </a>
+          </div>
+
+          <ContactForm fields="short" source="home" />
+        </div>
+      </section>
+    </>
   );
 }

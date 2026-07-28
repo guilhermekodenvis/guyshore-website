@@ -1,0 +1,10 @@
+[build]
+  command = "npm run build"
+  publish = ".next"
+
+[build.environment]
+  NODE_VERSION = "22"
+
+# Required for Next.js App Router, server actions and route handlers on Netlify.
+[[plugins]]
+  package = "@netlify/plugin-nextjs"
