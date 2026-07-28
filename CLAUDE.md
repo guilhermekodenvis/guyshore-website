@@ -79,9 +79,13 @@ Two slots ship with a decorative gradient panel instead of a real asset, each ma
 - Hero panel — `src/components/hero.tsx`
 - Founder portrait — the "Who we are" section of `src/app/page.tsx`, expecting `public/team/guy-sartori.jpg` (path in `team.ts`).
 
-## Not yet wired
+## Contact form delivery
 
-The contact form validates and returns proper state, but `submitContact` only logs to the server — no email provider, CRM or webhook is connected, so submissions reach nobody. See the `TODO` in `src/app/contact/actions.ts`.
+`submitContact` POSTs validated submissions to `process.env.N8N_CONTACT_WEBHOOK_URL`. The importable workflow and setup steps live in `automation/`. Both forms carry a hidden `source` field (`home` or `contact-page`) so the automation can tell them apart; do not try to infer the source from which fields are filled, since both forms currently render the short variant.
+
+If the variable is unset the action logs a warning and still reports success to the visitor. If the webhook errors or times out (10s), the visitor sees an error with the fallback email rather than a false success.
+
+## Not yet wired
 
 The hero's secondary CTA ("Book a 1-hour consultation") points at `/contact`; if a real booking tool is adopted, that link is the place to change.
 
