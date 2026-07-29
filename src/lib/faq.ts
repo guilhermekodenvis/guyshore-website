@@ -2,12 +2,11 @@ export const faq = [
   {
     question: "Which technologies do you work with?",
     answer:
-      "We work with Lovable, Bolt, Codex, Claude Code, Cursor and Replit. Also n8n, Next.js, Supabase, Netlify, Vercel and React Native, among others.",
+      "We build production systems with Next.js, Supabase, React Native, n8n, Vercel and Netlify. We also work on top of prototypes generated with Lovable, Bolt, Codex, Claude Code, Cursor and Replit, taking them from prototype to production-ready software.",
   },
   {
     question: "Which cities do you serve?",
-    answer:
-      "We work remotely across the entire United States. On request, we also work on site.",
+    answer: "We work remotely with founders across the United States.",
   },
   {
     question:

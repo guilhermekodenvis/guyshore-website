@@ -40,7 +40,7 @@ export default function HomePage() {
       >
         <p className="eyebrow text-surf">Our services</p>
         <h2 className="mt-5 max-w-[24ch] text-title">
-          We are a software, app and automation development company.
+          Your MVP or software built in weeks, not months.
         </h2>
         <p className="mt-7 max-w-[68ch] text-lead text-tide">
           We use the most advanced technologies on the market, which is how we
@@ -98,13 +98,13 @@ export default function HomePage() {
       <section className="mx-auto max-w-[76rem] px-6 py-24 lg:px-10 lg:py-32">
         <p className="eyebrow text-surf">Who we are</p>
         <h2 className="mt-5 max-w-[24ch] text-title">
-          We are a custom software development company.
+          We specialize in MVP and software development.
         </h2>
         <p className="mt-7 max-w-[66ch] text-lead text-tide">
-          {site.name} is a custom software development company. We have more
-          than 10 years in the market and countless satisfied clients. Our
-          method has been validated by clients who today have real results
-          thanks to our high-standard delivery.
+          {site.name} is an MVP and custom software development company for
+          non-technical founders and startups. We build web apps, SaaS
+          platforms, and mobile products from scratch, and take stalled
+          AI-generated prototypes to production.
         </p>
 
         <div className="mt-16 grid gap-10 border-t border-[var(--color-line)] pt-12 lg:grid-cols-[20rem_1fr] lg:gap-16">

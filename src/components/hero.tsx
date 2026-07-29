@@ -34,8 +34,8 @@ export function Hero() {
           </p>
 
           <h1 className="animate-rise-in mt-6 text-title">
-            Software Development Company for Non-Technical Founders &amp;
-            StartUps
+            MVP &amp; Software Development Company for Non-Technical Founders
+            and Startups
           </h1>
 
           <p className="animate-rise-in mt-8 max-w-[56ch] text-lead text-tide">

@@ -23,10 +23,10 @@ export function ServiceCard({ service }: { service: ServiceItem }) {
             </div>
             <div className="flex items-baseline gap-4 border-t border-[var(--color-line)] pt-4">
               <dt className="w-24 shrink-0 font-mono text-[0.6875rem] tracking-[0.1em] text-surf uppercase">
-                Investment
+                Price
               </dt>
               <dd className="font-display font-semibold tracking-[-0.01em]">
-                {service.investment}
+                {service.price}
               </dd>
             </div>
           </dl>
