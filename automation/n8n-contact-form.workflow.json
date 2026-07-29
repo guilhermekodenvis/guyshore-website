@@ -98,9 +98,10 @@
     {
       "parameters": {
         "respondWith": "json",
-        "responseCode": 400,
         "responseBody": "={{ JSON.stringify({ ok: false, error: 'email and message are required' }) }}",
-        "options": {}
+        "options": {
+          "responseCode": 400
+        }
       },
       "id": "a1000000-0000-4000-8000-000000000006",
       "name": "Respond 400",

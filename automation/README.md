@@ -43,5 +43,7 @@ The site posts JSON:
 | `company`, `need` | always empty today: both forms render the short variant. They fill in if a form is switched to `fields="full"` |
 | `submittedAt` | ISO timestamp |
 
-The workflow rejects anything missing `email` or `message` with a 400, which the
-site surfaces as an error rather than a false success.
+The workflow rejects anything missing `email` or `message` and answers
+`{"ok": false, ...}`. The site treats that body as a failure regardless of the
+HTTP status, because `responseCode` on the *Respond to Webhook* node is not
+honoured by every n8n version — a rejection can come back as 200.

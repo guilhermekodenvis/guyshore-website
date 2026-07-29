@@ -75,6 +75,25 @@ export async function submitContact(
     if (!response.ok) {
       throw new Error(`Webhook responded ${response.status}`);
     }
+
+    // The automation reports a rejection in the body, and depending on the n8n
+    // version it may still answer 200. Treat an explicit `ok: false` as a
+    // failure so the visitor is never told a dropped message was delivered.
+    const raw = await response.text().catch(() => "");
+    let payload: unknown = null;
+    try {
+      payload = raw ? JSON.parse(raw) : null;
+    } catch {
+      payload = null;
+    }
+
+    if (
+      payload !== null &&
+      typeof payload === "object" &&
+      (payload as { ok?: unknown }).ok === false
+    ) {
+      throw new Error(`Webhook rejected the submission: ${raw.slice(0, 200)}`);
+    }
   } catch (error) {
     console.error("[contact] delivery failed", error);
     return {
