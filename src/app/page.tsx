@@ -5,7 +5,7 @@ import { Hero } from "@/components/hero";
 import { ServiceCard } from "@/components/service-card";
 import { ServiceMarquee } from "@/components/service-marquee";
 import { homeSchema } from "@/lib/home-schema";
-import { method, serviceGroups } from "@/lib/services";
+import { method, services } from "@/lib/services";
 import { founder } from "@/lib/team";
 import { site, stats } from "@/lib/site";
 
@@ -59,27 +59,17 @@ export default function HomePage() {
           Your MVP or software built in weeks, not months.
         </h2>
         <p className="mt-7 max-w-[68ch] text-lead text-tide">
-          We use the most advanced technologies on the market, which is how we
-          build high-quality products. Our solutions range from the most basic,
-          such as websites and landing pages optimized to be found by Google and
-          by AI, to the most complex, such as custom software, automations and
-          apps built around each client&rsquo;s individual needs and goals.
+          We build production software for founders and startups: web apps,
+          SaaS platforms, mobile products and the automations that run behind
+          them. Fixed scope, clear timelines, and full source code ownership
+          from day one.
         </p>
 
-        {serviceGroups.map((group) => (
-          <div key={group.id} className="mt-20">
-            <div className="flex items-center gap-6">
-              <h3 className="eyebrow shrink-0 text-noon">{group.label}</h3>
-              <div className="tick-rule flex-1" />
-            </div>
-
-            <div className="mt-10 space-y-6">
-              {group.items.map((service) => (
-                <ServiceCard key={service.slug} service={service} />
-              ))}
-            </div>
-          </div>
-        ))}
+        <div className="mt-16 space-y-6">
+          {services.map((service) => (
+            <ServiceCard key={service.slug} service={service} />
+          ))}
+        </div>
       </section>
 
       {/* Our method */}

@@ -1,21 +1,78 @@
 import { faq } from "@/lib/faq";
+import { services } from "@/lib/services";
+
+const ORIGIN = "https://guyshore.com";
+
+/**
+ * Numeric price for a card, taken from the visible copy, so the schema and the
+ * page cannot disagree. "From $23,000" -> "23000".
+ */
+function priceFor(slug: string): string {
+  const service = services.find((item) => item.slug === slug);
+  if (!service) {
+    throw new Error(`home-schema: no service card with slug "${slug}"`);
+  }
+  return service.price.replace(/\D/g, "");
+}
+
+/** Card slug paired with the name the schema advertises it under. */
+const SERVICE_NODES = [
+  { slug: "prototype-rescue", name: "Prototype Rescue" },
+  { slug: "mvp-development", name: "MVP Development" },
+  { slug: "app-development", name: "Mobile App Development" },
+  { slug: "software-development", name: "Custom Software Development" },
+  {
+    slug: "automations-and-integrations",
+    name: "Automations and Integrations",
+  },
+];
+
+const serviceGraph = SERVICE_NODES.map(({ slug, name }) => {
+  const price = priceFor(slug);
+
+  const node: Record<string, unknown> = {
+    "@type": "Service",
+    name,
+    provider: { "@id": `${ORIGIN}/#organization` },
+    url: `${ORIGIN}/#${slug}`,
+    offers: { "@type": "Offer", priceCurrency: "USD", price },
+  };
+
+  // MVP Development keeps the richer offer shape it already had.
+  if (slug === "mvp-development") {
+    node.serviceType = "MVP development";
+    node.areaServed = { "@type": "Country", name: "United States" };
+    node.offers = {
+      "@type": "Offer",
+      priceCurrency: "USD",
+      price,
+      priceSpecification: {
+        "@type": "PriceSpecification",
+        minPrice: price,
+        priceCurrency: "USD",
+      },
+    };
+  }
+
+  return node;
+});
 
 /**
  * schema.org graph for the home page.
  *
- * The FAQPage entries are derived from `faq` rather than duplicated, so the
- * structured data and the visible accordion cannot drift apart.
+ * The FAQPage entries are derived from `faq` and the Service prices from
+ * `services`, so the structured data cannot drift from what is rendered.
  */
 export const homeSchema = {
   "@context": "https://schema.org",
   "@graph": [
     {
       "@type": "Organization",
-      "@id": "https://guyshore.com/#organization",
+      "@id": `${ORIGIN}/#organization`,
       name: "GuyShore",
-      url: "https://guyshore.com",
+      url: ORIGIN,
       email: "business@guyshore.com",
-      logo: "https://guyshore.com/og-image.png",
+      logo: `${ORIGIN}/og-image.png`,
       description:
         "GuyShore is an MVP and custom software development company for non-technical founders and startups. We build web apps, SaaS platforms, and mobile products from scratch, and take stalled AI-generated prototypes to production.",
       founder: {
@@ -46,47 +103,16 @@ export const homeSchema = {
     },
     {
       "@type": "WebSite",
-      "@id": "https://guyshore.com/#website",
-      url: "https://guyshore.com",
+      "@id": `${ORIGIN}/#website`,
+      url: ORIGIN,
       name: "GuyShore",
-      publisher: { "@id": "https://guyshore.com/#organization" },
+      publisher: { "@id": `${ORIGIN}/#organization` },
       inLanguage: "en-US",
     },
-    {
-      "@type": "Service",
-      name: "MVP Development",
-      serviceType: "MVP development",
-      provider: { "@id": "https://guyshore.com/#organization" },
-      areaServed: { "@type": "Country", name: "United States" },
-      url: "https://guyshore.com/#mvp-development",
-      offers: {
-        "@type": "Offer",
-        priceCurrency: "USD",
-        price: "5000",
-        priceSpecification: {
-          "@type": "PriceSpecification",
-          minPrice: "5000",
-          priceCurrency: "USD",
-        },
-      },
-    },
-    {
-      "@type": "Service",
-      name: "Custom Software Development",
-      provider: { "@id": "https://guyshore.com/#organization" },
-      url: "https://guyshore.com/#software-development",
-      offers: { "@type": "Offer", priceCurrency: "USD", price: "23000" },
-    },
-    {
-      "@type": "Service",
-      name: "Mobile App Development",
-      provider: { "@id": "https://guyshore.com/#organization" },
-      url: "https://guyshore.com/#app-development",
-      offers: { "@type": "Offer", priceCurrency: "USD", price: "9500" },
-    },
+    ...serviceGraph,
     {
       "@type": "FAQPage",
-      "@id": "https://guyshore.com/#faq",
+      "@id": `${ORIGIN}/#faq`,
       mainEntity: faq.map((item) => ({
         "@type": "Question",
         name: item.question,
