@@ -6,7 +6,7 @@
 export const site = {
   name: "GuyShore",
   /** Browser tab title for the home page. */
-  title: "MVP & Software Development Company for Founders & Startups",
+  title: "MVP & Software Development for Non-Technical Founders",
   /** Shown in the footer, under the wordmark. */
   tagline: "Your MVP, finally finished.",
   description:

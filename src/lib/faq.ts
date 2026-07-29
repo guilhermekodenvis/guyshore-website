@@ -22,6 +22,6 @@ export const faq = [
   {
     question: "How long does it take to build software?",
     answer:
-      "It depends a great deal on what you need. For company software it can take anywhere from a few weeks to several months. The investment varies with the need and the size of the project too.",
+      "MVPs start at 4 weeks. Mobile apps start at 8 weeks. Custom company software starts at 12 weeks. Automations start at 2 weeks.",
   },
 ];

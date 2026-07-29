@@ -1,15 +1,31 @@
+import type { Metadata } from "next";
 import { ContactForm } from "@/components/contact-form";
 import { FaqList } from "@/components/faq-list";
 import { Hero } from "@/components/hero";
 import { ServiceCard } from "@/components/service-card";
 import { ServiceMarquee } from "@/components/service-marquee";
+import { homeSchema } from "@/lib/home-schema";
 import { method, serviceGroups } from "@/lib/services";
 import { founder } from "@/lib/team";
 import { site, stats } from "@/lib/site";
 
+export const metadata: Metadata = {
+  // Emits <link rel="canonical" href="https://guyshore.com"/>. Next strips the
+  // root trailing slash because `trailingSlash` is false; passing the absolute
+  // URL with a slash does not change that.
+  alternates: { canonical: "/" },
+};
+
 export default function HomePage() {
   return (
     <>
+      {/* Server-rendered structured data. Must stay out of a client component
+          so it is present in the initial HTML for crawlers. */}
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(homeSchema) }}
+      />
+
       <Hero />
 
       <ServiceMarquee />
@@ -137,6 +153,9 @@ export default function HomePage() {
             <h3 className="mt-4 text-3xl tracking-[-0.03em]">{founder.name}</h3>
             <p className="mt-6 max-w-[54ch] text-lead text-tide">
               {founder.bio}
+            </p>
+            <p className="mt-4 max-w-[54ch] text-tide">
+              EU-based engineering, working US business hours.
             </p>
           </div>
         </div>

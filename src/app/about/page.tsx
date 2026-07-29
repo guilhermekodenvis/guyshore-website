@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   title: "About",
   description:
     "GuyShore builds the software, apps and automations that give your company back its time. Who we are and why we exist.",
+  alternates: { canonical: "/about" },
 };
 
 export default function AboutPage() {

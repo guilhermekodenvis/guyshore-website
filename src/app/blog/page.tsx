@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   title: "Blog",
   description:
     "Our expertise, our hands-on experience and what is happening in the market, so you stay ahead of your competitors.",
+  alternates: { canonical: "/blog" },
 };
 
 export default async function BlogPage() {

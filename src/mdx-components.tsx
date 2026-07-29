@@ -2,7 +2,7 @@ import type { MDXComponents } from "mdx/types";
 import Link from "next/link";
 
 // Global component map for every MDX file. Prose styling lives in the
-// `.prose` rules in globals.css; this map only handles behaviour that CSS
+// `.prose` rules in globals.css; this map only handles behavior that CSS
 // can't cover, like routing internal links through <Link>.
 const components: MDXComponents = {
   a: ({ href = "", children, ...props }) => {
