@@ -1,13 +1,10 @@
 const SERVICES = [
-  "AI",
-  "App",
-  "Software",
+  "MVP",
+  "SaaS",
+  "Web App",
+  "Mobile App",
   "Automation",
-  "Landing Page",
-  "Site",
-  "E-commerce",
-  "Blog",
-  "Scheduling System",
+  "Prototype Rescue",
 ];
 
 export function ServiceMarquee() {

@@ -81,8 +81,7 @@ export default function HomePage() {
           </h2>
           <p className="mt-7 max-w-[64ch] text-lead text-tide">
             You need your SaaS, software, app or automation delivered quickly
-            and done well. That is why we created our five-step method, which
-            has already satisfied countless clients.
+            and done well. That is why we created our five-step method.
           </p>
 
           <ol className="mt-16 border-t border-[var(--color-line)]">

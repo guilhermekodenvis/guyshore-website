@@ -22,7 +22,7 @@ export const services: ServiceItem[] = [
     timeline: "From 6 weeks",
     price: "From $23,000",
     description:
-      "If you are a startup or a non-technical founder and you need to test the market fit of your billion-dollar idea, we can help. We handle everything from scratch to deploy. You explain your idea end to end, we design your prototype and deliver it working on schedule, so you can launch and start testing as early as possible.",
+      "If you are a startup or a non-technical founder and you need to test the market fit of your billion-dollar idea, we can help. We handle everything from scratch to deploy. You explain your idea end to end, we design your product and deliver it working on schedule, so you can launch and start testing as early as possible.",
   },
   {
     slug: "app-development",
