@@ -57,7 +57,8 @@ export default function HomePage() {
       >
         <p className="eyebrow text-surf">Our services</p>
         <h2 className="mt-5 max-w-[24ch] text-title">
-          Your MVP or software built in weeks, not months.
+          MVP &amp; Software Development Company for Non-Technical Founders and
+          Startups.
         </h2>
         <p className="mt-7 max-w-[68ch] text-lead text-tide">
           We build production software for founders and startups: web apps,
