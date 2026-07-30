@@ -4,7 +4,7 @@ import { nav, site } from "@/lib/site";
 
 export function SiteFooter() {
   return (
-    <footer className="mt-auto bg-deep text-paper">
+    <footer className="mt-auto bg-ink text-paper">
       <div className="mx-auto max-w-[76rem] px-6 py-16 lg:px-10 lg:py-20">
         <div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr]">
           <div>
@@ -19,8 +19,8 @@ export function SiteFooter() {
                 height={48}
                 className="size-12 shrink-0 brightness-0 invert"
               />
-              <p className="font-display text-2xl font-extrabold tracking-[-0.045em] uppercase">
-                {site.name}
+              <p className="font-display text-2xl font-bold tracking-[-0.03em] lowercase">
+                {site.wordmark}
               </p>
             </div>
             <p className="mt-4 max-w-sm text-paper/70">{site.tagline}</p>
@@ -33,7 +33,7 @@ export function SiteFooter() {
                 <li key={item.href}>
                   <Link
                     href={item.href}
-                    className="text-paper/80 transition-colors hover:text-noon"
+                    className="text-paper/80 transition-colors hover:text-paper"
                   >
                     {item.label}
                   </Link>
@@ -42,7 +42,7 @@ export function SiteFooter() {
               <li>
                 <Link
                   href="/contact"
-                  className="text-paper/80 transition-colors hover:text-noon"
+                  className="text-paper/80 transition-colors hover:text-paper"
                 >
                   Contact
                 </Link>
@@ -56,7 +56,7 @@ export function SiteFooter() {
               <li>
                 <a
                   href={`mailto:${site.email}`}
-                  className="text-paper/80 transition-colors hover:text-noon"
+                  className="text-paper/80 transition-colors hover:text-paper"
                 >
                   {site.email}
                 </a>
@@ -72,7 +72,7 @@ export function SiteFooter() {
           </div>
         </div>
 
-        <div className="mt-16 border-t border-paper/15 pt-8 font-mono text-xs text-paper/50">
+        <div className="mt-16 border-t border-paper/15 pt-8 font-label text-xs text-paper/50">
           © {new Date().getFullYear()} {site.name}
         </div>
       </div>

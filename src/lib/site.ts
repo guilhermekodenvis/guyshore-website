@@ -4,7 +4,10 @@
  */
 
 export const site = {
+  /** Legal/brand name. Used in prose, the schema and the copyright line. */
   name: "GuyShore",
+  /** The logotype, always lowercase. Header and footer only. */
+  wordmark: "guyshore.com",
   /** Browser tab title for the home page. */
   title: "MVP & Software Development for Non-Technical Founders",
   /** Shown in the footer, under the wordmark. */

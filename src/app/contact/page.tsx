@@ -17,13 +17,13 @@ export default function ContactPage() {
         decorative fill below:
           <Image src="/contact-banner.jpg" alt="" fill className="object-cover" priority />
       */}
-      <div className="relative h-[400px] w-full overflow-hidden bg-deep">
+      <div className="relative h-[400px] w-full overflow-hidden bg-ink">
         <div
           aria-hidden
           className="absolute inset-0"
           style={{
             background:
-              "radial-gradient(90% 140% at 20% 10%, #2e6e7e 0%, transparent 60%), radial-gradient(80% 130% at 85% 95%, #12495a 0%, transparent 62%)",
+              "radial-gradient(90% 140% at 20% 10%, #3f3f46 0%, transparent 60%), radial-gradient(80% 130% at 85% 95%, #27272a 0%, transparent 62%)",
           }}
         />
         <div
@@ -31,17 +31,17 @@ export default function ContactPage() {
           className="absolute inset-0 opacity-[0.13]"
           style={{
             backgroundImage:
-              "repeating-linear-gradient(to right, #e7edee 0 1px, transparent 1px 44px), repeating-linear-gradient(to bottom, #e7edee 0 1px, transparent 1px 44px)",
+              "repeating-linear-gradient(to right, #ffffff 0 1px, transparent 1px 44px), repeating-linear-gradient(to bottom, #ffffff 0 1px, transparent 1px 44px)",
           }}
         />
       </div>
 
       <section className="mx-auto max-w-[76rem] px-6 pt-16 pb-24 lg:px-10 lg:pt-20 lg:pb-32">
-        <p className="eyebrow text-surf">Contact</p>
+        <p className="eyebrow text-slate">Contact</p>
         <h1 className="mt-5 max-w-[20ch] text-title">
           Let&rsquo;s talk about your challenge.
         </h1>
-        <p className="mt-7 max-w-[58ch] text-lead text-tide">
+        <p className="mt-7 max-w-[58ch] text-lead text-steel">
           You have a challenge and we want to solve it for you. Our goal is to
           see your dream project finished. It is time to ship the thing you have
           been planning for months. Send us a message and let&rsquo;s get
@@ -55,18 +55,18 @@ export default function ContactPage() {
 
           <aside className="space-y-12">
             <div>
-              <p className="eyebrow text-surf">Prefer email</p>
+              <p className="eyebrow text-slate">Prefer email</p>
               <a
                 href={`mailto:${site.email}`}
-                className="mt-4 block font-display text-xl font-semibold tracking-[-0.025em] text-tide transition-colors hover:text-deep"
+                className="mt-4 block font-body text-xl font-semibold tracking-[-0.025em] text-steel transition-colors hover:text-ink"
               >
                 {site.email}
               </a>
             </div>
 
             <div>
-              <p className="eyebrow text-surf">Office</p>
-              <address className="mt-4 text-tide not-italic">
+              <p className="eyebrow text-slate">Office</p>
+              <address className="mt-4 text-steel not-italic">
                 {site.address.street}
                 <br />
                 {site.address.postalCode} {site.address.city}

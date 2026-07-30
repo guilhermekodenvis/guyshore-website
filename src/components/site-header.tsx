@@ -14,57 +14,62 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-50 border-b border-[var(--color-line)] bg-paper/85 backdrop-blur-md">
       <div className="mx-auto flex h-[4.5rem] max-w-[76rem] items-center justify-between px-6 lg:px-10">
-        <Link href="/" className="flex items-center gap-2.5">
-          <Image
-            src="/logo-mark.png"
-            alt=""
-            width={40}
-            height={40}
-            priority
-            className="size-10 shrink-0"
-          />
-          <span className="font-display text-xl font-extrabold tracking-[-0.045em] uppercase">
-            {site.name}
-          </span>
-        </Link>
-
-        <nav className="hidden items-center gap-9 md:flex">
-          {nav.map((item) => {
-            const active = pathname.startsWith(item.href);
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`eyebrow transition-colors hover:text-deep ${
-                  active ? "text-deep" : "text-tide"
-                }`}
-              >
-                <span
-                  className={
-                    active
-                      ? "border-b-2 border-noon pb-1"
-                      : "border-b-2 border-transparent pb-1"
-                  }
-                >
-                  {item.label}
-                </span>
-              </Link>
-            );
-          })}
-          <Link
-            href="/contact"
-            className="rounded-[2px] bg-deep px-5 py-2.5 font-display text-sm font-semibold text-paper transition-colors hover:bg-tide"
-          >
-            Book a call
+        {/* Wordmark and links share the left; the call to action stands alone
+            on the right. */}
+        <div className="flex items-center gap-10">
+          <Link href="/" className="flex items-center gap-2.5">
+            <Image
+              src="/logo-mark.png"
+              alt=""
+              width={40}
+              height={40}
+              priority
+              className="size-10 shrink-0"
+            />
+            <span className="font-display text-xl font-bold tracking-[-0.03em] lowercase">
+              {site.wordmark}
+            </span>
           </Link>
-        </nav>
+
+          <nav className="hidden items-center gap-9 md:flex">
+            {nav.map((item) => {
+              const active = pathname.startsWith(item.href);
+              return (
+                <Link
+                  key={item.href}
+                  href={item.href}
+                  className={`eyebrow transition-colors hover:text-ink ${
+                    active ? "text-ink" : "text-steel"
+                  }`}
+                >
+                  <span
+                    className={
+                      active
+                        ? "border-b-2 border-ink pb-1"
+                        : "border-b-2 border-transparent pb-1"
+                    }
+                  >
+                    {item.label}
+                  </span>
+                </Link>
+              );
+            })}
+          </nav>
+        </div>
+
+        <Link
+          href="/contact"
+          className="hidden rounded-full bg-ink px-5 py-2 font-body text-sm font-semibold text-paper transition-colors hover:bg-steel md:inline-flex"
+        >
+          Contact us
+        </Link>
 
         <button
           type="button"
           onClick={() => setOpen((value) => !value)}
           aria-expanded={open}
           aria-controls="mobile-nav"
-          className="eyebrow text-tide md:hidden"
+          className="eyebrow text-steel md:hidden"
         >
           {open ? "Close" : "Menu"}
         </button>
@@ -80,7 +85,7 @@ export function SiteHeader() {
               key={item.href}
               href={item.href}
               onClick={closeMenu}
-              className="block border-b border-[var(--color-line)] py-4 font-display text-lg font-semibold tracking-[-0.02em]"
+              className="block border-b border-[var(--color-line)] py-4 font-body text-lg font-semibold tracking-[-0.02em]"
             >
               {item.label}
             </Link>
@@ -88,9 +93,9 @@ export function SiteHeader() {
           <Link
             href="/contact"
             onClick={closeMenu}
-            className="mt-6 block rounded-[2px] bg-deep px-5 py-3.5 text-center font-display font-semibold text-paper"
+            className="mt-6 block rounded-full bg-ink px-5 py-3 text-center font-body font-semibold text-paper"
           >
-            Book a call
+            Contact us
           </Link>
         </nav>
       ) : null}

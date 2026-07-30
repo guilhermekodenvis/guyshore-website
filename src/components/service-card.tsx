@@ -14,18 +14,18 @@ export function ServiceCard({ service }: { service: ServiceItem }) {
 
           <dl className="mt-7 space-y-4">
             <div className="flex items-baseline gap-4 border-t border-[var(--color-line)] pt-4">
-              <dt className="w-24 shrink-0 font-mono text-[0.6875rem] tracking-[0.1em] text-surf uppercase">
+              <dt className="w-24 shrink-0 font-label text-[0.6875rem] tracking-[0.1em] text-slate uppercase">
                 Timeline
               </dt>
-              <dd className="font-display font-semibold tracking-[-0.01em]">
+              <dd className="font-body font-semibold tracking-[-0.01em]">
                 {service.timeline}
               </dd>
             </div>
             <div className="flex items-baseline gap-4 border-t border-[var(--color-line)] pt-4">
-              <dt className="w-24 shrink-0 font-mono text-[0.6875rem] tracking-[0.1em] text-surf uppercase">
+              <dt className="w-24 shrink-0 font-label text-[0.6875rem] tracking-[0.1em] text-slate uppercase">
                 Price
               </dt>
-              <dd className="font-display font-semibold tracking-[-0.01em]">
+              <dd className="font-body font-semibold tracking-[-0.01em]">
                 {service.price}
               </dd>
             </div>
@@ -33,7 +33,7 @@ export function ServiceCard({ service }: { service: ServiceItem }) {
         </div>
 
         <div>
-          <p className="max-w-[62ch] text-tide">{service.description}</p>
+          <p className="max-w-[62ch] text-steel">{service.description}</p>
         </div>
       </div>
     </article>

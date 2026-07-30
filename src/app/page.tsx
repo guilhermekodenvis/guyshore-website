@@ -27,21 +27,24 @@ export default function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(homeSchema) }}
       />
 
-      <Hero />
-
-      <ServiceMarquee />
+      {/* Hero and marquee share the first screen, so the marquee sits at the
+          fold rather than below it. */}
+      <div className="flex min-h-[calc(100dvh-4.5rem)] flex-col">
+        <Hero />
+        <ServiceMarquee />
+      </div>
 
       {/* Numbers */}
-      <section className="border-b border-[var(--color-line)] bg-foam">
-        <dl className="mx-auto grid max-w-[76rem] grid-cols-2 gap-y-10 px-6 py-14 lg:grid-cols-4 lg:px-10">
+      <section className="border-b border-[var(--color-line)] bg-mist">
+        <dl className="mx-auto grid max-w-[76rem] grid-cols-2 gap-y-10 px-6 py-14 text-center lg:grid-cols-4 lg:px-10">
           {stats.map((stat) => (
             <div key={stat.label}>
               <dt className="sr-only">{stat.label}</dt>
               <dd>
-                <span className="block font-display text-4xl font-bold tracking-[-0.04em] lg:text-5xl">
+                <span className="block font-body text-4xl font-bold tracking-[-0.04em] lg:text-5xl">
                   {stat.value}
                 </span>
-                <span className="mt-2 block font-mono text-xs tracking-[0.08em] text-surf uppercase">
+                <span className="mt-2 block font-label text-xs tracking-[0.08em] text-slate uppercase">
                   {stat.label}
                 </span>
               </dd>
@@ -55,12 +58,12 @@ export default function HomePage() {
         id="services"
         className="mx-auto max-w-[76rem] scroll-mt-24 px-6 py-24 lg:px-10 lg:py-32"
       >
-        <p className="eyebrow text-surf">Our services</p>
+        <p className="eyebrow text-slate">Our services</p>
         <h2 className="mt-5 max-w-[24ch] text-title">
           MVP &amp; Software Development Company for Non-Technical Founders and
           Startups.
         </h2>
-        <p className="mt-7 max-w-[68ch] text-lead text-tide">
+        <p className="mt-7 max-w-[68ch] text-lead text-steel">
           We build production software for founders and startups: web apps,
           SaaS platforms, mobile products and the automations that run behind
           them. Fixed scope, clear timelines, and full source code ownership
@@ -75,13 +78,13 @@ export default function HomePage() {
       </section>
 
       {/* Our method */}
-      <section className="border-y border-[var(--color-line)] bg-foam">
+      <section className="border-y border-[var(--color-line)] bg-mist">
         <div className="mx-auto max-w-[76rem] px-6 py-24 lg:px-10 lg:py-32">
-          <p className="eyebrow text-surf">Our method</p>
+          <p className="eyebrow text-slate">Our method</p>
           <h2 className="mt-5 max-w-[24ch] text-title">
             How do we build your software or MVP?
           </h2>
-          <p className="mt-7 max-w-[64ch] text-lead text-tide">
+          <p className="mt-7 max-w-[64ch] text-lead text-steel">
             You need your SaaS, software, app or automation delivered quickly
             and done well. That is why we created our five-step method.
           </p>
@@ -92,9 +95,9 @@ export default function HomePage() {
                 key={item.step}
                 className="grid gap-4 border-b border-[var(--color-line)] py-8 lg:grid-cols-[5rem_16rem_1fr] lg:gap-10"
               >
-                <span className="font-mono text-sm text-noon">{item.step}</span>
+                <span className="font-label text-sm text-ink">{item.step}</span>
                 <h3 className="text-xl tracking-[-0.025em]">{item.title}</h3>
-                <p className="max-w-[62ch] text-tide">{item.body}</p>
+                <p className="max-w-[62ch] text-steel">{item.body}</p>
               </li>
             ))}
           </ol>
@@ -103,11 +106,11 @@ export default function HomePage() {
 
       {/* Who we are */}
       <section className="mx-auto max-w-[76rem] px-6 py-24 lg:px-10 lg:py-32">
-        <p className="eyebrow text-surf">Who we are</p>
+        <p className="eyebrow text-slate">Who we are</p>
         <h2 className="mt-5 max-w-[24ch] text-title">
           We specialize in MVP and software development.
         </h2>
-        <p className="mt-7 max-w-[66ch] text-lead text-tide">
+        <p className="mt-7 max-w-[66ch] text-lead text-steel">
           {site.name} is an MVP and custom software development company for
           non-technical founders and startups. We build web apps, SaaS
           platforms, and mobile products from scratch, and take stalled
@@ -115,7 +118,7 @@ export default function HomePage() {
         </p>
 
         <div className="mt-16 grid gap-10 border-t border-[var(--color-line)] pt-12 lg:grid-cols-[20rem_1fr] lg:gap-16">
-          <div className="relative aspect-[4/5] overflow-hidden rounded-[2px] bg-deep">
+          <div className="relative aspect-[4/5] overflow-hidden rounded-[2px] bg-ink">
             <Image
               src={founder.photo}
               alt={founder.name}
@@ -126,12 +129,12 @@ export default function HomePage() {
           </div>
 
           <div>
-            <p className="eyebrow text-noon">{founder.role}</p>
+            <p className="eyebrow text-ink">{founder.role}</p>
             <h3 className="mt-4 text-3xl tracking-[-0.03em]">{founder.name}</h3>
-            <p className="mt-6 max-w-[54ch] text-lead text-tide">
+            <p className="mt-6 max-w-[54ch] text-lead text-steel">
               {founder.bio}
             </p>
-            <p className="mt-4 max-w-[54ch] text-tide">
+            <p className="mt-4 max-w-[54ch] text-steel">
               EU-based engineering, working US business hours.
             </p>
           </div>
@@ -139,9 +142,9 @@ export default function HomePage() {
       </section>
 
       {/* FAQ */}
-      <section className="border-t border-[var(--color-line)] bg-foam">
+      <section className="border-t border-[var(--color-line)] bg-mist">
         <div className="mx-auto max-w-[76rem] px-6 py-24 lg:px-10 lg:py-32">
-          <p className="eyebrow text-surf">FAQ</p>
+          <p className="eyebrow text-slate">FAQ</p>
           <h2 className="mt-5 max-w-[20ch] text-title">
             Questions we get asked most.
           </h2>
@@ -159,17 +162,17 @@ export default function HomePage() {
       >
         <div className="grid gap-14 lg:grid-cols-[1fr_1.15fr] lg:gap-24">
           <div>
-            <p className="eyebrow text-surf">Contact</p>
+            <p className="eyebrow text-slate">Contact</p>
             <h2 className="mt-5 max-w-[16ch] text-title">
               Tell us about your project.
             </h2>
-            <p className="mt-7 max-w-[44ch] text-lead text-tide">
+            <p className="mt-7 max-w-[44ch] text-lead text-steel">
               Send us the short version and we will come back to you within one
               working day.
             </p>
             <a
               href={`mailto:${site.email}`}
-              className="mt-8 inline-block font-display text-lg font-semibold tracking-[-0.02em] text-tide transition-colors hover:text-deep"
+              className="mt-8 inline-block font-body text-lg font-semibold tracking-[-0.02em] text-steel transition-colors hover:text-ink"
             >
               {site.email}
             </a>

@@ -10,7 +10,7 @@ import {
 } from "@/lib/contact";
 
 const fieldClass =
-  "w-full rounded-[2px] border border-[var(--color-line-strong)] bg-foam px-4 py-3 font-body text-[1rem] text-deep transition-colors placeholder:text-surf/60 focus:border-tide";
+  "w-full rounded-[2px] border border-[var(--color-line-strong)] bg-mist px-4 py-3 font-body text-[1rem] text-ink transition-colors placeholder:text-slate/60 focus:border-steel";
 
 /**
  * `short` drops the company and need fields. Used by the home page section,
@@ -35,9 +35,9 @@ export function ContactForm({
     return (
       <div
         role="status"
-        className="rounded-[2px] border border-[var(--color-line-strong)] bg-foam p-8 lg:p-10"
+        className="rounded-[2px] border border-[var(--color-line-strong)] bg-mist p-8 lg:p-10"
       >
-        <p className="eyebrow text-noon">Message sent</p>
+        <p className="eyebrow text-ink">Message sent</p>
         <p className="mt-5 text-lead">{state.message}</p>
       </div>
     );
@@ -48,7 +48,7 @@ export function ContactForm({
       {state.status === "error" && state.message ? (
         <p
           role="alert"
-          className="rounded-[2px] border-l-2 border-noon bg-foam px-4 py-3 text-[0.9375rem] text-tide"
+          className="rounded-[2px] border-l-2 border-ink bg-mist px-4 py-3 text-[0.9375rem] text-steel"
         >
           {state.message}
         </p>
@@ -134,7 +134,7 @@ export function ContactForm({
       <button
         type="submit"
         disabled={pending}
-        className="inline-flex items-center justify-center rounded-[2px] bg-deep px-7 py-3.5 font-display text-[0.9375rem] font-semibold text-paper transition-colors hover:bg-tide disabled:opacity-60"
+        className="inline-flex items-center justify-center rounded-full bg-ink px-7 py-3 font-body text-[0.9375rem] font-semibold text-paper transition-colors hover:bg-steel disabled:opacity-60"
       >
         {pending ? "Sending…" : "Send message"}
       </button>
@@ -154,10 +154,10 @@ function Label({
   return (
     <label
       htmlFor={htmlFor}
-      className="mb-2.5 flex items-baseline gap-2 font-mono text-[0.6875rem] tracking-[0.1em] text-tide uppercase"
+      className="mb-2.5 flex items-baseline gap-2 font-label text-[0.6875rem] tracking-[0.1em] text-steel uppercase"
     >
       {children}
-      {optional ? <span className="text-surf/70">optional</span> : null}
+      {optional ? <span className="text-slate/70">optional</span> : null}
     </label>
   );
 }
@@ -165,8 +165,8 @@ function Label({
 function FieldError({ id, message }: { id: string; message?: string }) {
   if (!message) return null;
   return (
-    <p id={id} className="mt-2 text-[0.875rem] text-tide">
-      <span aria-hidden className="mr-1.5 text-noon">
+    <p id={id} className="mt-2 text-[0.875rem] text-steel">
+      <span aria-hidden className="mr-1.5 text-ink">
         ↳
       </span>
       {message}

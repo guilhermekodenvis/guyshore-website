@@ -45,17 +45,17 @@ export default async function BlogPostPage({ params }: Params) {
         <header className="mx-auto max-w-[76rem] px-6 pt-20 pb-12 lg:px-10 lg:pt-28">
           <Link
             href="/blog"
-            className="eyebrow text-surf transition-colors hover:text-deep"
+            className="eyebrow text-slate transition-colors hover:text-ink"
           >
             ← All posts
           </Link>
 
           <h1 className="mt-10 max-w-[22ch] text-title">{meta.title}</h1>
-          <p className="mt-7 max-w-[54ch] text-lead text-tide">
+          <p className="mt-7 max-w-[54ch] text-lead text-steel">
             {meta.description}
           </p>
 
-          <p className="mt-10 flex flex-wrap items-center gap-x-4 gap-y-2 font-mono text-[0.6875rem] tracking-[0.08em] text-surf uppercase">
+          <p className="mt-10 flex flex-wrap items-center gap-x-4 gap-y-2 font-label text-[0.6875rem] tracking-[0.08em] text-slate uppercase">
             <span>{meta.author}</span>
             <span aria-hidden>·</span>
             <time dateTime={meta.date}>{formatPostDate(meta.date)}</time>
@@ -73,7 +73,7 @@ export default async function BlogPostPage({ params }: Params) {
         </div>
       </article>
 
-      <section className="bg-deep text-paper">
+      <section className="bg-ink text-paper">
         <div className="mx-auto flex max-w-[76rem] flex-col gap-10 px-6 py-20 lg:flex-row lg:items-center lg:justify-between lg:px-10 lg:py-24">
           <h2 className="max-w-[22ch] text-title">
             Working on something this touches?

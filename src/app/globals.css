@@ -3,24 +3,30 @@
 /* ---------------------------------------------------------------------------
    GuyShore design tokens
 
-   Palette: "daylight over water". Amber (`noon`) is the single accent; it only
-   works because everything around it stays quiet.
+   Monochrome, weighted roughly 70% white / 20% grey / 10% black. There is no
+   colour accent: emphasis comes from weight, size and black, so anything that
+   needs to stand out on a dark surface flips to `paper` rather than tinting.
 --------------------------------------------------------------------------- */
 @theme {
-  --color-deep: #08252e;
-  --color-tide: #12495a;
-  --color-surf: #2e6e7e;
-  --color-paper: #e7edee;
-  --color-foam: #f8fbfb;
-  --color-noon: #f0a02e;
-  --color-aqua: #58b7a8;
+  --color-paper: #ffffff; /* 70% — page surface, and light text on dark */
+  --color-mist: #f4f4f5; /* raised and alternating surfaces */
+  /* 20% — labels and tertiary text. The lightest neutral that still clears
+     AA on both paper and mist; #71717a fails at 4.4 on mist. */
+  --color-slate: #6b6b74;
+  --color-steel: #3f3f46; /* secondary and body text */
+  --color-ink: #18181b; /* 10% — headings, dark surfaces, accent */
 
-  --color-line: color-mix(in oklab, #08252e 14%, transparent);
-  --color-line-strong: color-mix(in oklab, #08252e 28%, transparent);
+  --color-line: color-mix(in oklab, #18181b 12%, transparent);
+  --color-line-strong: color-mix(in oklab, #18181b 26%, transparent);
 
-  --font-display: var(--font-archivo), "Helvetica Neue", Arial, sans-serif;
-  --font-body: var(--font-source-serif), Georgia, "Times New Roman", serif;
-  --font-mono: var(--font-jetbrains), ui-monospace, "SF Mono", monospace;
+  --font-display: var(--font-host), "Helvetica Neue", Arial, sans-serif;
+  --font-body: var(--font-space), "Helvetica Neue", Arial, sans-serif;
+  /* Eyebrows, labels and data. Space Grotesk is the proportional sibling of
+     Space Mono, so it holds that register without a third family. */
+  --font-label: var(--font-space), "Helvetica Neue", Arial, sans-serif;
+  /* Code only, where character alignment actually matters. System stack, so
+     nothing extra is downloaded. */
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
 
   --text-display: clamp(2.75rem, 7vw, 5.5rem);
   --text-display--line-height: 0.94;
@@ -41,7 +47,7 @@
 
   body {
     background-color: var(--color-paper);
-    color: var(--color-deep);
+    color: var(--color-ink);
     font-family: var(--font-body);
     font-size: 1.0625rem;
     line-height: 1.65;
@@ -58,12 +64,14 @@
   }
 
   ::selection {
-    background-color: var(--color-noon);
-    color: var(--color-deep);
+    background-color: var(--color-ink);
+    color: var(--color-paper);
   }
 
+  /* currentColor, not a fixed token: without a colour accent a black ring
+     would be invisible on the dark sections, and this follows the text. */
   :focus-visible {
-    outline: 2px solid var(--color-noon);
+    outline: 2px solid currentColor;
     outline-offset: 3px;
     border-radius: 2px;
   }
@@ -106,7 +114,7 @@
   }
 
   .eyebrow {
-    font-family: var(--font-mono);
+    font-family: var(--font-label);
     font-size: 0.6875rem;
     font-weight: 500;
     letter-spacing: 0.18em;
@@ -138,16 +146,16 @@
   }
 
   .prose a {
-    color: var(--color-tide);
+    color: var(--color-steel);
     text-decoration: underline;
-    text-decoration-color: var(--color-noon);
+    text-decoration-color: var(--color-ink);
     text-decoration-thickness: 2px;
     text-underline-offset: 3px;
   }
 
   .prose a:hover {
-    color: var(--color-deep);
-    background-color: color-mix(in oklab, var(--color-noon) 28%, transparent);
+    color: var(--color-ink);
+    background-color: color-mix(in oklab, var(--color-ink) 28%, transparent);
   }
 
   .prose strong {
@@ -174,7 +182,7 @@
     top: 0.72em;
     width: 0.4em;
     height: 1px;
-    background-color: var(--color-surf);
+    background-color: var(--color-slate);
   }
 
   .prose ol {
@@ -182,9 +190,9 @@
   }
 
   .prose ol > li::marker {
-    font-family: var(--font-mono);
+    font-family: var(--font-label);
     font-size: 0.85em;
-    color: var(--color-surf);
+    color: var(--color-slate);
   }
 
   .prose li + li {
@@ -192,23 +200,23 @@
   }
 
   .prose blockquote {
-    border-left: 2px solid var(--color-noon);
+    border-left: 2px solid var(--color-ink);
     padding-left: 1.25em;
     font-size: 1.25rem;
     line-height: 1.5;
-    color: var(--color-tide);
+    color: var(--color-steel);
   }
 
   .prose code {
     font-family: var(--font-mono);
     font-size: 0.85em;
-    background-color: color-mix(in oklab, var(--color-surf) 12%, transparent);
+    background-color: color-mix(in oklab, var(--color-slate) 12%, transparent);
     padding: 0.15em 0.4em;
     border-radius: 3px;
   }
 
   .prose pre {
-    background-color: var(--color-deep);
+    background-color: var(--color-ink);
     color: var(--color-paper);
     padding: 1.25rem 1.4rem;
     overflow-x: auto;
@@ -235,7 +243,7 @@
   }
 
   .prose th {
-    font-family: var(--font-display);
+    font-family: var(--font-body);
     font-size: 0.8rem;
     letter-spacing: 0.06em;
     text-transform: uppercase;
@@ -293,13 +301,16 @@
   animation: float-y 6s ease-in-out infinite;
 }
 
-/* Service marquee. The track holds the list twice, so -50% is a seamless loop. */
+/* Service marquee. The track holds N copies of the list and shifts by exactly
+   one copy, so the loop restarts on an identical frame. N comes from the
+   component via --marquee-copies; it must be high enough that (N-1) copies
+   cover the viewport, or a gap opens on the trailing edge. */
 @keyframes marquee {
   from {
     transform: translateX(0);
   }
   to {
-    transform: translateX(-50%);
+    transform: translateX(calc(-100% / var(--marquee-copies, 2)));
   }
 }
 

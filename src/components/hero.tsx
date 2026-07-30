@@ -1,90 +1,58 @@
+import Image from "next/image";
 import { ButtonLink } from "@/components/button-link";
-import { BlocksIcon, LaunchIcon, SparkIcon } from "@/components/icons";
 
-const STAGES = [
-  {
-    label: "You dream",
-    Icon: SparkIcon,
-    // Parked around the centred copy. Hidden below lg, where a full-screen
-    // hero leaves no room beside the text.
-    position: "top-[20%] left-[7%]",
-    delay: "0s",
-  },
-  {
-    label: "We build",
-    Icon: BlocksIcon,
-    position: "top-[46%] right-[8%]",
-    delay: "1.4s",
-  },
-  {
-    label: "You launch",
-    Icon: LaunchIcon,
-    position: "bottom-[19%] left-[15%]",
-    delay: "2.8s",
-  },
-];
+/**
+ * Shared cap for the headline and the supporting line.
+ *
+ * Deliberately in rem, not ch: `ch` resolves against each element's own font,
+ * so 12ch on an 88px display face is ~686px while 24ch on a 22px body face is
+ * ~338px. A fixed value is the only way to make the two blocks match.
+ */
+const BLOCK = "max-w-[34rem]";
 
 export function Hero() {
   return (
-    // The header is 4.5rem and sits in flow above this, so subtracting it
-    // makes hero + header exactly one screen tall. dvh rather than vh so the
-    // mobile address bar does not push the bottom out of view.
-    <section className="relative flex min-h-[calc(100dvh-4.5rem)] w-full items-center overflow-hidden bg-deep">
-      {/*
-        Image slot, now full-bleed. Drop the real asset in here and delete the
-        two decorative fills below:
-          <Image src="/hero.jpg" alt="" fill className="object-cover" priority />
-      */}
-      <div
-        aria-hidden
-        className="absolute inset-0"
-        style={{
-          background:
-            "radial-gradient(120% 90% at 25% 15%, #2e6e7e 0%, transparent 55%), radial-gradient(100% 80% at 85% 90%, #12495a 0%, transparent 60%)",
-        }}
-      />
-      <div
-        aria-hidden
-        className="absolute inset-0 opacity-[0.13]"
-        style={{
-          backgroundImage:
-            "repeating-linear-gradient(to right, #e7edee 0 1px, transparent 1px 44px), repeating-linear-gradient(to bottom, #e7edee 0 1px, transparent 1px 44px)",
-        }}
-      />
+    // flex-1 rather than a height of its own: the wrapper on the home page
+    // pairs this with the marquee so the two together fill one screen.
+    <section className="flex flex-1 items-center bg-paper">
+      {/* No max-width on purpose: the hero runs wider than the rest of the
+          page, held off the edges by 40px from lg up.
+          Mobile stacks logo, headline, text, buttons and centres them; the
+          three-column split only starts at lg. */}
+      <div className="grid w-full gap-8 px-6 py-16 text-center lg:grid-cols-[1fr_auto_1fr] lg:grid-rows-[auto_auto] lg:gap-x-14 lg:gap-y-8 lg:px-10 lg:text-left">
+        <div className="order-1 flex justify-center lg:order-none lg:col-start-2 lg:row-span-2 lg:self-center">
+          <Image
+            src="/logo-mark.png"
+            alt=""
+            width={320}
+            height={320}
+            priority
+            className="w-[clamp(10rem,20vw,17rem)] drop-shadow-[0_18px_40px_rgba(0,0,0,0.18)]"
+          />
+        </div>
 
-      {STAGES.map(({ label, Icon, position, delay }) => (
-        <span
-          key={label}
-          className={`animate-float absolute ${position} hidden items-center gap-2.5 rounded-[2px] border border-[var(--color-line)] bg-paper px-4 py-2.5 shadow-[0_8px_28px_-12px_rgba(8,37,46,0.55)] lg:flex`}
-          style={{ animationDelay: delay }}
+        <h1
+          className={`animate-rise-in order-2 mx-auto ${BLOCK} text-display lg:order-none lg:col-start-1 lg:row-start-1 lg:mx-0 lg:self-end`}
         >
-          <Icon className="size-[18px] shrink-0 text-noon" />
-          <span className="font-display text-sm font-semibold tracking-[-0.01em] whitespace-nowrap">
-            {label}
-          </span>
-        </span>
-      ))}
-
-      <div className="relative mx-auto w-full max-w-[76rem] px-6 py-24 text-center lg:px-10">
-        <p className="eyebrow animate-rise-in text-aqua">
-          From scratch to production
-        </p>
-
-        <h1 className="animate-rise-in mx-auto mt-6 max-w-[15ch] text-display text-paper">
           Your MVP, finally finished
         </h1>
 
-        <p className="animate-rise-in mx-auto mt-8 max-w-[58ch] text-lead text-paper/75">
-          Web apps, SaaS platforms, and mobile products built from scratch, or
-          taken from a stalled Lovable, Bolt, Codex, Claude Code, Cursor, or
-          Replit prototype to production-ready software.
+        <p
+          className={`animate-rise-in order-3 mx-auto ${BLOCK} text-lead text-steel lg:order-none lg:col-start-3 lg:row-span-2 lg:mr-0 lg:ml-auto lg:self-center`}
+        >
+          Web apps, SaaS platforms, mobile products or automations built from
+          scratch to production-ready software.
         </p>
 
-        <div className="animate-rise-in mt-10 flex flex-wrap justify-center gap-4">
-          <ButtonLink href="/contact" variant="inverse">
+        <div className="animate-rise-in order-4 flex flex-col gap-3 sm:flex-row sm:justify-center lg:order-none lg:col-start-1 lg:row-start-2 lg:justify-start lg:self-start">
+          <ButtonLink href="/contact" className="w-full sm:w-auto">
             Contact us
           </ButtonLink>
-          <ButtonLink href="/contact" variant="ghost-inverse">
+          <ButtonLink
+            href="/contact"
+            variant="ghost"
+            className="w-full sm:w-auto"
+          >
             Book a 1-hour consultation
           </ButtonLink>
         </div>
