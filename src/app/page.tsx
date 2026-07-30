@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import { ContactForm } from "@/components/contact-form";
 import { FaqList } from "@/components/faq-list";
 import { Hero } from "@/components/hero";
@@ -113,27 +114,13 @@ export default function HomePage() {
         </p>
 
         <div className="mt-16 grid gap-10 border-t border-[var(--color-line)] pt-12 lg:grid-cols-[20rem_1fr] lg:gap-16">
-          {/*
-            Founder portrait. Drop the photo at `public/team/guy-sartori.jpg`
-            and swap the placeholder for:
-              <Image src={founder.photo} alt={founder.name} fill className="object-cover" />
-          */}
           <div className="relative aspect-[4/5] overflow-hidden rounded-[2px] bg-deep">
-            <div
-              aria-hidden
-              className="absolute inset-0"
-              style={{
-                background:
-                  "radial-gradient(120% 90% at 30% 20%, #2e6e7e 0%, transparent 58%), radial-gradient(100% 80% at 80% 95%, #12495a 0%, transparent 60%)",
-              }}
-            />
-            <div
-              aria-hidden
-              className="absolute inset-0 opacity-[0.13]"
-              style={{
-                backgroundImage:
-                  "repeating-linear-gradient(to right, #e7edee 0 1px, transparent 1px 40px), repeating-linear-gradient(to bottom, #e7edee 0 1px, transparent 1px 40px)",
-              }}
+            <Image
+              src={founder.photo}
+              alt={founder.name}
+              fill
+              sizes="(min-width: 1024px) 20rem, 100vw"
+              className="object-cover"
             />
           </div>
 

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
@@ -13,11 +14,18 @@ export function SiteHeader() {
   return (
     <header className="sticky top-0 z-50 border-b border-[var(--color-line)] bg-paper/85 backdrop-blur-md">
       <div className="mx-auto flex h-[4.5rem] max-w-[76rem] items-center justify-between px-6 lg:px-10">
-        <Link
-          href="/"
-          className="font-display text-xl font-extrabold tracking-[-0.045em] uppercase"
-        >
-          {site.name}
+        <Link href="/" className="flex items-center gap-2.5">
+          <Image
+            src="/logo-mark.png"
+            alt=""
+            width={40}
+            height={40}
+            priority
+            className="size-10 shrink-0"
+          />
+          <span className="font-display text-xl font-extrabold tracking-[-0.045em] uppercase">
+            {site.name}
+          </span>
         </Link>
 
         <nav className="hidden items-center gap-9 md:flex">

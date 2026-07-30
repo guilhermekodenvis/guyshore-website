@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { nav, site } from "@/lib/site";
 
@@ -7,9 +8,21 @@ export function SiteFooter() {
       <div className="mx-auto max-w-[76rem] px-6 py-16 lg:px-10 lg:py-20">
         <div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr]">
           <div>
-            <p className="font-display text-2xl font-extrabold tracking-[-0.045em] uppercase">
-              {site.name}
-            </p>
+            <div className="flex items-center gap-3">
+              {/* The mark is black; on the dark footer a filter repaints it
+                  white. Filters, unlike blend modes, do not depend on the
+                  surrounding stacking context. */}
+              <Image
+                src="/logo-mark.png"
+                alt=""
+                width={48}
+                height={48}
+                className="size-12 shrink-0 brightness-0 invert"
+              />
+              <p className="font-display text-2xl font-extrabold tracking-[-0.045em] uppercase">
+                {site.name}
+              </p>
+            </div>
             <p className="mt-4 max-w-sm text-paper/70">{site.tagline}</p>
           </div>
 
