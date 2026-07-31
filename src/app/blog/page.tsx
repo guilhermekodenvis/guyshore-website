@@ -6,8 +6,8 @@ import { formatPostDate, getAllPosts } from "@/lib/posts";
 
 export const metadata: Metadata = {
   title: "Blog",
-  description:
-    "Our expertise, our hands-on experience and what is happening in the market, so you stay ahead of your competitors.",
+  // description intentionally omitted: inherits site.description from the root
+  // layout, so every page carries the same snippet.
   alternates: { canonical: "/blog" },
 };
 

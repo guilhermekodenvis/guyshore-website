@@ -4,8 +4,8 @@ import { founder } from "@/lib/team";
 
 export const metadata: Metadata = {
   title: "About",
-  description:
-    "GuyShore builds the software, apps and automations that give your company back its time. Who we are and why we exist.",
+  // description intentionally omitted: inherits site.description from the root
+  // layout, so every page carries the same snippet.
   alternates: { canonical: "/about" },
 };
 

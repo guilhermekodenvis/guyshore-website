@@ -9,11 +9,15 @@ export const site = {
   /** The logotype, always lowercase. Header and footer only. */
   wordmark: "guyshore.com",
   /** Browser tab title for the home page. */
-  title: "MVP & Software Development for Non-Technical Founders",
+  title: "MVP & Software Development Company for Startups",
   /** Shown in the footer, under the wordmark. */
   tagline: "Your MVP, finally finished.",
+  /**
+   * Meta description for every page. The inner pages deliberately do not set
+   * their own, so they inherit this one from the root layout.
+   */
   description:
-    "GuyShore builds MVPs, custom software, apps and automations for non-technical founders and startups, from scratch to production.",
+    "We build for non-technical founders and startups: web apps, mobile products and automations. Fixed scope, clear timelines, and full source code ownership.",
   url: "https://guyshore.com",
   email: "business@guyshore.com",
   address: {

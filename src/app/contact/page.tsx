@@ -4,8 +4,8 @@ import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Contact",
-  description:
-    "Tell us about your challenge. Send a message and we will come back to you within one working day.",
+  // description intentionally omitted: inherits site.description from the root
+  // layout, so every page carries the same snippet.
   alternates: { canonical: "/contact" },
 };
 
