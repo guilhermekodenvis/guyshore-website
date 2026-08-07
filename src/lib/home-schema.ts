@@ -4,54 +4,32 @@ import { services } from "@/lib/services";
 const ORIGIN = "https://guyshore.com";
 
 /**
- * Numeric price for a card, taken from the visible copy, so the schema and the
- * page cannot disagree. "From $23,000" -> "23000".
+ * The search-facing name for each card, keyed by slug. The cards use short
+ * titles ("App Development"); search wants the unambiguous phrasing.
+ *
+ * No `offers` node anywhere: the page stopped publishing prices, and a price
+ * in the markup that a visitor cannot see on the page is exactly what Google's
+ * structured-data guidelines call out.
  */
-function priceFor(slug: string): string {
-  const service = services.find((item) => item.slug === slug);
-  if (!service) {
-    throw new Error(`home-schema: no service card with slug "${slug}"`);
-  }
-  return service.price.replace(/\D/g, "");
-}
+const SEARCH_NAMES: Record<string, string> = {
+  "mvp-development": "MVP Development",
+  "app-development": "Mobile App Development",
+  "software-development": "Custom Software Development",
+  "automations-and-integrations": "Automations and Integrations",
+};
 
-/** Card slug paired with the name the schema advertises it under. */
-const SERVICE_NODES = [
-  { slug: "prototype-rescue", name: "Prototype Rescue" },
-  { slug: "mvp-development", name: "MVP Development" },
-  { slug: "app-development", name: "Mobile App Development" },
-  { slug: "software-development", name: "Custom Software Development" },
-  {
-    slug: "automations-and-integrations",
-    name: "Automations and Integrations",
-  },
-];
-
-const serviceGraph = SERVICE_NODES.map(({ slug, name }) => {
-  const price = priceFor(slug);
-
+const serviceGraph = services.map((service) => {
   const node: Record<string, unknown> = {
     "@type": "Service",
-    name,
+    name: SEARCH_NAMES[service.slug] ?? service.title,
+    description: service.description,
     provider: { "@id": `${ORIGIN}/#organization` },
-    url: `${ORIGIN}/#${slug}`,
-    offers: { "@type": "Offer", priceCurrency: "USD", price },
+    url: `${ORIGIN}/#${service.slug}`,
   };
 
-  // MVP Development keeps the richer offer shape it already had.
-  if (slug === "mvp-development") {
+  if (service.slug === "mvp-development") {
     node.serviceType = "MVP development";
     node.areaServed = { "@type": "Country", name: "United States" };
-    node.offers = {
-      "@type": "Offer",
-      priceCurrency: "USD",
-      price,
-      priceSpecification: {
-        "@type": "PriceSpecification",
-        minPrice: price,
-        priceCurrency: "USD",
-      },
-    };
   }
 
   return node;
@@ -60,7 +38,7 @@ const serviceGraph = SERVICE_NODES.map(({ slug, name }) => {
 /**
  * schema.org graph for the home page.
  *
- * The FAQPage entries are derived from `faq` and the Service prices from
+ * The FAQPage entries are derived from `faq` and the Service nodes from
  * `services`, so the structured data cannot drift from what is rendered.
  */
 export const homeSchema = {

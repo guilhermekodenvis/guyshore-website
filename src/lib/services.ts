@@ -1,50 +1,38 @@
 export type ServiceItem = {
   slug: string;
   title: string;
-  timeline: string;
-  price: string;
   description: string;
 };
 
-/** Rendered in this order, straight under the section intro. */
+/**
+ * Rendered in this order, two per row from md up.
+ *
+ * Deliberately no timeline or price: scope and cost are quoted per project,
+ * not published. Keep it that way, or `home-schema.ts` will start advertising
+ * an Offer the page does not show.
+ */
 export const services: ServiceItem[] = [
-  {
-    slug: "prototype-rescue",
-    title: "Prototype Rescue",
-    timeline: "2 weeks",
-    price: "$3,200",
-    description:
-      "Your Lovable, Bolt, Cursor, Codex, Claude Code or Replit prototype works in the demo and breaks with real users. We audit what you have, fix what is unsafe, and take it to production. Fixed scope, fixed price, two weeks.",
-  },
   {
     slug: "mvp-development",
     title: "MVP Development",
-    timeline: "From 6 weeks",
-    price: "From $23,000",
     description:
       "If you are a startup or a non-technical founder and you need to test the market fit of your billion-dollar idea, we can help. We handle everything from scratch to deploy. You explain your idea end to end, we design your product and deliver it working on schedule, so you can launch and start testing as early as possible.",
   },
   {
     slug: "app-development",
     title: "App Development",
-    timeline: "From 8 weeks",
-    price: "From $32,000",
     description:
       "Your app has never been closer to launching. We will build it properly and publish it to both the Apple and Android stores.",
   },
   {
     slug: "software-development",
     title: "Software Development",
-    timeline: "From 12 weeks",
-    price: "From $41,000",
     description:
       "If your company is growing and you are starting to feel the need to bring in technology and stop running your operation on spreadsheets, talk to us and we will solve it.",
   },
   {
     slug: "automations-and-integrations",
     title: "Automations and Integrations",
-    timeline: "From 2 weeks",
-    price: "From $5,000",
     description:
       "Have you noticed how much bureaucratic work happens inside your company? A lot of it can be automated. Automation at company level can hand you back up to 60% of that time and save a great deal of cash.",
   },

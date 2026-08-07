@@ -44,16 +44,9 @@ export function Hero() {
           scratch to production-ready software.
         </p>
 
-        <div className="animate-rise-in order-4 flex flex-col gap-3 sm:flex-row sm:justify-center lg:order-none lg:col-start-1 lg:row-start-2 lg:justify-start lg:self-start">
+        <div className="animate-rise-in order-4 flex sm:justify-center lg:order-none lg:col-start-1 lg:row-start-2 lg:justify-start lg:self-start">
           <ButtonLink href="/contact" className="w-full sm:w-auto">
             Contact us
-          </ButtonLink>
-          <ButtonLink
-            href="/contact"
-            variant="ghost"
-            className="w-full sm:w-auto"
-          >
-            Book a 1-hour consultation
           </ButtonLink>
         </div>
       </div>

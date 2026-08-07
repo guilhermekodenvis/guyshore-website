@@ -1,20 +1,13 @@
 import type { CSSProperties } from "react";
 
-const SERVICES = [
-  "MVP",
-  "SaaS",
-  "Web App",
-  "Mobile App",
-  "Automation",
-  "Prototype Rescue",
-];
+const SERVICES = ["MVP", "SaaS", "Web App", "Mobile App", "Automation"];
 
 /**
  * How many times the list is repeated inside the track.
  *
  * The animation shifts by exactly one copy, so the remaining (COPIES - 1)
  * copies have to be wider than the viewport or the trailing edge runs out of
- * content mid-loop. At ~1000px per copy, six covers roughly 5000px of screen.
+ * content mid-loop. At ~772px per copy, six covers roughly 3850px of screen.
  * Shortening SERVICES makes each copy narrower, so raise this if the list ever
  * drops below a handful of items.
  */

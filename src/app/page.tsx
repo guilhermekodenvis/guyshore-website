@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Image from "next/image";
+import { ButtonLink } from "@/components/button-link";
 import { ContactForm } from "@/components/contact-form";
 import { FaqList } from "@/components/faq-list";
 import { Hero } from "@/components/hero";
@@ -70,7 +71,9 @@ export default function HomePage() {
           from day one.
         </p>
 
-        <div className="mt-16 space-y-6">
+        {/* Two per row from md up, one per row below it. `items-stretch` is
+            implicit in grid, so paired cards match height. */}
+        <div className="mt-16 grid gap-6 md:grid-cols-2">
           {services.map((service) => (
             <ServiceCard key={service.slug} service={service} />
           ))}
@@ -137,6 +140,31 @@ export default function HomePage() {
             <p className="mt-4 max-w-[54ch] text-steel">
               EU-based engineering, working US business hours.
             </p>
+            <ButtonLink
+              href={founder.linkedin}
+              variant="ghost"
+              target="_blank"
+              rel="noreferrer"
+              className="mt-8"
+            >
+              Connect with me on LinkedIn
+              {/* The label says where it goes but not that it leaves the site,
+                  so the arrow is paired with a spoken equivalent. */}
+              <span className="sr-only">(opens in a new tab)</span>
+              <svg
+                aria-hidden
+                viewBox="0 0 16 16"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.75"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                className="size-4 shrink-0"
+              >
+                <path d="M5.25 10.75 10.75 5.25" />
+                <path d="M5.75 5.25h5v5" />
+              </svg>
+            </ButtonLink>
           </div>
         </div>
       </section>

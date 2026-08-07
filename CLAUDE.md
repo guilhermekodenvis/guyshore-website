@@ -100,7 +100,7 @@ A healthy submission shows up in the Netlify function log as a ~3s invocation; a
 
 ## Not yet wired
 
-The hero's secondary CTA ("Book a 1-hour consultation") points at `/contact`; if a real booking tool is adopted, that link is the place to change.
+There is no booking flow anywhere on the site. The hero used to carry a secondary "Book a 1-hour consultation" CTA that only pointed at `/contact`; it was removed rather than left pretending. Every CTA now routes to the contact form.
 
 `business@guyshore.com` appears in the footer, on `/contact` and as the automation's recipient, but the domain has **no MX record** — mail sent to it is not delivered anywhere. The contact form works because it goes through n8n, not because that mailbox exists.
 
