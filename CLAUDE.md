@@ -8,7 +8,16 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Marketing site for GuyShore, a custom software development company (MVPs, software, apps, automations) selling to non-technical founders and startups. Office in Lisbon; clients served remotely across the US. Founder: Guy Sartori. Content is in English.
 
-Four routes: home, about, blog (index + MDX posts), contact. The services and portfolio routes were deleted — services now live only as a section on the home page.
+Routes: home, services (index + a detail page per service), about, blog (index + MDX posts), contact. The portfolio route was deleted and is not coming back.
+
+## Site copy is American English
+
+Every user-visible string on the site is written in **English, American spelling**: optimize, organize, recognize, license, color, judgment. This holds regardless of the language the request arrives in, which is usually Portuguese. Translate the intent, do not paste the Portuguese.
+
+Two standing rules that come from earlier corrections:
+
+- **No em dashes anywhere in site copy.** Use commas, colons or a full stop.
+- Grep before shipping: `grep -rnoE "optimis|organis|recognis|specialis|licence|colour|judgement" src/` should return nothing.
 
 ## Commands
 
@@ -46,12 +55,12 @@ Turbopack caches aggressively in dev. After renaming an export, stale HMR errors
 **Data lives in `src/lib/`, never inline in pages.** Editing copy means editing these modules:
 
 - `site.ts` — company facts, `title` (the browser-tab title), address, email, nav, the four `stats`.
-- `services.ts` — `serviceGroups` (Development / Marketing), the flattened `services`, and the five-step `method`.
+- `services.ts` — every service and its whole detail page. `services` is all seven; `homeServices` is the four with `onHome: true`, used by the home grid and the header dropdown; `getService(slug)` resolves one. Also the five-step `method`.
 - `faq.ts` — home-page FAQ entries.
-- `team.ts` — `founder` and `principles`.
+- `team.ts` — `founder`, including the LinkedIn URL.
 - `contact.ts` — form shapes and the initial action state.
 
-**Home page composition** (`src/app/page.tsx`): hero → service marquee → stats → our services → our method → who we are → FAQ → contact. Each block is either a component in `src/components/` or a section rendered straight from a `src/lib` module.
+**Home page composition** (`src/app/page.tsx`): hero → service marquee → stats → our services (four cards, then a centred link to `/services`) → our method → who we are → FAQ → contact. Each block is either a component in `src/components/` or a section rendered straight from a `src/lib` module.
 
 **Blog is MDX compiled by `@next/mdx`.** Posts are `.mdx` files in `src/content/blog/`; the filename is the slug. Each post exports a `meta` object (title, description, date, author, readingTime, tags) alongside its default component — named `meta`, not `metadata`, so it is never confused with the Next.js route-metadata convention.
 
@@ -61,23 +70,48 @@ Turbopack caches aggressively in dev. After renaming an export, stale HMR errors
 
 Adding a post requires no code changes. Adding a remark/rehype plugin does: Turbopack cannot receive JS functions, so plugins are named as **strings** in `next.config.ts`.
 
+## Services
+
+`src/lib/services.ts` is the single source for all of it. A service object carries both the card copy and every section of its detail page, so adding a service is a data edit and nothing else: it appears on `/services`, gets a prerendered detail page, enters the sitemap, and joins the header dropdown if `onHome` is true.
+
+- `/services` (`src/app/services/page.tsx`) lists all seven, one per row. Long descriptions side by side invite comparison rather than reading, which is why it is not a grid.
+- `/services/[slug]` renders hero → direct answer → who this is for → deliverables → process → FAQ → contact, and is statically generated via `generateStaticParams`.
+
+Each detail page emits a `@graph` of **Service + FAQPage + BreadcrumbList**, all derived from the same object the page renders. As with the home schema, there is no `offers` node: the site publishes no prices, and markup must not claim what the page does not show.
+
+The contact form on a detail page posts `source: "service-<slug>"`, so the automation can tell which page produced a lead.
+
+**The header dropdown** lives in `site-header.tsx`. It opens on hover for pointers and on click for keyboard and touch, and closes on Escape. It must not close via an effect: `react-hooks/set-state-in-effect` is an error in this repo.
+
 ## Design system
 
-Tokens are defined in the `@theme` block of `src/app/globals.css` (Tailwind v4 — there is no `tailwind.config`). Utilities follow from the token names: `bg-deep`, `text-tide`, `text-surf`, `bg-noon`, `bg-aqua`, `bg-paper`, `bg-foam`, plus the type scale `text-display` / `text-title` / `text-lead`.
+Tokens are defined in the `@theme` block of `src/app/globals.css` (Tailwind v4 — there is no `tailwind.config`). The palette is **monochrome**, roughly 70% white / 20% grey / 10% black, and there is no accent colour:
 
-- Amber (`noon`) is the single accent: step numbers, group labels, the marquee separators, focus rings, list markers. Spend it sparingly — it only works because everything around it is quiet.
-- Three type roles, all wired through `next/font`: `font-display` (Archivo) for headings and UI, `font-body` (Source Serif 4) for prose, `font-mono` (JetBrains Mono) for labels and data. The serif-body/sans-display pairing is deliberate — do not "fix" it to a conventional sans body.
-- `.tick-rule` and `.eyebrow` are the recurring structural devices. Numbered markers appear only where the content is genuinely a sequence (the five-step method, case-study steps) — not on service or portfolio listings.
-- Motion lives in `globals.css`: `animate-rise-in` (hero load), `animate-float` (hero tags), `animate-marquee`. The marquee and float animations opt out of the global reduced-motion reset explicitly, because snapping a loop to its end frame is worse than holding it still.
+| Token | Value | Role |
+|---|---|---|
+| `paper` | `#ffffff` | page surface, and light text on dark |
+| `mist` | `#f4f4f5` | raised and alternating sections |
+| `slate` | `#6b6b74` | labels and tertiary text |
+| `steel` | `#3f3f46` | body and secondary text |
+| `ink` | `#18181b` | headings, dark surfaces, primary buttons |
 
-**The marquee** (`service-marquee.tsx`) renders its list twice and translates the track `-50%`, so the loop is seamless. The duplicate is `aria-hidden`. The track is wider than the viewport by design; the section's `overflow-hidden` is what keeps the page from scrolling sideways.
+`slate` is exactly as light as it can be: `#71717a` measures 4.4:1 on `mist` and fails AA. Plus `line` and `line-strong` for hairlines, and the type scale `text-display` / `text-title` / `text-lead`.
+
+- **Two families, both through `next/font`.** `font-display` is Host Grotesk 700, used for headings only. `font-body` is Space Grotesk, used for everything else including navigation and buttons. `font-label` is deliberately the same family as `font-body`; `font-mono` is a system stack and is only for code.
+- The one branded colour on the site is LinkedIn blue, on the LinkedIn button alone (`ButtonLink variant="linkedin"`, `#0a66c2`, measured 5.69:1 with white text). Do not spread it.
+- Focus rings use `outline: 2px solid currentColor`, not a fixed colour, because a black ring disappears on the dark sections.
+- `.tick-rule` and `.eyebrow` are the recurring structural devices. Numbered markers appear only where the content is genuinely a sequence: the five-step method and the process block on a service page.
+- Motion lives in `globals.css`: `animate-rise-in` (hero load), `animate-float`, `animate-marquee`. The marquee and float animations opt out of the global reduced-motion reset explicitly, because snapping a loop to its end frame is worse than holding it still.
+
+**The marquee** (`service-marquee.tsx`) renders its list `COPIES` times and translates the track by `-100% / COPIES`. The invariant is `(COPIES - 1) × copyWidth > viewport`, or the trailing edge runs out of content mid-loop. Shortening the list narrows each copy, so check the arithmetic before removing an item. Everything after the first copy is `aria-hidden`.
 
 ## Image placeholders
 
-Two slots ship with a decorative gradient panel instead of a real asset, each marked with a comment showing the exact `<Image>` swap:
+The hero and the founder portrait both use real assets now (`public/logo-mark.png` and `public/guy-sartori-avatar.png`). One decorative slot remains:
 
-- Hero panel — `src/components/hero.tsx`
-- Founder portrait — the "Who we are" section of `src/app/page.tsx`, expecting `public/team/guy-sartori.jpg` (path in `team.ts`).
+- The full-bleed banner at the top of `/contact`, a gradient panel with the exact `<Image>` swap in a comment above it.
+
+`public/og-image.png` is a 1200×630 screenshot of the live hero, taken from the **production** build (the dev build paints a Next.js badge over the corner). Regenerate it whenever the hero changes: run `next start`, then headless Chrome at `--window-size=1200,630 --force-device-scale-factor=2`, and downscale with sharp using `.flatten()` so the PNG carries no alpha.
 
 ## Where this runs
 

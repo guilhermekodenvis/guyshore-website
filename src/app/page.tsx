@@ -1,13 +1,14 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { ButtonLink } from "@/components/button-link";
+import { ArrowRight, LinkedInMark } from "@/components/icons";
 import { ContactForm } from "@/components/contact-form";
 import { FaqList } from "@/components/faq-list";
 import { Hero } from "@/components/hero";
 import { ServiceCard } from "@/components/service-card";
 import { ServiceMarquee } from "@/components/service-marquee";
 import { homeSchema } from "@/lib/home-schema";
-import { method, services } from "@/lib/services";
+import { method, homeServices } from "@/lib/services";
 import { founder } from "@/lib/team";
 import { site, stats } from "@/lib/site";
 
@@ -74,9 +75,18 @@ export default function HomePage() {
         {/* Two per row from md up, one per row below it. `items-stretch` is
             implicit in grid, so paired cards match height. */}
         <div className="mt-16 grid gap-6 md:grid-cols-2">
-          {services.map((service) => (
+          {homeServices.map((service) => (
             <ServiceCard key={service.slug} service={service} />
           ))}
+        </div>
+
+        {/* The home grid is the four core services. Three more live on the
+            index, which is what this leads to. */}
+        <div className="mt-14 flex justify-center">
+          <ButtonLink href="/services" variant="ghost">
+            View all services
+            <ArrowRight className="size-5 shrink-0" />
+          </ButtonLink>
         </div>
       </section>
 
@@ -142,28 +152,16 @@ export default function HomePage() {
             </p>
             <ButtonLink
               href={founder.linkedin}
-              variant="ghost"
+              variant="linkedin"
               target="_blank"
               rel="noreferrer"
               className="mt-8"
             >
+              <LinkedInMark className="size-[1.15em] shrink-0" />
               Connect with me on LinkedIn
-              {/* The label says where it goes but not that it leaves the site,
-                  so the arrow is paired with a spoken equivalent. */}
+              {/* The mark says which network but not that the link leaves the
+                  site, so it is paired with a spoken equivalent. */}
               <span className="sr-only">(opens in a new tab)</span>
-              <svg
-                aria-hidden
-                viewBox="0 0 16 16"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.75"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                className="size-4 shrink-0"
-              >
-                <path d="M5.25 10.75 10.75 5.25" />
-                <path d="M5.75 5.25h5v5" />
-              </svg>
             </ButtonLink>
           </div>
         </div>

@@ -1,5 +1,5 @@
 import { faq } from "@/lib/faq";
-import { services } from "@/lib/services";
+import { homeServices } from "@/lib/services";
 
 const ORIGIN = "https://guyshore.com";
 
@@ -18,13 +18,13 @@ const SEARCH_NAMES: Record<string, string> = {
   "automations-and-integrations": "Automations and Integrations",
 };
 
-const serviceGraph = services.map((service) => {
+const serviceGraph = homeServices.map((service) => {
   const node: Record<string, unknown> = {
     "@type": "Service",
     name: SEARCH_NAMES[service.slug] ?? service.title,
     description: service.description,
     provider: { "@id": `${ORIGIN}/#organization` },
-    url: `${ORIGIN}/#${service.slug}`,
+    url: `${ORIGIN}/services/${service.slug}`,
   };
 
   if (service.slug === "mvp-development") {

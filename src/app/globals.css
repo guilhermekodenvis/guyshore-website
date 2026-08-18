@@ -4,7 +4,7 @@
    GuyShore design tokens
 
    Monochrome, weighted roughly 70% white / 20% grey / 10% black. There is no
-   colour accent: emphasis comes from weight, size and black, so anything that
+   color accent: emphasis comes from weight, size and black, so anything that
    needs to stand out on a dark surface flips to `paper` rather than tinting.
 --------------------------------------------------------------------------- */
 @theme {
@@ -68,7 +68,7 @@
     color: var(--color-paper);
   }
 
-  /* currentColor, not a fixed token: without a colour accent a black ring
+  /* currentColor, not a fixed token: without a color accent a black ring
      would be invisible on the dark sections, and this follows the text. */
   :focus-visible {
     outline: 2px solid currentColor;
