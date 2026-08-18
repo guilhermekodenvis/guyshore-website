@@ -85,6 +85,24 @@ Two slots ship with a decorative gradient panel instead of a real asset, each ma
 - **Netlify** project `guyshore-website`, auto-publishing from `main`.
 - **GitHub** `guilhermekodenvis/guyshore-website` (public).
 - **n8n** cloud instance `black-elephant`, workflow *GuyShore site contact form* in the `Personal / GuyShore` folder.
+- **Mail** for `business@guyshore.com` is Google Workspace (`MX 1 smtp.google.com`), served from the same Namecheap zone. The mailbox is real and receives; earlier notes claiming the domain had no MX were wrong.
+
+### The domain can be suspended out from under you
+
+On 2026-08-10 Namecheap swapped the delegation to `failed-whois-verification.namecheap.com` / `verify-contact-details.namecheap.com`, because the ICANN registrant-email verification went unanswered for the 15 days after registration. That parks apex and `www` on `198.54.117.242` and publishes no MX, so **the site, the company mailbox and the contact form all go down together**.
+
+The registrar panel is no help diagnosing it: it still shows the domain ACTIVE and still lists the intended nameservers. Only the registry tells the truth.
+
+```bash
+curl -s https://rdap.verisign.com/com/v1/domain/guyshore.com
+```
+
+Two things made this slow to fix, both worth knowing before it happens again:
+
+- **There is no resend button anywhere in the Namecheap dashboard.** It lives on the suspension page served at the domain itself, and POSTs to `https://raa.namecheap.com/api/v1/ncpl/raa/ResendConfirmationEmail`.
+- **Our own HSTS header locks us out of that page.** The site sends `Strict-Transport-Security: max-age=31536000; includeSubDomains; preload`, so any browser that has already loaded `https://guyshore.com` forces HTTPS forever, and the parking host has no certificate for the domain. You get `ERR_CONNECTION_REFUSED` and no way through. Open it from a browser profile that has never visited the site over HTTPS.
+
+The verification mail goes to the **registrant** contact, `gui.sartori96@gmail.com`, not to `business@guyshore.com`. Recovery took about five minutes once the link was clicked. The A, MX and TXT records survive the suspension untouched and so does the Let's Encrypt certificate, so nothing needs rebuilding afterwards. Renewal is 2027-07-26, and editing the registrant email restarts the 15-day clock.
 
 ## Contact form delivery
 
@@ -101,8 +119,6 @@ A healthy submission shows up in the Netlify function log as a ~3s invocation; a
 ## Not yet wired
 
 There is no booking flow anywhere on the site. The hero used to carry a secondary "Book a 1-hour consultation" CTA that only pointed at `/contact`; it was removed rather than left pretending. Every CTA now routes to the contact form.
-
-`business@guyshore.com` appears in the footer, on `/contact` and as the automation's recipient, but the domain has **no MX record** — mail sent to it is not delivered anywhere. The contact form works because it goes through n8n, not because that mailbox exists.
 
 ## Stale content
 
