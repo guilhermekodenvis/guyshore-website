@@ -8,6 +8,8 @@ import type { ComponentType } from "react";
  *
  *   export const meta = { title, description, date, author, readingTime, tags }
  *
+ * plus the optional `seoTitle`, `updated` and `faq` described on PostMeta.
+ *
  * The filename is the slug. `meta` is deliberately not called `metadata` so it
  * is never confused with the Next.js route metadata convention.
  *
@@ -15,13 +17,35 @@ import type { ComponentType } from "react";
  */
 
 export type PostMeta = {
+  /** The on-page h1. Also the <title> unless `seoTitle` is set. */
   title: string;
   description: string;
   /** ISO date, `YYYY-MM-DD`. Sorted as a string, so keep the format. */
   date: string;
+  /** Set when the text was revised after publishing; feeds dateModified. */
+  updated?: string;
   author: string;
   readingTime: string;
   tags: string[];
+  /**
+   * Optional <title> for search results when it should differ from the h1,
+   * for example a question-shaped title with the year in it. Used verbatim,
+   * without the site suffix.
+   */
+  seoTitle?: string;
+  /**
+   * Optional social and structured-data image, as a path under `public`.
+   * Falls back to the site image when absent. Must be 1200x630: the template
+   * declares those dimensions, and a file that is not that shape gets cropped
+   * badly by the sharing preview.
+   */
+  image?: string;
+  /**
+   * Optional FAQ, emitted as FAQPage structured data. Keep it a faithful copy
+   * of the FAQ section in the body: search engines require the schema answers
+   * to be visible on the page.
+   */
+  faq?: { question: string; answer: string }[];
 };
 
 export type Post = {

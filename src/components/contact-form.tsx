@@ -10,7 +10,7 @@ import {
 } from "@/lib/contact";
 
 const fieldClass =
-  "w-full rounded-[2px] border border-[var(--color-line-strong)] bg-mist px-4 py-3 font-body text-[1rem] text-ink transition-colors placeholder:text-slate/60 focus:border-steel";
+  "w-full rounded-[2px] border border-[var(--color-line-strong)] bg-mist px-4 py-3 font-body text-[1rem] text-ink transition-colors placeholder:text-slate focus:border-steel";
 
 /**
  * `short` drops the company and need fields. Used by the home page section,

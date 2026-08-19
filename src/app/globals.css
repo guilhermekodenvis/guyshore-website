@@ -236,6 +236,39 @@
     margin-block: 3em;
   }
 
+  /* Rich blocks a post may embed. The prose rules style every descendant
+     heading and assume dark-on-light, so each block gets its spacing reset
+     here rather than fighting those rules inline. */
+  /* Only `margin-top` is here on purpose. `font-size` and `letter-spacing`
+     would lose to the Tailwind utilities on the element: utilities is a later
+     cascade layer than components, so it wins regardless of specificity. Size
+     the heading in `faq-list.tsx` instead. */
+  .prose .post-faq h3,
+  .prose .post-cta h3 {
+    margin-top: 0;
+  }
+
+  .prose .post-cta,
+  .prose .post-figure {
+    margin-top: 2.5em;
+  }
+
+  .prose .post-cta + *,
+  .prose .post-figure + * {
+    margin-top: 2.5em;
+  }
+
+  .prose .post-cta a:hover {
+    background-color: transparent;
+  }
+
+  /* The global focus ring is `currentColor`. On this white button that is
+     ink, drawn 3px clear of the button, which puts a black ring on a black
+     slab. Repaint it rather than losing the ring. */
+  .post-cta a:focus-visible {
+    outline-color: var(--color-paper);
+  }
+
   .prose table {
     width: 100%;
     border-collapse: collapse;

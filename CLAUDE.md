@@ -69,7 +69,32 @@ Turbopack caches aggressively in dev. After renaming an export, stale HMR errors
 
 `src/mdx-components.tsx` is required by `@next/mdx` and must stay at the root of `src/`. It only handles what CSS cannot: routing internal links through `<Link>` and wrapping tables in a scroll container. All prose styling is the hand-rolled `.prose` block in `globals.css` (no typography plugin).
 
-Adding a post requires no code changes. Adding a remark/rehype plugin does: Turbopack cannot receive JS functions, so plugins are named as **strings** in `next.config.ts`.
+Adding a post requires no code changes. Adding a remark/rehype plugin does: Turbopack cannot receive JS functions, so plugins are named as **strings** in `next.config.ts`. `remark-gfm` is already on, so tables work.
+
+Three things a post author needs to know, learned publishing the first one:
+
+- The body starts at `##`. The template renders `meta.title` as the h1, so a `# ` in the body makes two.
+- Internal links must be **relative** (`/services/mvp-development`). `mdx-components.tsx` only routes `/`-prefixed hrefs through `<Link>`; an absolute `https://guyshore.com/...` is treated as external and opens in a new tab.
+- MDX comments are `{/* ... */}`. HTML comments `<!-- -->` are a syntax error in MDX.
+
+**Three rich blocks are available as bare tags in MDX**, exposed through `mdx-components.tsx` so a post needs no import line. They are the only components a post may use; everything else stays Markdown.
+
+- `<PostFaq items={meta.faq} />` renders the accordion, reusing the site-wide `FaqList`. Feed it `meta.faq` and nothing else, so the visible answers and the FAQPage schema come from one array and cannot drift.
+- `<PostCta title body href label />` is the black slab. `href` is treated as external and opens in a new tab.
+- `<PostImage src alt caption width height priority />` is a figure. `width`/`height` are the file's intrinsic pixels and must be real, because they reserve the space that stops the article jumping while it loads.
+
+Each of the three carries a hook class (`post-faq`, `post-cta`, `post-figure`) that `globals.css` uses to undo the `.prose` rules that would otherwise reach inside them, in particular `.prose h3` spacing and `.prose a:hover`.
+
+Two traps those overrides sit on:
+
+- **A `.prose` rule cannot override a Tailwind utility on the same element.** The `.prose` block lives in `@layer components` and utilities live in the later `@layer utilities`, so the utility wins no matter how specific the selector is. Only properties the element does not already set as a utility can be corrected there, which is why `.prose .post-faq h3` sets `margin-top` and nothing else. Size the heading in `faq-list.tsx` instead.
+- **The focus ring is `outline: 2px solid currentColor` at a 3px offset.** On a white button sitting on the black `PostCta` slab that draws a black ring on black, invisible. `globals.css` repaints it with `.post-cta a:focus-visible { outline-color: var(--color-paper) }`. Any future light-on-dark control needs the same treatment.
+
+**Images live in `public/blog/<slug>/`**, one folder per post, so deleting a post means deleting one folder. Export at 2x the rendered width: the prose column is 68ch, roughly 800px, so 1600px wide is the right source. Filenames are kebab-case and describe the content, not the position (`four-walls-diagram.png`, not `image-1.png`).
+
+**Every post ends with `<PostSubscribe />`**, rendered by the template rather than the MDX so a new article cannot ship without it. It posts to the same n8n webhook as the contact form with `source: "blog-subscribe"`, filling `name` and `message` with fixed strings so the existing notification email stays readable without changing the automation.
+
+`meta` accepts four optional fields beyond the required six: `seoTitle` (a search-facing `<title>` distinct from the h1, used verbatim with no site suffix), `updated` (feeds `dateModified`), `image` (a 1200x630 path under `public`, used for Open Graph, Twitter and the Article `image`; falls back to `/og-image.png`), and `faq` (emitted as FAQPage structured data; keep it a faithful copy of the FAQ section in the body, because search engines require schema answers to be visible on the page). The template emits Article + BreadcrumbList for every post, and FAQPage when `faq` is present, all derived from `meta`.
 
 ## Services
 
@@ -182,8 +207,8 @@ A healthy submission shows up in the Netlify function log as a ~3s invocation; a
 
 ## Not yet wired
 
-There is no booking flow anywhere on the site. The hero used to carry a secondary "Book a 1-hour consultation" CTA that only pointed at `/contact`; it was removed rather than left pretending. Every CTA now routes to the contact form.
+The site's own CTAs all route to the contact form. The hero used to carry a "Book a 1-hour consultation" button that only pointed at `/contact`; it was removed rather than left pretending. The one real booking link is the Calendly for the vibe-coding consulting session (`calendly.com/guilherme-blackelephant/vibe-coding-consulting`), and it appears only inside the blog post that sells that session, not in site chrome.
 
 ## Stale content
 
-The site pivoted from a nearshore-staffing premise to the current one. These still carry the old framing and need rewriting: the `/about` page body, and all three blog posts in `src/content/blog/` (they are about distributed teams and timezone overlap).
+The site pivoted from a nearshore-staffing premise to the current one. The `/about` page body still carries the old framing and needs rewriting. The three old blog posts about distributed teams were deleted; the blog restarted with `vibe-coding.mdx`.
