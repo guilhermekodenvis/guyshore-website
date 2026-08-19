@@ -5,12 +5,12 @@ import { ArrowRight, LinkedInMark } from "@/components/icons";
 import { ContactForm } from "@/components/contact-form";
 import { FaqList } from "@/components/faq-list";
 import { Hero } from "@/components/hero";
+import { Partners } from "@/components/partners";
 import { ServiceCard } from "@/components/service-card";
-import { ServiceMarquee } from "@/components/service-marquee";
 import { homeSchema } from "@/lib/home-schema";
 import { method, homeServices } from "@/lib/services";
 import { founder } from "@/lib/team";
-import { site, stats } from "@/lib/site";
+import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
   // Emits <link rel="canonical" href="https://guyshore.com"/>. Next strips the
@@ -29,31 +29,12 @@ export default function HomePage() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(homeSchema) }}
       />
 
-      {/* Hero and marquee share the first screen, so the marquee sits at the
-          fold rather than below it. */}
+      {/* The hero owns the first screen on its own. */}
       <div className="flex min-h-[calc(100dvh-4.5rem)] flex-col">
         <Hero />
-        <ServiceMarquee />
       </div>
 
-      {/* Numbers */}
-      <section className="border-b border-[var(--color-line)] bg-mist">
-        <dl className="mx-auto grid max-w-[76rem] grid-cols-2 gap-y-10 px-6 py-14 text-center lg:grid-cols-4 lg:px-10">
-          {stats.map((stat) => (
-            <div key={stat.label}>
-              <dt className="sr-only">{stat.label}</dt>
-              <dd>
-                <span className="block font-body text-4xl font-bold tracking-[-0.04em] lg:text-5xl">
-                  {stat.value}
-                </span>
-                <span className="mt-2 block font-label text-xs tracking-[0.08em] text-slate uppercase">
-                  {stat.label}
-                </span>
-              </dd>
-            </div>
-          ))}
-        </dl>
-      </section>
+      <Partners />
 
       {/* Our services */}
       <section

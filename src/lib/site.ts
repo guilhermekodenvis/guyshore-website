@@ -31,10 +31,3 @@ export const nav = [
   { href: "/about", label: "About" },
   { href: "/blog", label: "Blog" },
 ] as const;
-
-export const stats = [
-  { value: "10+", label: "years of experience" },
-  { value: "100+", label: "satisfied clients" },
-  { value: "400+", label: "projects delivered" },
-  { value: "5.0", label: "Google rating" },
-] as const;

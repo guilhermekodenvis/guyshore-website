@@ -54,13 +54,14 @@ Turbopack caches aggressively in dev. After renaming an export, stale HMR errors
 
 **Data lives in `src/lib/`, never inline in pages.** Editing copy means editing these modules:
 
-- `site.ts` — company facts, `title` (the browser-tab title), address, email, nav, the four `stats`.
+- `site.ts` — company facts, `title` (the browser-tab title), address, email, nav.
 - `services.ts` — every service and its whole detail page. `services` is all seven; `homeServices` is the four with `onHome: true`, used by the home grid and the header dropdown; `getService(slug)` resolves one. Also the five-step `method`.
 - `faq.ts` — home-page FAQ entries.
 - `team.ts` — `founder`, including the LinkedIn URL.
+- `partners.ts` — the three partner logos, their links and their 1x box sizes.
 - `contact.ts` — form shapes and the initial action state.
 
-**Home page composition** (`src/app/page.tsx`): hero → service marquee → stats → our services (four cards, then a centred link to `/services`) → our method → who we are → FAQ → contact. Each block is either a component in `src/components/` or a section rendered straight from a `src/lib` module.
+**Home page composition** (`src/app/page.tsx`): hero (owns the first screen alone) → partners → our services (four cards, then a centred link to `/services`) → our method → who we are → FAQ → contact. Each block is either a component in `src/components/` or a section rendered straight from a `src/lib` module.
 
 **Blog is MDX compiled by `@next/mdx`.** Posts are `.mdx` files in `src/content/blog/`; the filename is the slug. Each post exports a `meta` object (title, description, date, author, readingTime, tags) alongside its default component — named `meta`, not `metadata`, so it is never confused with the Next.js route-metadata convention.
 
@@ -83,6 +84,19 @@ The contact form on a detail page posts `source: "service-<slug>"`, so the autom
 
 **The header dropdown** lives in `site-header.tsx`. It opens on hover for pointers and on click for keyboard and touch, and closes on Escape. It must not close via an effect: `react-hooks/set-state-in-effect` is an error in this repo.
 
+## Partners
+
+The row under the hero replaced the service marquee and the stats band, both deleted.
+
+`public/partners/*.png` are pre-processed, not the partners' original files. Each one is flattened to a **single grey** (`--color-slate`, the alpha channel of the source becomes the mask of a solid colour fill) and then scaled so all three carry the **same optical area**, not the same height. A wide horizontal lock-up and a stacked near-square one never read as equal weight at equal height; `sqrt(w x h)` is what makes them match. Measured spread across the three: 1.02x.
+
+The regeneration pipeline is: fetch the source, trim to the ink bounding box, replace the colour while keeping alpha, then resize to `SIDE * sqrt(ratio)` by `SIDE / sqrt(ratio)` at 3x. Sizes in `partners.ts` are the 1x CSS box.
+
+Two traps:
+
+- **Do not put `w-auto`/`h-auto` on the `<Image>`.** On a replaced element that has not loaded, `width: auto` computes to 0, the box collapses, and the lazy-load observer then never fires because there is nothing to intersect. The `width`/`height` props are the sizing.
+- **The links must not become `nofollow`.** The partnership offers a real backlink; `rel="noreferrer"` alone does not stop a link being followed, which is why it is safe to keep for `target="_blank"`.
+
 ## Design system
 
 Tokens are defined in the `@theme` block of `src/app/globals.css` (Tailwind v4 — there is no `tailwind.config`). The palette is **monochrome**, roughly 70% white / 20% grey / 10% black, and there is no accent colour:
@@ -101,9 +115,7 @@ Tokens are defined in the `@theme` block of `src/app/globals.css` (Tailwind v4 �
 - The one branded colour on the site is LinkedIn blue, on the LinkedIn button alone (`ButtonLink variant="linkedin"`, `#0a66c2`, measured 5.69:1 with white text). Do not spread it.
 - Focus rings use `outline: 2px solid currentColor`, not a fixed colour, because a black ring disappears on the dark sections.
 - `.tick-rule` and `.eyebrow` are the recurring structural devices. Numbered markers appear only where the content is genuinely a sequence: the five-step method and the process block on a service page.
-- Motion lives in `globals.css`: `animate-rise-in` (hero load), `animate-float`, `animate-marquee`. The marquee and float animations opt out of the global reduced-motion reset explicitly, because snapping a loop to its end frame is worse than holding it still.
-
-**The marquee** (`service-marquee.tsx`) renders its list `COPIES` times and translates the track by `-100% / COPIES`. The invariant is `(COPIES - 1) × copyWidth > viewport`, or the trailing edge runs out of content mid-loop. Shortening the list narrows each copy, so check the arithmetic before removing an item. Everything after the first copy is `aria-hidden`.
+- Motion lives in `globals.css`: `animate-rise-in` (hero load) and `animate-float`. The float animation opts out of the global reduced-motion reset explicitly, because snapping a loop to its end frame is worse than holding it still.
 
 ## Image placeholders
 
