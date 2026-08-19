@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
+import { ContactDetails } from "@/components/contact-details";
 import { ContactForm } from "@/components/contact-form";
-import { site } from "@/lib/site";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -53,24 +53,10 @@ export default function ContactPage() {
         <div className="mt-16 grid gap-16 lg:grid-cols-[1.5fr_1fr] lg:gap-24">
           <ContactForm fields="short" source="contact-page" />
 
-          <aside className="space-y-12">
-            <div>
-              <p className="eyebrow text-slate">Prefer email</p>
-              <a
-                href={`mailto:${site.email}`}
-                className="mt-4 block font-body text-xl font-semibold tracking-[-0.025em] text-steel transition-colors hover:text-ink"
-              >
-                {site.email}
-              </a>
-            </div>
-
-            <div>
-              <p className="eyebrow text-slate">Office</p>
-              <address className="mt-4 text-steel not-italic">
-                {site.address.street}
-                <br />
-                {site.address.postalCode} {site.address.city}
-              </address>
+          <aside>
+            <p className="eyebrow text-slate">Reach us directly</p>
+            <div className="mt-6">
+              <ContactDetails />
             </div>
           </aside>
         </div>

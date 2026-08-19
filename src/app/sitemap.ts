@@ -8,6 +8,9 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const lastModified = new Date();
 
   const staticRoutes = ["", "/services", "/about", "/blog", "/contact"];
+  // Legal pages are linked from every footer, so they are crawled anyway, but
+  // they carry the lowest priority in the file.
+  const legalRoutes = ["/privacy", "/terms"];
   const postSlugs = await getPostSlugs();
 
   return [
@@ -23,6 +26,12 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       lastModified,
       changeFrequency: "monthly" as const,
       priority: 0.9,
+    })),
+    ...legalRoutes.map((route) => ({
+      url: `${site.url}${route}`,
+      lastModified,
+      changeFrequency: "yearly" as const,
+      priority: 0.3,
     })),
     ...postSlugs.map((slug) => ({
       url: `${site.url}/blog/${slug}`,

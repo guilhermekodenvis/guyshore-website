@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Image from "next/image";
 import { ButtonLink } from "@/components/button-link";
 import { ArrowRight, LinkedInMark } from "@/components/icons";
+import { ContactDetails } from "@/components/contact-details";
 import { ContactForm } from "@/components/contact-form";
 import { FaqList } from "@/components/faq-list";
 import { Hero } from "@/components/hero";
@@ -177,12 +178,9 @@ export default function HomePage() {
               Send us the short version and we will come back to you within one
               working day.
             </p>
-            <a
-              href={`mailto:${site.email}`}
-              className="mt-8 inline-block font-body text-lg font-semibold tracking-[-0.02em] text-steel transition-colors hover:text-ink"
-            >
-              {site.email}
-            </a>
+            <div className="mt-10">
+              <ContactDetails />
+            </div>
           </div>
 
           <ContactForm fields="short" source="home" />

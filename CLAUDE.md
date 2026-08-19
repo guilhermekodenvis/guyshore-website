@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Marketing site for GuyShore, a custom software development company (MVPs, software, apps, automations) selling to non-technical founders and startups. Office in Lisbon; clients served remotely across the US. Founder: Guy Sartori. Content is in English.
 
-Routes: home, services (index + a detail page per service), about, blog (index + MDX posts), contact. The portfolio route was deleted and is not coming back.
+Routes: home, services (index + a detail page per service), about, blog (index + MDX posts), contact, privacy, terms. The portfolio route was deleted and is not coming back.
 
 ## Site copy is American English
 
@@ -54,7 +54,7 @@ Turbopack caches aggressively in dev. After renaming an export, stale HMR errors
 
 **Data lives in `src/lib/`, never inline in pages.** Editing copy means editing these modules:
 
-- `site.ts` — company facts, `title` (the browser-tab title), address, email, nav.
+- `site.ts` — company facts, `title` (the browser-tab title), `listingName`, address, phone, email, `nav` and `legalNav`.
 - `services.ts` — every service and its whole detail page. `services` is all seven; `homeServices` is the four with `onHome: true`, used by the home grid and the header dropdown; `getService(slug)` resolves one. Also the five-step `method`.
 - `faq.ts` — home-page FAQ entries.
 - `team.ts` — `founder`, including the LinkedIn URL.
@@ -83,6 +83,24 @@ Each detail page emits a `@graph` of **Service + FAQPage + BreadcrumbList**, all
 The contact form on a detail page posts `source: "service-<slug>"`, so the automation can tell which page produced a lead.
 
 **The header dropdown** lives in `site-header.tsx`. It opens on hover for pointers and on click for keyboard and touch, and closes on Escape. It must not close via an effect: `react-hooks/set-state-in-effect` is an error in this repo.
+
+## Contact details are one string, used everywhere
+
+Search engines identify a business by its name, address and phone appearing **identically** across the site and every external listing. So those three live in `site.ts` and are rendered by a single component, `ContactDetails`, which appears in the footer, the home contact section, `/contact` and every service page. Do not re-type them into a page.
+
+- `site.listingName` is `guyshore.com`, which is the name the external listings use. `site.name` stays `GuyShore` for prose and the copyright line. The schema carries the first as `name` and the second as `alternateName`.
+- `site.phone` holds both forms: `display` (`+351 934 417 809`, the string listings must match) and `e164` (no spaces, for `tel:` and schema.org).
+- The Organization node in `home-schema.ts` reads all of it from `site` rather than repeating the literals, so the markup cannot drift from the page.
+
+Changing any of these means changing the external listings in the same pass, otherwise the consistency they exist for is gone.
+
+## Legal pages
+
+`/privacy` and `/terms` are hand-written to match what the site actually does, which is unusually little: **no analytics, no tracking cookies, no advertising pixel**. If a script is ever added that sets a cookie or tracks a visitor, the privacy policy stops being true and needs updating in the same commit, along with a consent banner.
+
+The processors named in the policy are Netlify, n8n Cloud and Google Workspace. That list has to match reality too.
+
+Both pages carry a `Last updated` date as a constant at the top of the file. Change it when the text changes.
 
 ## Partners
 
