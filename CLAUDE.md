@@ -35,7 +35,9 @@ npm run lint
 
 `npm start` serves the production build. There are no tests configured.
 
-Port 3000 is occupied on this machine by an unrelated `workerd.exe`, so `.claude/launch.json` pins the dev server to **3001** (`npm run dev -- --port 3001`).
+`.claude/launch.json` pins the dev server to **3000** (`npm run dev -- --port 3000`), with `autoPort: false`.
+
+That port used to be held on this machine by an unrelated `workerd.exe`, which is why the config previously pinned 3001. It is free now. If that process comes back, the start will fail loudly rather than silently moving to another port, which is the point of `autoPort: false`; check with `netstat -ano | findstr ":3000"` before assuming the dev server is broken.
 
 ## Next.js 16 specifics
 
@@ -58,7 +60,7 @@ Turbopack caches aggressively in dev. After renaming an export, stale HMR errors
 - `services.ts` — every service and its whole detail page. `services` is all seven; `homeServices` is the four with `onHome: true`, used by the home grid and the header dropdown; `getService(slug)` resolves one. Also the five-step `method`.
 - `faq.ts` — home-page FAQ entries.
 - `team.ts` — `founder`, including the LinkedIn URL.
-- `partners.ts` — the three partner logos, their links and their 1x box sizes.
+- `partners.json` — the partner logos, their links and their 1x box sizes. The only file to edit to add, remove or reorder a partner; `partners.ts` just types it.
 - `contact.ts` — form shapes and the initial action state.
 
 **Home page composition** (`src/app/page.tsx`): hero (owns the first screen alone) → partners → our services (four cards, then a centred link to `/services`) → our method → who we are → FAQ → contact. Each block is either a component in `src/components/` or a section rendered straight from a `src/lib` module.
@@ -96,6 +98,15 @@ Two traps those overrides sit on:
 
 `meta` accepts four optional fields beyond the required six: `seoTitle` (a search-facing `<title>` distinct from the h1, used verbatim with no site suffix), `updated` (feeds `dateModified`), `image` (a 1200x630 path under `public`, used for Open Graph, Twitter and the Article `image`; falls back to `/og-image.png`), and `faq` (emitted as FAQPage structured data; keep it a faithful copy of the FAQ section in the body, because search engines require schema answers to be visible on the page). The template emits Article + BreadcrumbList for every post, and FAQPage when `faq` is present, all derived from `meta`.
 
+## Generated text routes
+
+Three files are served as text and **none of them is hand-written**. All three read the same `src/lib` modules the pages render, so publishing a service or a post updates them with no extra step. Never replace one with a static file in `public/`.
+
+- `src/app/sitemap.ts` and `src/app/robots.ts` use the Next.js metadata file conventions. `robots.ts` lists GPTBot, ClaudeBot, PerplexityBot, Google-Extended and CCBot explicitly rather than leaving them to the `*` rule, so the intent to allow them is legible to anyone auditing it.
+- `src/app/llms.txt/route.ts` is the curated index described at llms.txt.org: the company facts, then every service, post, company and legal page as a labelled link with a one-line summary. Next.js has no file convention for it, so it is a route handler with `export const dynamic = "force-static"`, which prerenders it at build like the sitemap. The docs name this exact pattern in `01-app/02-guides/backend-for-frontend.md`.
+
+Be honest about what `llms.txt` buys: no crawler has publicly committed to reading it and Google has said it does not use it, so the answer-engine benefit is speculative. It is here because it costs one generated file, exposes nothing that is not already in `sitemap.xml`, and cannot go stale.
+
 ## Services
 
 `src/lib/services.ts` is the single source for all of it. A service object carries both the card copy and every section of its detail page, so adding a service is a data edit and nothing else: it appears on `/services`, gets a prerendered detail page, enters the sitemap, and joins the header dropdown if `onHome` is true.
@@ -119,6 +130,8 @@ Search engines identify a business by its name, address and phone appearing **id
 
 Changing any of these means changing the external listings in the same pass, otherwise the consistency they exist for is gone.
 
+**The founder's email signature is a flat PNG and lives outside the repo.** It bakes the name, role, phone, email, LinkedIn and tagline into pixels, so nothing can validate it and nothing will warn you when it goes stale. Treat it like an external listing: when `site.phone.display`, `site.email`, `site.tagline` or anything in `team.ts` changes, the signature has to be regenerated and reinstalled in the same pass.
+
 ## Legal pages
 
 `/privacy` and `/terms` are hand-written to match what the site actually does, which is unusually little: **no analytics, no tracking cookies, no advertising pixel**. If a script is ever added that sets a cookie or tracks a visitor, the privacy policy stops being true and needs updating in the same commit, along with a consent banner.
@@ -131,9 +144,13 @@ Both pages carry a `Last updated` date as a constant at the top of the file. Cha
 
 The row under the hero replaced the service marquee and the stats band, both deleted.
 
-`public/partners/*.png` are pre-processed, not the partners' original files. Each one is flattened to a **single grey** (`--color-slate`, the alpha channel of the source becomes the mask of a solid colour fill) and then scaled so all three carry the **same optical area**, not the same height. A wide horizontal lock-up and a stacked near-square one never read as equal weight at equal height; `sqrt(w x h)` is what makes them match. Measured spread across the three: 1.02x.
+**`src/lib/partners.json` is the whole editing surface.** Adding, removing or reordering a partner is a JSON edit and nothing else: the array order is the display order, and `partners.ts` only declares the `Partner` type and hands the array to the row. Every field is required, and TypeScript checks the JSON against the type, so a missing key or a quoted number fails `next build` instead of rendering a broken row. The one thing the type cannot check is that `logo` points at a file that exists, so removing a partner means deleting `public/partners/<name>.png` in the same pass.
 
-The regeneration pipeline is: fetch the source, trim to the ink bounding box, replace the colour while keeping alpha, then resize to `SIDE * sqrt(ratio)` by `SIDE / sqrt(ratio)` at 3x. Sizes in `partners.ts` are the 1x CSS box.
+**Vet a partner before adding it.** The row is a public statement of who we work with, and it sits on the same domain as the blog. If a post describes a client anonymously, a partner whose own public positioning matches that description defeats the anonymization in one click. Read the partner's own homepage title and meta description before adding the entry, and re-read them when a post that anonymizes a client goes up.
+
+`public/partners/*.png` are pre-processed, not the partners' original files. Each one is flattened to a **single grey** (`--color-slate`, the alpha channel of the source becomes the mask of a solid colour fill) and then scaled so they all carry the **same optical area**, not the same height. A wide horizontal lock-up and a stacked near-square one never read as equal weight at equal height; `sqrt(w x h)` is what makes them match. Measured spread across the two now in the row: 1.00x.
+
+The regeneration pipeline is: fetch the source, trim to the ink bounding box, replace the colour while keeping alpha, then resize to `SIDE * sqrt(ratio)` by `SIDE / sqrt(ratio)` at 3x. Sizes in the JSON are the 1x CSS box.
 
 Two traps:
 
@@ -208,6 +225,8 @@ A healthy submission shows up in the Netlify function log as a ~3s invocation; a
 ## Not yet wired
 
 The site's own CTAs all route to the contact form. The hero used to carry a "Book a 1-hour consultation" button that only pointed at `/contact`; it was removed rather than left pretending. The one real booking link is the Calendly for the vibe-coding consulting session (`calendly.com/guilherme-blackelephant/vibe-coding-consulting`), and it appears only inside the blog post that sells that session, not in site chrome.
+
+**That Calendly event is mis-branded and is a known pending fix.** Its page title is "Vibe coding - consulting - Guilherme Kodenvis", its locale is `pt` and its timezone is `America/Sao_Paulo`. Nothing on it says GuyShore, and it is written for a Portuguese speaker. Any post that is not about vibe coding, and any English-speaking visitor, lands somewhere that does not match the page they came from. Reusing it is a deliberate stopgap: when a properly branded event exists, replace the URL in every `PostCta` that carries it.
 
 ## Stale content
 
