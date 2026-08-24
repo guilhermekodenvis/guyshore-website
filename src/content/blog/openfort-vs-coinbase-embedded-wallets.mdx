@@ -1,0 +1,647 @@
+{/*
+  CORRECTED FULL DRAFT. Replaces the previous version end to end.
+
+  What changed against the version currently live, and why:
+   1. Coinbase is two architectures with different bills. Every cost figure now
+      says which one it belongs to. The old post priced only the CDP-routed one
+      and labeled it "Coinbase".
+   2. The monthly table is now all-in (gas + surcharge + platform), three
+      columns, because a platform-fee-only table shows $0 forever for a path
+      that still pays gas.
+   3. Openfort's blended (pack-full) rate is no longer compared against
+      Coinbase's flat rate. Both Openfort rates are shown.
+   4. 224,398 corrected to 224,199 (mean of the five measured receipts).
+   5. The 199,651 row is relabeled: it is a pull into an operator-held account,
+      not a payment from the user's wallet, and it does not split.
+   6. The first-use total is withheld: our two measurement passes disagree by
+      156,313 gas and we have not reconciled them.
+   7. The gas table preamble no longer claims every figure is a $0.50 payment.
+   8. Every transaction size discussed is $0.50.
+   9. No em dashes anywhere.
+
+*/}
+
+export const meta = {
+  title:
+    "We Built the Same Embedded Wallet Flow Twice, Once on Openfort and Once on Coinbase CDP",
+  seoTitle: "Openfort or Coinbase Embedded Wallets? We Built Both",
+  description:
+    "We built the same embedded wallet flow twice in one production app, on Openfort and on Coinbase CDP. 2026 pricing per transaction, measured on chain, and which we would pick.",
+  date: "2026-08-23",
+  author: "Guy Sartori",
+  readingTime: "16 min read",
+  image: "/blog/openfort-vs-coinbase-embedded-wallets/og.png",
+  tags: ["Embedded wallets", "Openfort", "Coinbase CDP", "Pricing"],
+  faq: [
+    {
+      question: "Is Openfort free?",
+      answer:
+        "There is a free plan with 2,000 operations a month, after which every extra operation is $0.01. Paid plans are Growth at $99 a month for 25,000 operations, Pro at $249 for 100,000, and Scale at $599 for 500,000, with extra operations at $0.008, $0.006 and $0.004 respectively. Gas sponsorship carries a paymaster surcharge on top: 10% on Free and Growth, 5% on Pro and Scale. Two conditions make the free plan less free than it reads, and we hit both. Testnet usage consumes the same monthly allowance as production, so development spends the budget you were saving for users. And an operation is billed when a transaction is created, before anyone signs it, so an abandoned transaction costs exactly what a completed one costs: in our own build, 5 of 59 transactions were never signed and 2 failed on chain, about 12% of everything created, all of it billable. Figures from openfort.io/pricing, checked on August 23, 2026.",
+    },
+    {
+      question: "How much do Coinbase Embedded Wallets cost?",
+      answer:
+        "The first 5,000 wallet operations each month are free, and every operation after that costs $0.005. There is no monthly minimum and no contract; you are billed in arrears at the start of the following month. Read operations are not billed. Watch the counting: a transaction sent through the wallet API is two operations, because signing and broadcasting are billed separately. But whether you pay per operation at all depends on your architecture, and that is the fact most likely to change your cost model. A payment fired by your own key through a spend permission never calls the wallet API, so it costs gas and nothing else, zero operations. The same payment routed through the wallet API costs two. Same product, same contract, roughly eight times apart on the bill. Figures from docs.cdp.coinbase.com/wallets/pricing, checked on August 23, 2026.",
+    },
+    {
+      question:
+        "Are Coinbase Embedded Wallets and Coinbase Non-Custodial Wallets the same product?",
+      answer:
+        "Yes, same product, different name. Coinbase's documentation now calls it Non-Custodial Wallets, and every docs URL under /embedded-wallets/ permanently redirects to /wallets/. The change landed between February and May 2026. The Coinbase marketing site still says CDP Embedded Wallets, so both names are live, and the category and everyone searching still say embedded wallets.",
+    },
+    {
+      question: "Who holds the keys in Openfort and in Coinbase embedded wallets?",
+      answer:
+        "Neither vendor can sign on its own, but they get there differently. Openfort splits the key with Shamir secret sharing into three shares in a 2-of-3 threshold, so any two shares reconstruct it, and one of the three sits encrypted on Openfort's servers. The signing layer, OpenSigner, is MIT licensed and open source, so the scheme is auditable. Coinbase generates and uses keys inside a trusted execution environment it operates on AWS Nitro Enclaves, with no persistent storage, no interactive access and no external networking, and states the enclave is not externally accessible to CDP or AWS. One is verifiable threshold cryptography, the other is architectural attestation. Note also that each vendor sells a custodial product as well, Openfort's backend wallets and Coinbase's Custodial Wallets beta, so non-custodial names a product on each side, not the vendor.",
+    },
+    {
+      question: "Do users need a Coinbase account to use a Coinbase embedded wallet?",
+      answer:
+        "No, and that is an inference rather than a quote, because Coinbase does not state it either way. What the documentation does list is the authentication it supports: email one-time passwords, SMS, social login with Google, Apple, X or Telegram, your own OAuth or JWT provider, and Sign In With Ethereum. None of those routes through a Coinbase consumer account. The caveat we did not verify is whether the bundled onramp and trading features pull in identity collection on Coinbase's side.",
+    },
+    {
+      question: "Which is cheaper, Openfort or Coinbase embedded wallets?",
+      answer:
+        "It depends on an architectural choice more than on the vendors. Coinbase supports a design where your own key settles the payment in a plain transaction that never calls the wallet API. That path pays no platform fee at any volume, costs about $0.0015 per $0.50 payment all in, and is cheaper than anything in Openfort's price list at every volume we modeled. If instead you route payments through the vendor's wallet API on both sides, there is a genuine crossover: Coinbase's pay-as-you-go wins early and Openfort's plan pricing wins later, with the two meeting somewhere between roughly 12,900 and 28,100 transactions a month depending on whether Openfort bills the one operation per payment we measured or the two it documents. All figures are for $0.50 payments at a frozen price snapshot, ETH at $1,928.52 and Base gas at 0.006 gwei.",
+    },
+    {
+      question:
+        "Can I migrate from Openfort to Coinbase embedded wallets later, or the other way round?",
+      answer:
+        "Partly, and we tested the half that matters. Both are ERC-4337 smart accounts, so the wallets and the funds in them survive a change of vendor: on each platform we exported a user's key and moved money out with the app closed and no vendor SDK loaded, and both transactions are linked in the article. What does not migrate is the orchestration. The bundler, the paymaster service and the policy engine are proprietary on both sides and have to be rebuilt or re-bought. Openfort additionally documents a bulk key-share migration, but it runs through authenticated Openfort endpoints, so it only works while your account is still live; it is a planned-divorce tool, not a survival kit. Coinbase documents no bulk path at all, so there the unit of migration is each user exporting their own key.",
+    },
+    {
+      question: "Can Claude Code build a production web3 app?",
+      answer:
+        "Yes. Every line of both implementations behind this article was written with Claude Code, in 12 to 16 hours for the Coinbase build and 14 hours for the Openfort build, and human review still owned architecture, key handling and security. If you are new to AI-driven development, our guide to vibe coding covers where that approach works and where it breaks.",
+    },
+  ],
+};
+
+We don't sell either product. We pay these bills ourselves, on client work, and we
+have no commercial relationship with Openfort or with Coinbase.
+
+This article comes out of building the same embedded wallet flow twice, once on
+each platform, inside one production consumer application with frequent, small
+on-chain payments, for a client under NDA. Nothing about that product appears
+here. What appears here is what the two platforms cost, where each one stopped
+us, and how the two builds ended up shaped differently.
+
+One naming note before the numbers. Coinbase's documentation now calls this
+product **Non-Custodial Wallets**, and every docs URL under `/embedded-wallets/`
+permanently redirects to `/wallets/`. The change landed between February and May
+2026. The Coinbase marketing site still says CDP Embedded Wallets. This article
+says embedded wallets, because that is what the category and everyone searching
+still calls it.
+
+Two more conventions, because they carry the whole argument.
+
+**Every payment discussed here is `$0.50`.** That was the size both builds were
+measured at, so the columns compare.
+
+**The Coinbase side is not one thing.** Its spend permissions let the spender be
+either a wallet the vendor hosts or a plain key you hold, and that choice, not
+the price list, is the single biggest lever on the bill. Throughout this article
+those are called the **CDP-routed path** and the **backend-settled path**. Any
+comparison that prints one number under "Coinbase" has already lost the plot,
+and the first version of this article did exactly that.
+
+## The short version
+
+- **Zero budget:** Coinbase. 5,000 free operations a month against 2,000, its
+  testnet does not consume the allowance while Openfort's does, and there is no
+  monthly plan to grow into. Our entire Openfort build, mistakes included, burned
+  93 of the 2,000 free operations before it ever saw a real user.
+- **High volume of small payments:** the backend-settled Coinbase path, and the
+  gap is structural rather than a discount. It pays no vendor fee per payment at
+  all, so its cost is gas and nothing else: about `$0.0015` per `$0.50` payment
+  against `$0.0068` to `$0.0109` on Openfort, at every volume we modeled.
+  Openfort earns its price by removing the privileged key that design requires.
+  Note what we did not test: every payment here was `$0.50`. Per-payment cost is
+  fixed while revenue per payment is not, so the ratio moves against you quickly
+  as the payment shrinks, and we have no measurement below that size.
+- **Self-hosting and custody:** Openfort, with eyes open. The signing layer is
+  MIT-licensed and runs under Docker, and we verified that an exported key moves
+  funds with no vendor code in the path. But the layer you can self-host is not
+  the layer you are billed for: bundler, paymaster, policy engine and API have no
+  public repositories at all.
+- **Native fiat onramp:** Coinbase, and it is not close.
+
+One more verdict is settled by arithmetic rather than opinion, and it has to be
+stated twice because there are two Coinbase answers. **Against the CDP-routed
+path there is a crossover**, somewhere between roughly 12,900 and 28,100
+transactions a month depending on which of Openfort's two answers about its own
+billing unit you believe: below it Coinbase is cheaper, above it Openfort is, and
+the gap widens quickly. **Against the backend-settled path there is no crossover
+at any volume**, because it pays no platform fee at all. Both are derived in the
+pricing section.
+
+## What Openfort and Coinbase embedded wallets actually are
+
+Openfort is wallet infrastructure for developers: embedded wallets with account
+abstraction, session keys and gas sponsorship, under your own brand. Coinbase
+Embedded Wallets are the wallet product inside the Coinbase Developer Platform
+(CDP), with Coinbase's onramp and swaps built in.
+
+"Embedded" means the same thing on both sides, and it is the point of the
+category: the wallet lives inside your app. Your user signs in the way they
+already sign in to anything else, with an email code, an SMS code or a social
+login, and a wallet exists for them afterwards. No extension to install, no seed
+phrase to write down, no second app to open.
+
+Custody is where the two genuinely differ, and the difference is easy to flatten
+into one word that hides it.
+
+- **Openfort** splits the private key with Shamir secret sharing into three
+  shares in a 2-of-3 threshold, which means any two of the three reconstruct it.
+  One of those three sits encrypted on Openfort's servers. The signing layer,
+  OpenSigner, is MIT licensed and open source, so the scheme can be read rather
+  than trusted. What you can say safely is that no single party signs alone. What
+  you cannot say is that Openfort could never reconstruct a key.
+- **Coinbase** generates and uses keys inside a trusted execution environment it
+  operates on AWS Nitro Enclaves, which the docs describe as having no persistent
+  storage, no interactive access and no external networking, and which Coinbase
+  states is not externally accessible to CDP or AWS. The user's control rests on a
+  device-bound secret.
+
+Those are two different kinds of assurance. One is verifiable threshold
+cryptography you can audit; the other is an architectural claim you have to
+accept. Which of the two you prefer is a real decision, and a comparison that
+prints "non-custodial" in both columns has thrown it away.
+
+Worth knowing before you compare the wrong products: each vendor also sells a
+custodial one. Openfort's **backend wallets** are documented as developer
+controlled and custodial, and Coinbase ships a **Custodial Wallets** beta
+alongside the non-custodial line. Non-custodial names a product on each side, not
+the vendor.
+
+## What each one costs
+
+All list prices below were read from the vendors' own pricing pages and docs, and
+**verified on August 23, 2026**. Neither page carries a last-updated date, so
+re-check before relying on them. Coinbase's page is at its new URL,
+[docs.cdp.coinbase.com/wallets/pricing](https://docs.cdp.coinbase.com/wallets/pricing),
+under the Non-Custodial Wallets name; Openfort's is at
+[openfort.io/pricing](https://www.openfort.io/pricing).
+
+| | Coinbase Embedded Wallets | Openfort |
+|---|---|---|
+| Free allowance | 5,000 wallet operations per month | 2,000 operations per month |
+| After the allowance | `$0.005` per operation, no monthly minimum and no contract | Free: `$0.01`/op. Growth `$99`/mo (25,000 ops, `$0.008` extra). Pro `$249` (100,000, `$0.006`). Scale `$599` (500,000, `$0.004`) |
+| Billing quirks | A transaction sent through the wallet API is 2 operations (sign and broadcast are billed separately). Wallet creation is 1. Signing a message is 1. An EIP-7702 delegation is 2. Reads are never billed. A payment fired by your own key outside the wallet API is 0 | An operation is "one piece of wallet work": creating a wallet, signing, broadcasting, evaluating a policy, **or firing a webhook**. Charged at transaction creation, before signing |
+| Gas sponsorship | 7% surcharge on sponsored gas, Base Mainnet and Base Sepolia only, smart accounts only, CDP's bundler only | 10% surcharge on Free and Growth, 5% on Pro and Scale, EVM and Solana |
+| Gating | One price for every wallet type; the difference is your authentication mode | Core platform on every plan, but there is a "Plan exclusives" block: webhooks capped at 1 on Free, global wallet and Jito bundler on Scale only, tiered support, self-hosted key management on Enterprise only |
+| Testnet | Does not consume the allowance | Consumes the same allowance as production |
+
+Two corrections to the version of this table that circulates elsewhere, including
+in our own first draft. Openfort's marketing line says no features are locked
+behind higher tiers; its own comparison table, on the same page, carries a section
+headed *Plan exclusives* that contradicts it. And Coinbase's "policy evaluation
+costs 1 operation" row is qualified in the source as *API key auth workflows*. For
+end-user-authenticated wallets, which is what an embedded wallet is, policy
+evaluation is not listed as billable at all. Quoting it flat overstates what
+Coinbase costs in exactly the case this article is about.
+
+### The catch that breaks every comparison you have read
+
+**An operation is not the same unit on the two platforms, and on the Coinbase
+side it is not even the same unit as itself.**
+
+Coinbase publishes an exhaustive six-row table of what consumes an operation.
+Openfort publishes no equivalent in its documentation at all: the only enumeration
+is on the marketing pricing page, and its comparison-page FAQ defines an operation
+circularly, as any request to the services mentioned on the pricing page. Where
+the two lists can be compared, they diverge:
+
+- Openfort bills **a fired webhook** as an operation. Coinbase does not list
+  webhooks as billable at all.
+- Coinbase bills an **EIP-7702 delegation** at 2 operations. Openfort has no
+  equivalent line.
+- Openfort's own cost simulator charges **2 operations per monthly active user**,
+  which its published list of billable work does not account for.
+- Openfort charges **at transaction creation**, before a signature exists.
+  Coinbase charges on use.
+
+The line usually quoted as the common ground, that a transaction is two
+operations, holds only for payments routed through the vendor's wallet API, and
+even there our own meter disagreed with it. So this article does not lean on a
+shared unit. It prices everything all in: gas, paymaster surcharge and platform
+fees together, at the same frozen snapshot, per `$0.50` payment.
+
+### Cost per payment, all in
+
+Two things have to travel with these numbers.
+
+**Openfort has two prices per operation and Coinbase has one.** Openfort's plans
+quote a blended rate that applies only when a plan's pack is exactly full, and an
+overage rate two to three and a half times higher for everything past it.
+Coinbase charges `$0.005` at any volume. Comparing Openfort's blended rate to Coinbase's flat rate
+compares a best case to an only case, and an earlier version of this article did
+that. Both Openfort rates appear below.
+
+**Openfort's own API reports more gas than the chain does**, about 18.7% more,
+and we were never invoiced, so we cannot prove which figure it bills on. The
+table below budgets with theirs, which is the conservative choice.
+
+| Per `$0.50` payment, all in | Gas + surcharge | Platform | **Total** |
+|---|---|---|---|
+| Coinbase, backend-settled | `$0.0015` | none | **`$0.0015`** |
+| Openfort, Scale, pack full | `$0.0027` | `$0.0012` | `$0.0039` |
+| Openfort, Scale, past the pack | `$0.0027` | `$0.0040` | `$0.0067` |
+| Openfort, Growth, pack full | `$0.0029` | `$0.0040` | `$0.0068` |
+| Openfort, Growth, past the pack | `$0.0029` | `$0.0080` | **`$0.0109`** |
+| Coinbase, CDP-routed | `$0.0025` | `$0.0100` | `$0.0125` |
+
+Read the bolded rows as the honest bracket. On blended rates Openfort's Growth
+plan looks 1.8 times cheaper than Coinbase's CDP-routed path. At the overage rate
+a growing product actually pays, that advantage collapses to about 15%, `$0.0109`
+against `$0.0125`. Coinbase's backend-settled path is not on the same scale as
+either: seven to eight and a half times cheaper, and it gets there by not calling
+the vendor at all.
+
+### Cost per month, all in
+
+Platform fees alone would flatter one side, because a path that pays no platform
+fee would show `$0` forever while still burning gas. So this table is everything:
+gas, paymaster surcharge and platform operations, at the frozen snapshot, for
+`$0.50` payments. Openfort's column takes the cheapest plan available at each
+volume, at the one operation per payment we measured.
+
+| Payments per month | Coinbase, backend-settled | Coinbase, CDP-routed | Openfort |
+|---|---|---|---|
+| 1,000 | `$1.46` | `$2.47` | `$2.85` (Free) |
+| 10,000 | `$14.61` | `$99.72` | `$108.54` (Free) |
+| 25,000 | `$36.52` | `$286.80` | `$170.34` (Growth) |
+| 50,000 | `$73.04` | `$598.59` | `$385.20` (Pro) |
+| 100,000 | `$146.08` | `$1,222.19` | `$521.39` (Pro) |
+| 250,000 | `$365.21` | `$3,092.97` | `$1,279.99` (Scale) |
+
+There are two different stories in that table, and reading only one of them is
+how most comparisons go wrong.
+
+**Against the CDP-routed path there is a crossover.** Coinbase's line is
+pay-as-you-go and Openfort's is a step function, so Coinbase wins early and loses
+late. The two meet at about **12,900 payments a month** on the one operation per
+payment our meter charged, or about **28,100** on the two its pricing page
+documents. Past that point Openfort's included volume wins and the gap widens
+quickly.
+
+One wrinkle in Openfort's step function that its own pricing page hides: you take
+the cheaper of the next plan up and your current plan plus overage, and those
+cross in places the plan boundaries do not predict. At 10,000 operations, staying
+on Free and paying `$0.01` overage costs `$80`, which beats the `$99` Growth plan
+outright.
+
+**Against the backend-settled path there is no crossover at any volume.** It pays
+no platform fee ever, so its cost is a straight line of gas, and it stays cheaper
+than Openfort at every row, by about two times at a thousand payments a month and
+by three and a half to seven and a half times everywhere above that.
+If your payment path can be a plain transaction fired by your own key, that is
+the cheapest thing on this page and nothing in Openfort's price list reaches it.
+
+## What we measured, not what the pages say
+
+Pricing pages describe a unit. Meters and block explorers record one. Everything
+in this section was measured on Base Sepolia, with both builds doing the same job:
+a user signs in, a wallet appears, they make a `$0.50` payment that a contract
+forwards to a recipient and a fee address in one transaction, and later they take
+their money out on their own. Every claim links to its transaction.
+
+USD projections use one frozen price snapshot for both builds, ETH at `$1,928.52`
+and Base gas at 0.006 gwei (2026-07-15), so that the difference between columns
+is architecture rather than market movement. That snapshot predates the pricing
+verification date above; it was chosen for consistency, not recency.
+
+### Gas per action
+
+Gas is a property of the work a transaction does, not of the amount it moves: an
+ERC-20 transfer of `$0.50` costs the same as one of `$0.05`. The payment rows
+below were measured on `$0.50` payments; the setup and one-time rows do not move
+a payment amount at all. Across five consecutive identical payments our own
+figures ranged from 188,815 to 188,851, which is the noise floor to keep in mind
+before reading anything into small differences. Multiply by your own gas price.
+
+| Action | Coinbase build | Openfort build |
+|---|---|---|
+| Permission or allowance grant, sponsored (the Coinbase wallet contract deploys inside this one) | 423,503 | 167,174 |
+| First payment from a fresh account (the Openfort account deploys inside this one) | n/a | 205,951 |
+| **Steady-state payment: pull and split, one transaction** | **126,249** backend-settled, a plain transaction | **188,839** sponsored 4337, from the user's own account |
+| Payment pulled into an operator-held account, no split (CDP-routed) | 199,651 | no equivalent path |
+| Payment signed by a session key instead of the user | n/a | 201,154 |
+| User withdraws on their own (the user pays this one) | 57,510 | 76,098 |
+| One-time: deploy the splitter contract | 558,311 | 426,536 |
+| One-time: register a recipient | 45,965 | 45,914 |
+
+**We are not publishing a first-use total.** Our own two measurement passes
+disagree by 156,313 gas on the Openfort side, depending on whether the account
+deploys inside the allowance grant or in a transaction of its own, and we have
+not reconciled them. The individual rows above are solid; the sum is not, and
+publishing the lower of two figures we do not trust would be the exact kind of
+thing this article is trying to correct.
+
+Three things to read off that table.
+
+**The two Coinbase payment rows are not the same act.** The 199,651 one is a pull
+into an account the operator holds, through the vendor's wallet API, and it does
+not split anything. The 126,249 one pulls and splits in a single plain
+transaction fired by the operator's own key, and never calls the vendor. Only the
+second is what that build shipped.
+
+**Openfort's payment is a third shape again.** It does the pull and the split as
+one sponsored operation from the user's own account, for 188,839 gas. That beats
+Coinbase's CDP-routed row while doing strictly more work, which is a genuine
+efficiency win and was misreported in our first draft as beating Coinbase
+outright. It does not beat 126,249.
+
+**The difference that matters is not per-operation price, it is whether the
+vendor is in the path at all.** Openfort's gas sponsorship and smart account are
+one hosted service, so every payment goes through it and is an operation. That is
+structural, and no pricing tier removes it.
+
+**Proof, five consecutive `$0.50` payments on Openfort, each splitting 0.45/0.05
+inside a single transaction:**
+[0x344ca3c](https://sepolia.basescan.org/tx/0x344ca3cad3cfa3e3bb5d8d2face7b3d0dca415ab69a857079204f1f495e6a7f3) (188,827),
+[0xf5ec733](https://sepolia.basescan.org/tx/0xf5ec733c578dc9cab5d6e3c0b9a9aea756843c20a4f4d42593ada06e10fc63bc) (188,851),
+[0x800d70f](https://sepolia.basescan.org/tx/0x800d70fc664c7e014b197094ff82aa57fc5471c8dced40b78568c217ee0ba44a) (188,815),
+[0x7105bf9](https://sepolia.basescan.org/tx/0x7105bf929572c8635bc6b52c05b9dce6881e193105e1f6697f33ab3b5898221c) (188,851),
+[0x137b4b6](https://sepolia.basescan.org/tx/0x137b4b626103cf7e37d2402fb46c5368da6a2de0f7de1b5b9ace4d0db2461f22) (188,851).
+Mean 188,839. Open "ERC-20 Tokens Transferred" on any of them and the three legs
+are visible in one transaction. On every one, `From` is a bundler and `To` is the
+EntryPoint, which is what a sponsored 4337 operation looks like.
+
+**Coinbase build:**
+[one `$0.50` settle that pulls and splits in one plain transaction](https://sepolia.basescan.org/tx/0xcf8ee8f846c6c836e2514fcee156bd0d8b68010e06a4f335c5998f2ff91baf75) (126,249),
+[the one-tap grant, sponsored, with the wallet contract deployed inside the same bundle](https://sepolia.basescan.org/tx/0x7dec4601705317d3472684abfdecdebb573944bffc97e1a6cedf3ed17540c08c) (423,503).
+
+**Exit, both platforms.** The user's exported key moving funds out with the app
+closed and no vendor SDK loaded:
+[Coinbase](https://sepolia.basescan.org/tx/0x131508b298dad89485b95936fdb587ee9d38e814cebb4bbbad32021a397607af),
+[Openfort](https://sepolia.basescan.org/tx/0x05b1add9b56bbbe2aaedbde83974a9cdc1f7e273f914d777524b435edbbf2843).
+These two receipts look different from every other one here: `From` is the user's
+own key, not a bundler, and `To` is the smart account, not the EntryPoint. No
+4337 infrastructure in the path. That is what non-custodial means in practice.
+
+### The meter experiment
+
+Openfort's dashboard shows a live operation counter, so we tested its billing unit
+instead of trusting the page. Baseline: 83. Create a sponsored transaction and
+leave it unsigned: **84**. Sign and broadcast that same transaction: **still 84**.
+Sign up a new user, wallet included: **85**. We re-read the counter long afterwards
+to rule out lag. It held.
+
+So on our meter a payment bills **one operation, charged at creation**, not the
+two the pricing page describes. The same experiment shows that an abandoned
+transaction costs exactly as much as a completed one. In our project, 5 of 59
+transactions were never signed and 2 failed on chain, about 12% of everything
+created, all of it billable. We cannot say whether mainnet meters differently.
+Get it in writing before you sign.
+
+Coinbase's meter we did not instrument; its pricing page is the only source for
+its side, and its documented unit is the one the tables above use.
+
+### Billed gas is not chain gas
+
+Openfort's API reported, consistently, about 35,360 more gas units per payment
+than the blockchain receipt: **224,199 against 188,839** on the same five
+payments, **18.7% higher**. Presumably that is ERC-4337 overhead the receipt does
+not attribute to the operation. We were never invoiced, so we cannot say which
+figure they bill on. Budget with theirs, which is what every projection here does.
+
+### What a user costs per month
+
+Observed: one operation per new user, charged once at signup, then one per payment
+on Openfort's meter. Nothing for an existing user who does not transact, and
+nothing per wallet stored, per chain or per seat, on either platform. A user
+making 20 payments a month is therefore about 20 operations on Openfort as
+measured, 40 on Coinbase's CDP-routed path at its documented unit, and **zero on
+Coinbase's backend-settled path**, which pays only gas.
+
+Costs that appear on no pricing page: Openfort requires **prepaid gas credit**
+before mainnet sponsorship starts, where Coinbase invoices in arrears; Openfort's
+**testnet usage consumes the same allowance** as production; and on Openfort the
+operation counter exists **only in the dashboard**, since the usage endpoint
+rejects a project key and demands a browser session, so any billing alert has to
+be built around a number you can only see by logging in.
+
+## The walls we hit
+
+Every one of these cost at least one debugging round, and every one failed
+silently. That is the pattern worth taking away: on both platforms the expensive
+mistakes do not throw.
+
+**Openfort**
+
+1. **The SDK creates EOA wallets by default.** Session keys and gas sponsorship
+   do not work on an EOA, and nothing says so; transactions just fail in ways that
+   look like a configuration error somewhere else. Set `accountType` to
+   `SMART_ACCOUNT` explicitly, on day one.
+2. **One signup yields several accounts**, a smart account plus the EOAs that own
+   it, and repeat sign-ins can add more. Selecting the first wallet in the list on
+   reconnect gave us an EOA and broke sponsorship with no error. Select by account
+   type, never by position.
+3. **Registering a session key is itself a sponsored transaction aimed at the
+   user's own wallet**, so a strictly scoped paymaster policy refuses it with "no
+   matching rule". Each user's wallet address has to be allowlisted at signup, or
+   the policy widened, which forfeits the hard-refusal guarantee that makes a
+   paymaster safe. The documentation does not mention this.
+4. **A contract-scoped gas policy is much looser than it reads.** Allowing
+   sponsorship for "the token contract" allows every instruction that contract
+   accepts, including moving a user's entire balance to a stranger. We confirmed
+   this by asking Openfort to sponsor exactly that, and it agreed. Pinning the
+   policy to a function with an amount cap closes it, after which every function
+   the app calls needs its own rule, and every address in a rule must be EIP-55
+   checksummed or it silently never matches.
+
+**Coinbase**
+
+1. **On testnet the SDK silently executes even when the paymaster denies.** A
+   sponsored transaction landing on chain is not proof your allowlist works; the
+   real refusal is only visible by calling the paymaster endpoint directly and
+   reading the denial. In our case the denial was there all along, in the vendor's
+   own error log, while the transaction succeeded anyway.
+2. **The one transaction that proves independence is the one the user cannot
+   pay for.** Sponsored users hold zero ETH by design, so the withdrawal, which is
+   deliberately unsponsored, needs gas they have to acquire somewhere else first.
+   This one is shared by both platforms, and so is the deeper catch beneath it:
+   the exported key controls the account's *owner*, not the address holding the
+   money. Paste it into MetaMask and you see an empty wallet. The funds are
+   reachable through the account's `execute` function, as the exit links above
+   show, but a non-technical user could not do it unaided.
+
+## The same flow, built twice
+
+Same job on both platforms: sign in, silent wallet, a `$0.50` payment forwarded
+by an immutable splitter contract to two recipients in one transaction, and a
+self-serve exit. Generic labels throughout.
+
+**The Coinbase build**
+
+1. Email sign-in creates a smart wallet; the wallet contract deploys inside the
+   user's first sponsored operation.
+2. One tap grants a spend permission: an allowance, a period, sponsored, no popup.
+3. The payment. This build shipped both variants side by side, and they are the
+   two Coinbase rows in the gas table:
+   - **Backend-settled**, the one it shipped. A plain key in your own code calls
+     `settle` on the splitter contract, which pulls the payment through the spend
+     permission and forwards both legs in the same transaction. No bundler, no
+     vendor operation, 126,249 gas.
+   - **CDP-routed.** A wallet the vendor hosts pulls the payment into an account
+     the operator controls. Sponsored, 199,651 gas, 2 billable operations, and no
+     split: the money lands on the operator's address and has to be forwarded
+     separately.
+4. Exit: the user exports the owner key inside Coinbase's iframe and, from a
+   script with the app closed, calls `execute` on their own wallet.
+
+<PostImage
+  src="/blog/openfort-vs-coinbase-embedded-wallets/coinbase-flow.png"
+  alt="Four lanes, user, app and backend, vendor service and chain, crossed by five steps of the Coinbase CDP build. The vendor lane is black at sign-in and at the permission grant, and empty at the shipped payment and at the exit."
+  caption="The Coinbase build. The vendor lane is the grey band, and a black cell means the vendor is in the path. The shipped payment leaves a hole in it."
+  width={1600}
+  height={1480}
+/>
+
+**The Openfort build**
+
+1. Email sign-in creates a smart account with automatic recovery; a small backend
+   route mints the encryption session that makes the signup silent.
+2. One tap tops the balance up and grants the splitter an ERC-20 allowance,
+   sponsored, no popup.
+3. The user's own wallet calls the payment function on the splitter, which pulls
+   via the allowance and forwards both legs in the same transaction. A sponsored
+   4337 operation; the user never holds ETH.
+4. Optionally, the user grants a server-held session key, after which the server
+   can make the same call with the user absent.
+5. Exit: the user exports the owner key and, from a script with the app closed,
+   calls `execute` on their own account.
+
+<PostImage
+  src="/blog/openfort-vs-coinbase-embedded-wallets/openfort-flow.png"
+  alt="The same four lanes and five steps for the Openfort build. The vendor lane is an unbroken run of black cells across sign-in, the approval and both payment triggers, and is empty only at the exit."
+  caption="The Openfort build, on the same grid. Every payment crosses the vendor lane, which is why every payment is a billable operation."
+  width={1600}
+  height={1480}
+/>
+
+Three structural differences only appear once you build.
+
+**Who triggers the payment, and what a leak costs.** On Openfort it is the user's
+own wallet, so there is no privileged key anywhere, and a leaked session key can
+only spend its own narrow grant. The cheap Coinbase path needs a backend key that
+can fire payments, which is a real security surface, and the only honest way to
+buy that discount is to design the contract so the key cannot do damage. Ours has
+no owner, no proxy or upgrade path, no withdraw function and no setter for the
+split, the fee address or the roles: all of them are fixed at deployment, so they
+cannot be changed because the code to change them does not exist. Its `settle`
+function takes a recipient id, never a raw address, and pays only recipients
+registered on chain through a separate append-only key. A leaked backend key
+therefore cannot redirect funds, cannot change the split and cannot drain
+anything. What it can still do is spend a user's allowance to a legitimate
+recipient, which is a griefing nuisance rather than theft. That residual risk is
+the actual price of the cheaper path, and it should be priced deliberately rather
+than discovered later.
+
+**Where the payment is billed.** The Coinbase backend path never touches the
+vendor's wallet API, so a payment costs gas and nothing else. Every Openfort
+payment is a vendor operation. Same contract shape, different economics.
+
+**What "silent" depends on.** Openfort's SDK is headless and has no confirmation
+screen to suppress; silence is the absence of a guardrail, which is a thing to
+notice rather than celebrate. Coinbase's silence comes from the spend permission
+granted up front, which is an explicit, revocable, on-chain scope.
+
+## The stack around the wallets
+
+Next.js on the App Router, viem, wagmi on the Openfort side, deployed to Vercel,
+Base Sepolia for every test, Basescan as the referee. The splitter contract was
+compiled with solc 0.8.26 at the same optimizer settings on both builds. Its split
+logic, its write-once recipient allowlist and the absence of any owner or upgrade
+path carried over unchanged; the funding mechanism did not, because the Coinbase
+version pulls through a spend permission and the Openfort version through an
+ERC-20 allowance, so the two bytecodes differ (2,677 and 2,029 bytes).
+
+Nothing else in that stack changed between the two builds, and that is the point:
+these platforms are the wallet layer, not the application layer. Swapping one for
+the other touched the provider wiring, the policy configuration and the funding
+path, and nothing above it.
+
+## Which one for your project
+
+Four questions. Each answer points one way.
+
+1. **Do you need a native fiat onramp?** Coinbase. The onramp and swaps ship with
+   the wallet product. Openfort does not bundle an equivalent.
+2. **Do you need session keys and gas sponsorship?** Both have them, and a
+   checkmark table would mislead you here. Openfort has a feature called session
+   keys, based on EIP-7715, but it requires a smart account while the SDK creates
+   EOAs by default, so it is not out of the box. Coinbase ships no feature by that
+   name and splits the capability across delegated signing, which is a short-lived
+   revocable grant with an expiry, and spend permissions, which are scoped on-chain
+   by token, amount and period and require smart accounts. Compare the mechanisms,
+   not the vocabulary.
+3. **Who has to hold the keys, and does it need to be auditable?** Openfort, if
+   open-source, verifiable threshold cryptography matters to you or to your
+   auditors, since OpenSigner is MIT licensed and can be self-hosted by anyone with
+   Docker. But note that self-hosting is three answers, not one: the Openfort
+   platform itself cannot be self-hosted on any standard plan, their own FAQ says
+   so plainly; OpenSigner alone can be, by anyone; and full-platform self-hosting
+   in your own VPC is an Enterprise arrangement. Coinbase documents no self-hosted
+   option at any tier, which follows from the architecture, since signing only
+   happens inside enclaves Coinbase operates.
+4. **Can your payments be settled by a key you hold?** This is the volume
+   question, and it is architectural before it is financial. If yes, Coinbase's
+   backend-settled path is cheaper at every volume we modeled, by between roughly
+   two and a half and seven and a half times depending on Openfort's plan and
+   whether its pack is full, and the real decision becomes whether you want a
+   privileged trigger key in your system at all. If no, and payments must route
+   through the vendor's wallet API on both sides, then it is Coinbase under roughly 12,900 payments a
+   month and Openfort above roughly 28,100, with the gap between those two figures
+   depending on whether Openfort bills the one operation per payment we measured
+   or the two it documents. Ask them in writing before you choose.
+
+<PostCta
+  title="Building something with embedded wallets?"
+  body="Bring your architecture to a one-hour session. We will go through the wallet layer, the cost model at your projected volume, and what it takes to get it to production."
+  href="https://calendly.com/guilherme-blackelephant/vibe-coding-consulting"
+  label="Book an hour with us"
+/>
+
+## Can you build all of this with Claude Code alone?
+
+Yes. Every line of both implementations, the Coinbase build and the Openfort
+build, was written with Claude Code, and that changed the economics of comparing
+infrastructure at all.
+
+Building the same thing twice used to be a luxury nobody could justify. You picked
+a provider from documentation and a pricing page, integrated it, and discovered
+what you had actually bought somewhere around the third week. Building it twice
+turns that guess into a measurement, and once the cost of the second build drops
+far enough, doing it becomes method rather than indulgence. That is the real
+change, and it is not specific to wallets.
+
+What the agent did not decide: the architecture, what to do with keys, which
+failure modes were acceptable, and which of its suggestions to throw away. Those
+stayed with a human, and on a project where a mistake in key handling is not
+recoverable, that division was not negotiable.
+
+What made it work was discipline rather than cleverness. A written spec per
+requirement before any code. Review of what came back, not just of whether it ran.
+Continuous integration with checks that fail loudly. The failure mode of agentic
+development is not that the agent writes bad code; it is that it writes plausible
+code and you stop reading. The first version of this very article carried three
+arithmetic errors that read perfectly well, and they only surfaced when every
+number was recomputed against the raw receipts.
+
+The honest numbers: the Coinbase build took **12 to 16 hours**, covering both the
+backend-settled and CDP-routed paths. The Openfort build took **14 hours**,
+including the session-key flow and the exit. Both with Claude Code, both measured
+in working hours rather than calendar days, and neither counting the research that
+preceded the first line of code. A few years ago each of those was a multi-week
+engagement.
+
+If you are new to AI-driven development, start with our guide to
+[vibe coding](/blog/vibe-coding), which covers where the approach works and the
+four walls where it stops.
+
+## Frequently asked questions
+
+<PostFaq items={meta.faq} />
