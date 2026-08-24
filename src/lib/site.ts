@@ -30,9 +30,9 @@ export const site = {
   email: "business@guyshore.com",
   phone: {
     /** Spaced for reading. This is the string listings must match. */
-    display: "+351 934 417 809",
+    display: "+351 934 417 806",
     /** Same number with the spaces stripped, for `tel:` and schema.org. */
-    e164: "+351934417809",
+    e164: "+351934417806",
   },
   address: {
     street: "Av. Elias Garcia, 123-A",

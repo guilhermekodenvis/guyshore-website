@@ -125,7 +125,7 @@ The contact form on a detail page posts `source: "service-<slug>"`, so the autom
 Search engines identify a business by its name, address and phone appearing **identically** across the site and every external listing. So those three live in `site.ts` and are rendered by a single component, `ContactDetails`, which appears in the footer, the home contact section, `/contact` and every service page. Do not re-type them into a page.
 
 - `site.listingName` is `guyshore.com`, which is the name the external listings use. `site.name` stays `GuyShore` for prose and the copyright line. The schema carries the first as `name` and the second as `alternateName`.
-- `site.phone` holds both forms: `display` (`+351 934 417 809`, the string listings must match) and `e164` (no spaces, for `tel:` and schema.org).
+- `site.phone` holds both forms: `display` (`+351 934 417 806`, the string listings must match) and `e164` (no spaces, for `tel:` and schema.org).
 - The Organization node in `home-schema.ts` reads all of it from `site` rather than repeating the literals, so the markup cannot drift from the page.
 
 Changing any of these means changing the external listings in the same pass, otherwise the consistency they exist for is gone.
