@@ -269,6 +269,15 @@
     outline-color: var(--color-paper);
   }
 
+  /* The same trap, generalised. Put `on-ink` on any dark panel and every
+     control inside it keeps a visible focus ring, whatever its own text
+     color. Lives in `components` so it outranks the `base` layer rule. */
+  .on-ink a:focus-visible,
+  .on-ink button:focus-visible,
+  .on-ink summary:focus-visible {
+    outline-color: var(--color-paper);
+  }
+
   .prose table {
     width: 100%;
     border-collapse: collapse;
@@ -334,9 +343,32 @@
   animation: float-y 6s ease-in-out infinite;
 }
 
+/* The hero's read-more control. Shorter travel and a longer rest than
+   `float-y`, because this sits on something the visitor is meant to hit:
+   a target that never stops moving is a target that is hard to click. */
+@keyframes bounce-hint {
+  0%,
+  30%,
+  60%,
+  100% {
+    transform: translateY(0);
+  }
+  45% {
+    transform: translateY(-0.45rem);
+  }
+  52% {
+    transform: translateY(-0.15rem);
+  }
+}
+
+.animate-bounce-hint {
+  animation: bounce-hint 2.4s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
   /* The global reset would snap the loop to its end frame; hold it still instead. */
-  .animate-float {
+  .animate-float,
+  .animate-bounce-hint {
     animation: none !important;
     transform: none !important;
   }

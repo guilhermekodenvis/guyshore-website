@@ -79,7 +79,7 @@ export function CheckMark({ className = "" }: IconProps) {
   );
 }
 
-/** Only used by the header dropdown toggle. */
+/** The header dropdown toggle, and the hero's read-more control. */
 export function ChevronDown({ className = "" }: IconProps) {
   return (
     <svg

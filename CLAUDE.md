@@ -61,9 +61,10 @@ Turbopack caches aggressively in dev. After renaming an export, stale HMR errors
 - `faq.ts` — home-page FAQ entries.
 - `team.ts` — `founder`, including the LinkedIn URL.
 - `partners.json` — the partner logos, their links and their 1x box sizes. The only file to edit to add, remove or reorder a partner; `partners.ts` just types it.
+- `feasibility.ts` — the MVP Feasibility Check panel: copy, price, deliverables, and the Stripe payment link. The only place that URL appears.
 - `contact.ts` — form shapes and the initial action state.
 
-**Home page composition** (`src/app/page.tsx`): hero (owns the first screen alone) → partners → our services (four cards, then a centred link to `/services`) → our method → who we are → FAQ → contact. Each block is either a component in `src/components/` or a section rendered straight from a `src/lib` module.
+**Home page composition** (`src/app/page.tsx`): hero (owns the first screen alone) → partners → MVP Feasibility Check → our services (four cards, then a centred link to `/services`) → our method → who we are → FAQ → contact. Each block is either a component in `src/components/` or a section rendered straight from a `src/lib` module.
 
 **Blog is MDX compiled by `@next/mdx`.** Posts are `.mdx` files in `src/content/blog/`; the filename is the slug. Each post exports a `meta` object (title, description, date, author, readingTime, tags) alongside its default component — named `meta`, not `metadata`, so it is never confused with the Next.js route-metadata convention.
 
@@ -114,7 +115,7 @@ Be honest about what `llms.txt` buys: no crawler has publicly committed to readi
 - `/services` (`src/app/services/page.tsx`) lists all seven, one per row. Long descriptions side by side invite comparison rather than reading, which is why it is not a grid.
 - `/services/[slug]` renders hero → direct answer → who this is for → deliverables → process → FAQ → contact, and is statically generated via `generateStaticParams`.
 
-Each detail page emits a `@graph` of **Service + FAQPage + BreadcrumbList**, all derived from the same object the page renders. As with the home schema, there is no `offers` node: the site publishes no prices, and markup must not claim what the page does not show.
+Each detail page emits a `@graph` of **Service + FAQPage + BreadcrumbList**, all derived from the same object the page renders. There is no `offers` node: **services** publish no prices, scope and cost are quoted per project, and markup must not claim what the page does not show. The one exception on the whole site is the MVP Feasibility Check, which publishes `$275` on the home page; the home schema does not describe it yet, so nothing is claimed there either.
 
 The contact form on a detail page posts `source: "service-<slug>"`, so the automation can tell which page produced a lead.
 
@@ -173,9 +174,10 @@ Tokens are defined in the `@theme` block of `src/app/globals.css` (Tailwind v4 �
 
 - **Two families, both through `next/font`.** `font-display` is Host Grotesk 700, used for headings only. `font-body` is Space Grotesk, used for everything else including navigation and buttons. `font-label` is deliberately the same family as `font-body`; `font-mono` is a system stack and is only for code.
 - The one branded colour on the site is LinkedIn blue, on the LinkedIn button alone (`ButtonLink variant="linkedin"`, `#0a66c2`, measured 5.69:1 with white text). Do not spread it.
-- Focus rings use `outline: 2px solid currentColor`, not a fixed colour, because a black ring disappears on the dark sections.
+- Focus rings use `outline: 2px solid currentColor`, not a fixed colour, because a black ring disappears on the dark sections. On a dark panel that backfires: a light control draws its ring in its own dark text colour, onto dark. Put **`on-ink`** on the panel and every link, button and summary inside it gets the ring repainted `--color-paper`. `.post-cta` solves the same problem for the blog.
+- **Verifying a focus ring needs the transition switched off.** Tailwind v4 includes `outline-color` in `transition-colors`, which every button carries. `getComputedStyle(el).outlineColor` read straight after focus returns the frame at t=0 of a 200ms interpolation, which is the old colour, so a working ring reads as broken. Set `el.style.transition = "none"` and force a reflow before reading.
 - `.tick-rule` and `.eyebrow` are the recurring structural devices. Numbered markers appear only where the content is genuinely a sequence: the five-step method and the process block on a service page.
-- Motion lives in `globals.css`: `animate-rise-in` (hero load) and `animate-float`. The float animation opts out of the global reduced-motion reset explicitly, because snapping a loop to its end frame is worse than holding it still.
+- Motion lives in `globals.css`: `animate-rise-in` (hero load), `animate-float`, and `animate-bounce-hint` (the hero read-more control). Both loops opt out of the global reduced-motion reset explicitly, because snapping a loop to its end frame is worse than holding it still.
 
 ## Image placeholders
 
@@ -225,6 +227,8 @@ A healthy submission shows up in the Netlify function log as a ~3s invocation; a
 ## Not yet wired
 
 The site's own CTAs all route to the contact form. The hero used to carry a "Book a 1-hour consultation" button that only pointed at `/contact`; it was removed rather than left pretending. The one real booking link is the Calendly for the vibe-coding consulting session (`calendly.com/guilherme-blackelephant/vibe-coding-consulting`), and it appears only inside the blog post that sells that session, not in site chrome.
+
+**The MVP Feasibility Check button points at a Stripe *test* link.** `buy.stripe.com/test_...` accepts Stripe test cards only and charges nobody, so the panel currently sells nothing. Swap `feasibility.cta.href` for the live payment link before the section is published. It is the only place the URL appears.
 
 **That Calendly event is mis-branded and is a known pending fix.** Its page title is "Vibe coding - consulting - Guilherme Kodenvis", its locale is `pt` and its timezone is `America/Sao_Paulo`. Nothing on it says GuyShore, and it is written for a Portuguese speaker. Any post that is not about vibe coding, and any English-speaking visitor, lands somewhere that does not match the page they came from. Reusing it is a deliberate stopgap: when a properly branded event exists, replace the URL in every `PostCta` that carries it.
 

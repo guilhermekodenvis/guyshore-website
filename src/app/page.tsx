@@ -5,6 +5,7 @@ import { ArrowRight, LinkedInMark } from "@/components/icons";
 import { ContactDetails } from "@/components/contact-details";
 import { ContactForm } from "@/components/contact-form";
 import { FaqList } from "@/components/faq-list";
+import { FeasibilityPanel } from "@/components/feasibility-panel";
 import { Hero } from "@/components/hero";
 import { Partners } from "@/components/partners";
 import { ServiceCard } from "@/components/service-card";
@@ -36,6 +37,8 @@ export default function HomePage() {
       </div>
 
       <Partners />
+
+      <FeasibilityPanel />
 
       {/* Our services */}
       <section
