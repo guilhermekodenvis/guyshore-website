@@ -1,0 +1,111 @@
+{
+  "name": "KZ Serviços: customer app, provider app and management platform",
+  "client": "KZ Serviços",
+  "category": "On-demand services",
+  "summary": "A management platform, a customer app and a provider app for a company that books drivers and home service professionals, with each request tracked through to payment.",
+  "description": [
+    "KZ Serviços books two kinds of on-demand work: trips with drivers, including executive transport and airport transfers, and home services from professionals such as electricians, painters, gardeners and cleaners. We built a management platform for the team, an app for customers to request trips and services, and an app for service providers to review their upcoming jobs.",
+    "The management platform is where the team schedules every service provider and manages the driver and provider rosters. Trip requests and service requests each sit on a board with a column per stage, including open, under review, searching for a driver or provider, scheduled or assigned, and in progress. Separate sections list customers, every user with their role, drivers with their license category and expiry date, and providers with their rating, completed jobs and whether they carry a card machine or issue invoices. The finance section shows total revenue, the amount awaiting payment, a monthly revenue panel for the last six months, and the pending and paid charges with the payment method for each. Reports go out by WhatsApp and email, and data exports to XLSX and PDF.",
+    "In the customer app, people sign up with email, Google or Apple, search for an origin and destination, and see the route on a map. They then choose to leave now or pick a date and time, set the number of adults, and say whether they are traveling with children or luggage. For home services they pick a category, describe the problem, attach photos or videos, and either schedule a time or ask for someone right away, then follow the request while the platform looks for an available professional. A profile screen gathers scheduled trips, service requests, messages, a wallet and ride history.",
+    "The web platform and the customer app follow the KZ visual identity, with the brand's yellow running through both."
+  ],
+  "deliverables": [
+    "Management platform for trips, services and finance",
+    "Scheduling and rosters for providers and drivers",
+    "Stage boards for trip and service requests",
+    "Driver and provider records with ratings and license details",
+    "Tracking of pending and paid charges",
+    "Reports by WhatsApp and email, exports to XLSX and PDF",
+    "Customer app for booking trips and home services",
+    "Provider app for upcoming jobs"
+  ],
+  "stack": [
+    "Next.js",
+    "Supabase",
+    "n8n"
+  ],
+  "link": null,
+  "featured": true,
+  "order": 3,
+  "cover": "7-cover.png",
+  "images": [
+    {
+      "file": "7-cover.png",
+      "width": 1919,
+      "height": 859,
+      "alt": "KZ trips board with columns for open, under review, searching for a driver, scheduled and in progress"
+    },
+    {
+      "file": "5.png",
+      "width": 1918,
+      "height": 862,
+      "alt": "Admin sign-in screen split between a yellow brand panel and a dark login form"
+    },
+    {
+      "file": "17.png",
+      "width": 622,
+      "height": 869,
+      "alt": "Customer app home map with a destination search bar and a pending trip card"
+    },
+    {
+      "file": "20.png",
+      "width": 634,
+      "height": 867,
+      "alt": "Address search screen with origin and destination fields and place suggestions"
+    },
+    {
+      "file": "21.png",
+      "width": 622,
+      "height": 869,
+      "alt": "Trip booking sheet over a route map with date, time and passenger options"
+    },
+    {
+      "file": "19.png",
+      "width": 624,
+      "height": 867,
+      "alt": "Trip details sheet with a route map, date, passenger count and notes"
+    },
+    {
+      "file": "18.png",
+      "width": 622,
+      "height": 870,
+      "alt": "Scheduled trips list with a route map and a pending trip card"
+    },
+    {
+      "file": "22.png",
+      "width": 620,
+      "height": 864,
+      "alt": "Services screen with a new request button, category filters and an electrician request searching for a professional"
+    },
+    {
+      "file": "23.png",
+      "width": 618,
+      "height": 865,
+      "alt": "Service category picker with tiles for glazier, IT technician, painter, gardener, cleaner and more"
+    },
+    {
+      "file": "24.png",
+      "width": 617,
+      "height": 868,
+      "alt": "Service request form with problem description, photo and video attachment, address and scheduling options"
+    },
+    {
+      "file": "25.png",
+      "width": 623,
+      "height": 864,
+      "alt": "Service request details while the app searches for an available professional"
+    },
+    {
+      "file": "15.png",
+      "width": 624,
+      "height": 871,
+      "alt": "Customer app sign-up sheet with name, email, phone and password fields and Google and Apple options"
+    },
+    {
+      "file": "16.png",
+      "width": 629,
+      "height": 873,
+      "alt": "Customer app login sheet with email and password fields and Google and Apple sign-in"
+    }
+  ]
+}

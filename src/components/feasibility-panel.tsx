@@ -1,4 +1,5 @@
 import { ButtonLink } from "@/components/button-link";
+import { Confetti } from "@/components/confetti";
 import { ArrowUpRight, CheckMark } from "@/components/icons";
 import { feasibility } from "@/lib/feasibility";
 
@@ -24,14 +25,20 @@ import { feasibility } from "@/lib/feasibility";
  *
  * `on-ink` repaints the focus ring: see the note beside the rule in
  * globals.css.
+ *
+ * The confetti falls behind the content, once per page view. `overflow-hidden`
+ * keeps pieces that drift sideways from widening the page, and the grid is
+ * `relative` so it stacks above the canvas.
  */
 export function FeasibilityPanel() {
   return (
     <section
       id={feasibility.id}
-      className="on-ink flex min-h-[100dvh] items-center bg-ink text-paper"
+      className="on-ink relative flex min-h-[100dvh] items-center overflow-hidden bg-ink text-paper"
     >
-      <div className="mx-auto grid w-full max-w-[76rem] gap-x-16 gap-y-12 px-6 py-20 lg:grid-cols-[1.1fr_1fr] lg:items-center lg:px-10 lg:py-24">
+      <Confetti />
+
+      <div className="relative mx-auto grid w-full max-w-[76rem] gap-x-16 gap-y-12 px-6 py-20 lg:grid-cols-[1.1fr_1fr] lg:items-center lg:px-10 lg:py-24">
         <div>
           <p className="eyebrow text-paper/70">{feasibility.eyebrow}</p>
 

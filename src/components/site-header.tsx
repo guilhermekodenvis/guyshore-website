@@ -68,7 +68,7 @@ export function SiteHeader() {
                   Services
                 </span>
                 <ChevronDown
-                  className={`size-3.5 transition-transform duration-200 ${
+                  className={`mb-1.5 size-3.5 transition-transform duration-200 ${
                     servicesOpen ? "rotate-180" : ""
                   }`}
                 />
@@ -100,13 +100,19 @@ export function SiteHeader() {
               ) : null}
             </div>
 
+            {/* Every item is a flex box around a span with pb-1 and a 2px
+                border, the same as the Services button. As an inline span
+                that padding does not count toward the line box, so these
+                links came out 6px shorter and Services, centred in the
+                row, sat 3px higher. The chevron's mb-1.5 re-centres it on
+                the text rather than on the text plus its underline gap. */}
             {nav.map((item) => {
               const active = pathname.startsWith(item.href);
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`eyebrow transition-colors hover:text-ink ${
+                  className={`eyebrow flex items-center transition-colors hover:text-ink ${
                     active ? "text-ink" : "text-steel"
                   }`}
                 >

@@ -1,0 +1,83 @@
+{
+  "name": "HubFive: website and management platform",
+  "client": "HubFive",
+  "category": "Financial services",
+  "summary": "A marketing website, client sign-in page and admin platform for a Brazilian accounting and financial services firm, covering clients, accounting, payroll, tax deadlines and activity history.",
+  "description": [
+    "HubFive offers companies accounting, outsourced financial operations and tax planning. We built two things for them: the marketing website that presents the firm, and a management platform for running the firm's operation.",
+    "The website presents the firm's services and a results section with case studies, with Blog and Contact in its navigation. A Login button leads to the client area, whose sign-in page takes an email and password and also shows Google and Apple sign-in buttons.",
+    "The platform is an admin panel organized by department. The dashboard shows active clients, registered users, monthly revenue and pending tasks, flags clients whose taxes are coming due and tracks payrolls still to process. Client companies are listed with their CNPJ and tagged with the services they contract, and individual users are sorted into employees, partners and administrative staff. The accounting area has tabs for the income statement, balance sheet, equity and an investor report, with a report status for each company in the selected month. The HR and payroll area covers payroll, timesheets with an approval status, the 13th-month salary and employees. Tax, corporate, paralegal and finance sections sit alongside in the sidebar, and a history log records system activity with the module, the person responsible and the time.",
+    "The platform sends reports by WhatsApp and email and exports data to XLSX and PDF. The website, the sign-in page and the panel share the hubfive full finance logo and the same blue-to-violet gradient."
+  ],
+  "deliverables": [
+    "Marketing website with services and case studies sections",
+    "Client area sign-in page with email and password, plus Google and Apple buttons",
+    "Admin dashboard with KPI cards and tax due-date alerts",
+    "Client company and user management with export",
+    "Accounting module: income statement, balance sheet, equity and investor report",
+    "HR and payroll module: payroll, timesheets, 13th-month salary and employees",
+    "Tax, corporate, paralegal and finance sections",
+    "Activity history filterable by module",
+    "Notifications panel and settings with profile, notification, security and integration tabs",
+    "Report delivery by WhatsApp and email, with XLSX and PDF export"
+  ],
+  "stack": [
+    "Next.js",
+    "Supabase",
+    "n8n"
+  ],
+  "link": null,
+  "featured": true,
+  "order": 2,
+  "cover": "5.png",
+  "images": [
+    {
+      "file": "5.png",
+      "width": 1919,
+      "height": 867,
+      "alt": "HubFive admin dashboard with KPI cards, a tax due-date alert, clients with pending taxes and payroll progress"
+    },
+    {
+      "file": "2.png",
+      "width": 1919,
+      "height": 869,
+      "alt": "HubFive website services section with cards for accounting, financial outsourcing and tax planning"
+    },
+    {
+      "file": "4.png",
+      "width": 1919,
+      "height": 863,
+      "alt": "HubFive client area sign-in page with email and password fields and Google and Apple sign-in buttons"
+    },
+    {
+      "file": "6.png",
+      "width": 1919,
+      "height": 866,
+      "alt": "HubFive users screen listing individuals by type and status with export, search and filters"
+    },
+    {
+      "file": "8.png",
+      "width": 1919,
+      "height": 865,
+      "alt": "HubFive accounting overview with revenue, profit and margin cards and a monthly report status list per company"
+    },
+    {
+      "file": "9.png",
+      "width": 1919,
+      "height": 864,
+      "alt": "HubFive HR and payroll overview with headcount, payroll totals, pending payrolls and timesheet approval counts"
+    },
+    {
+      "file": "10.png",
+      "width": 1919,
+      "height": 872,
+      "alt": "HubFive activity history timeline filterable by module, showing who changed what and when"
+    },
+    {
+      "file": "11.png",
+      "width": 1919,
+      "height": 864,
+      "alt": "HubFive settings profile tab with the notifications dropdown open"
+    }
+  ]
+}

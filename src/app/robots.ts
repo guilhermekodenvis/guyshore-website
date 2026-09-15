@@ -13,11 +13,18 @@ const AI_CRAWLERS = [
   "CCBot",
 ];
 
+/**
+ * Every group, not just `*`: a crawler obeys only the most specific group
+ * that names it. `/api/google-rating` bills Google on every call, and a
+ * crawler that renders the home page would otherwise trigger it.
+ */
+const API = "/api/";
+
 export default function robots(): MetadataRoute.Robots {
   return {
     rules: [
-      { userAgent: "*", allow: "/" },
-      ...AI_CRAWLERS.map((userAgent) => ({ userAgent, allow: "/" })),
+      { userAgent: "*", allow: "/", disallow: API },
+      ...AI_CRAWLERS.map((userAgent) => ({ userAgent, allow: "/", disallow: API })),
     ],
     sitemap: `${site.url}/sitemap.xml`,
   };

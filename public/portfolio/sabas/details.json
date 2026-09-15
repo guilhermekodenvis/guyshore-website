@@ -1,0 +1,76 @@
+{
+  "name": "S.Sabas: website and management system",
+  "client": "S.Sabas Locadora",
+  "category": "Executive transportation",
+  "summary": "Website and internal management system for an executive transportation company in Valinhos, Brazil: fleet pages, bookings, driver scheduling and billing.",
+  "description": [
+    "S.Sabas Locadora provides executive ground transportation in Valinhos and the Campinas region, in the state of São Paulo, Brazil: airport transfers, corporate events, transportation for business meetings, intercity and interstate trips, and private drivers. We built two things for the company: its public website and a management system that organizes its internal operation.",
+    "The website has home, vehicles, categories, about and contact pages. Vehicle cards show the category, passenger capacity and amenities, and each vehicle has a detail page with a photo gallery, specifications, features and what the service includes. From a vehicle page, visitors can book over WhatsApp or request a quote. The design follows the S.Sabas visual identity, with red accents on headings, category labels and buttons. The site is responsive, and we also handle its hosting and security.",
+    "In the management system, the team schedules trips and events and tracks each one by status, including whether the service order has reached the driver and whether the driver has viewed it. A booking record holds the client, cost center, driver, vehicle, voucher, flight number, route and times. The schedule view is where drivers are assigned for each day: it shows the day's booking count and billed total, marks trips that still have no vehicle assigned, and prints. Separate modules cover clients, vehicles, drivers and staff.",
+    "Billing runs through a closing module, with tabs for open trips, closings awaiting sending, pending documentation, receivables and history. Each closing not yet sent shows the amount due, the number of trips and how many days it has been waiting. Closings are emailed to the client or downloaded as XLSX, and the system also sends reports over WhatsApp and email and exports to PDF."
+  ],
+  "deliverables": [
+    "Website with home, vehicles, categories, about and contact pages",
+    "Fleet listing and vehicle detail pages",
+    "WhatsApp booking and quote request buttons",
+    "Responsive layout",
+    "Hosting and security",
+    "Trip and event booking management",
+    "Daily driver schedule with printing",
+    "Client, vehicle, driver and staff modules",
+    "Billing closings sent by email or exported to XLSX",
+    "Reports over WhatsApp and email, with PDF export"
+  ],
+  "stack": [
+    "Bubble",
+    "n8n"
+  ],
+  "link": "https://www.sabas.com.br/",
+  "featured": false,
+  "order": 4,
+  "cover": "1.png",
+  "images": [
+    {
+      "file": "1.png",
+      "width": 1919,
+      "height": 911,
+      "alt": "S.Sabas Locadora home page hero with a white Volvo SUV and WhatsApp and vehicles buttons"
+    },
+    {
+      "file": "2.png",
+      "width": 1919,
+      "height": 859,
+      "alt": "Home page section listing airport transfers, corporate events and private driver services"
+    },
+    {
+      "file": "3.png",
+      "width": 1919,
+      "height": 903,
+      "alt": "Fleet section with cards for four vehicles showing category, capacity and amenities"
+    },
+    {
+      "file": "6.png",
+      "width": 1919,
+      "height": 905,
+      "alt": "Vehicles page with executive car cards and view details buttons"
+    },
+    {
+      "file": "4.png",
+      "width": 1919,
+      "height": 901,
+      "alt": "Vehicle detail page with photo gallery, specifications, features and a WhatsApp booking button"
+    },
+    {
+      "file": "5.png",
+      "width": 1919,
+      "height": 905,
+      "alt": "Contact page with a message form and the company address and phone"
+    },
+    {
+      "file": "7.png",
+      "width": 1919,
+      "height": 906,
+      "alt": "Management system login screen with the navy S mark"
+    }
+  ]
+}

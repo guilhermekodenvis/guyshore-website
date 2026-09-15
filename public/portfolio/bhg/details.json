@@ -1,0 +1,59 @@
+{
+  "name": "BHG: website and tax operations platform",
+  "client": "BHG",
+  "category": "Tax consulting",
+  "summary": "A website and a custom management platform for BHG, a Brazilian tax consultancy: a stage board for tax records, client contracts, fees, commissions and exportable reports.",
+  "description": [
+    "BHG is a Brazilian tax consultancy that works with companies under the Simples Nacional, Lucro Presumido and Lucro Real tax regimes. We built two things for them: the public website where prospective clients learn about the service and get in touch, and the management platform that runs the whole operation.",
+    "The platform covers finance, contracts, clients, partners and tax movements. Each tax record, tied to a client and a tax period, moves across a board of stages such as awaiting the client's original tax files, importing the SPED and generating the SPED file for delivery. Opening a record shows its uploaded files, comments that can be marked internal only, and a button to advance it to the next stage. Fees are split into installments, overdue ones are flagged in red, and each installment can be marked received or renegotiated from the same screen.",
+    "Client records show the reserved contract value, the total spent against it, a contract usage chart and a forecast of when the contract will run out, along with the client's users and commissioned partners. Dashboards split results into overview, financial and operational views, filtered by branch, tax period, tax regime and company size, with a twelve-month chart of fees, commissions, costs and profit and a breakdown of taxes by value. Reports are built by choosing columns, can be saved and reloaded, and export to XLSX or PDF. The platform also sends reports by WhatsApp and email.",
+    "The website, the sign-in page and the platform share one visual identity: the BHG logo, gold accents on a dark theme, and a light mode toggle."
+  ],
+  "deliverables": [
+    "Marketing website with about, services and FAQ sections",
+    "Platform sign-in page",
+    "Operations dashboard with summary, stage board, list and tax views",
+    "Record detail with file uploads, internal-only comments and stage control",
+    "Client and contract management with a usage forecast",
+    "Fee installments with overdue alerts and renegotiation",
+    "Commissioned partners linked to each client",
+    "Financial dashboard with revenue, commissions, costs and profit",
+    "Custom report builder with saved reports and XLSX and PDF export",
+    "Report delivery by WhatsApp and email"
+  ],
+  "stack": [
+    "Next.js",
+    "Supabase",
+    "n8n"
+  ],
+  "link": null,
+  "featured": true,
+  "order": 1,
+  "cover": "9.png",
+  "images": [
+    {
+      "file": "3.png",
+      "width": 1918,
+      "height": 865,
+      "alt": "BHG operations dashboard summary with view tabs, tax regime filters and key figures for revenue, savings, fees and profit"
+    },
+    {
+      "file": "1.png",
+      "width": 1914,
+      "height": 867,
+      "alt": "BHG website hero with a tax savings headline over a city skyline, top navigation and a contact button"
+    },
+    {
+      "file": "2.png",
+      "width": 1918,
+      "height": 867,
+      "alt": "BHG platform sign-in page with the BHG logo on a purple gradient and a gold-to-purple login button"
+    },
+    {
+      "file": "9.png",
+      "width": 1919,
+      "height": 865,
+      "alt": "Financial dashboard with revenue, commission and cost totals, a twelve-month bar chart and a donut chart of taxes by value"
+    }
+  ]
+}

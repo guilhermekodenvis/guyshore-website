@@ -8,7 +8,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Marketing site for GuyShore, a custom software development company (MVPs, software, apps, automations) selling to non-technical founders and startups. Office in Lisbon; clients served remotely across the US. Founder: Guy Sartori. Content is in English.
 
-Routes: home, services (index + a detail page per service), about, blog (index + MDX posts), contact, privacy, terms. The portfolio route was deleted and is not coming back.
+Routes: home, services (index + a detail page per service), portfolio (index + a detail page per project), about, blog (index + MDX posts), contact, privacy, terms. An earlier portfolio route was deleted; the current one was rebuilt from real client projects in September 2026.
 
 ## Site copy is American English
 
@@ -59,12 +59,14 @@ Turbopack caches aggressively in dev. After renaming an export, stale HMR errors
 - `site.ts` — company facts, `title` (the browser-tab title), `listingName`, address, phone, email, `nav` and `legalNav`.
 - `services.ts` — every service and its whole detail page. `services` is all seven; `homeServices` is the four with `onHome: true`, used by the home grid and the header dropdown; `getService(slug)` resolves one. Also the five-step `method`.
 - `faq.ts` — home-page FAQ entries.
-- `team.ts` — `founder`, including the LinkedIn URL.
+- `team.ts` — `founder`, including the LinkedIn URL and the `highlights` rendered under the LinkedIn button. An entry with `value: null` renders as a full-width statement instead of a number.
 - `partners.json` — the partner logos, their links and their 1x box sizes. The only file to edit to add, remove or reorder a partner; `partners.ts` just types it.
 - `feasibility.ts` — the MVP Feasibility Check panel: copy, price, deliverables, and the Stripe payment link. The only place that URL appears.
+- `portfolio.ts` — types and orders the portfolio. The content itself lives in `public/portfolio/<slug>/details.json`; see the Portfolio section.
+- `google-reviews.ts` — the server-side Places API read behind the client reviews section, served to the browser by `src/app/api/google-rating/route.ts`; see Client reviews.
 - `contact.ts` — form shapes and the initial action state.
 
-**Home page composition** (`src/app/page.tsx`): hero (owns the first screen alone) → partners → MVP Feasibility Check → our services (four cards, then a centred link to `/services`) → our method → who we are → FAQ → contact. Each block is either a component in `src/components/` or a section rendered straight from a `src/lib` module.
+**Home page composition** (`src/app/page.tsx`): hero (owns the first screen alone) → partners → MVP Feasibility Check → our services (four cards, then a centred link to `/services`) → client reviews (renders nothing until there is something real to show) → portfolio (the featured projects, then a link to `/portfolio`) → our method → who we are → FAQ → contact. Each block is either a component in `src/components/` or a section rendered straight from a `src/lib` module.
 
 **Blog is MDX compiled by `@next/mdx`.** Posts are `.mdx` files in `src/content/blog/`; the filename is the slug. Each post exports a `meta` object (title, description, date, author, readingTime, tags) alongside its default component — named `meta`, not `metadata`, so it is never confused with the Next.js route-metadata convention.
 
@@ -103,7 +105,7 @@ Two traps those overrides sit on:
 
 Three files are served as text and **none of them is hand-written**. All three read the same `src/lib` modules the pages render, so publishing a service or a post updates them with no extra step. Never replace one with a static file in `public/`.
 
-- `src/app/sitemap.ts` and `src/app/robots.ts` use the Next.js metadata file conventions. `robots.ts` lists GPTBot, ClaudeBot, PerplexityBot, Google-Extended and CCBot explicitly rather than leaving them to the `*` rule, so the intent to allow them is legible to anyone auditing it.
+- `src/app/sitemap.ts` and `src/app/robots.ts` use the Next.js metadata file conventions. `robots.ts` lists GPTBot, ClaudeBot, PerplexityBot, Google-Extended and CCBot explicitly rather than leaving them to the `*` rule, so the intent to allow them is legible to anyone auditing it. Every group also disallows `/api/`: the rating endpoint bills Google on each call, and a crawler rendering the home page would otherwise trigger it. A crawler obeys only the most specific group that names it, which is why the rule is repeated rather than set once on `*`.
 - `src/app/llms.txt/route.ts` is the curated index described at llms.txt.org: the company facts, then every service, post, company and legal page as a labelled link with a one-line summary. Next.js has no file convention for it, so it is a route handler with `export const dynamic = "force-static"`, which prerenders it at build like the sitemap. The docs name this exact pattern in `01-app/02-guides/backend-for-frontend.md`.
 
 Be honest about what `llms.txt` buys: no crawler has publicly committed to reading it and Google has said it does not use it, so the answer-engine benefit is speculative. It is here because it costs one generated file, exposes nothing that is not already in `sitemap.xml`, and cannot go stale.
@@ -119,7 +121,7 @@ Each detail page emits a `@graph` of **Service + FAQPage + BreadcrumbList**, all
 
 The contact form on a detail page posts `source: "service-<slug>"`, so the automation can tell which page produced a lead.
 
-**The header dropdown** lives in `site-header.tsx`. It opens on hover for pointers and on click for keyboard and touch, and closes on Escape. It must not close via an effect: `react-hooks/set-state-in-effect` is an error in this repo.
+**The header dropdown** lives in `site-header.tsx`. It opens on hover for pointers and on click for keyboard and touch, and closes on Escape. It must not close via an effect: `react-hooks/set-state-in-effect` is an error in this repo. Keep every desktop nav item the same kind of box as the Services button, a flex container around a span with `pb-1` and a 2px border: an inline span's padding does not count toward its height, and the mismatch put Services 3px above the other links. Measure label alignment with a Range over the text node, not the element box.
 
 ## Contact details are one string, used everywhere
 
@@ -131,6 +133,8 @@ Search engines identify a business by its name, address and phone appearing **id
 
 Changing any of these means changing the external listings in the same pass, otherwise the consistency they exist for is gone.
 
+**The Google Business Profile does not match the site today.** On 2026-09-15 the listing showed the address Av. António Augusto de Aguiar, 24, 1st floor, right, 1050-016 Lisboa, while `site.address` is Av. Elias Garcia, 123-A, 1050-098 Lisboa. The phone matched. One of the two addresses is wrong and has to be corrected, in the listing or here.
+
 **The founder's email signature is a flat PNG and lives outside the repo.** It bakes the name, role, phone, email, LinkedIn and tagline into pixels, so nothing can validate it and nothing will warn you when it goes stale. Treat it like an external listing: when `site.phone.display`, `site.email`, `site.tagline` or anything in `team.ts` changes, the signature has to be regenerated and reinstalled in the same pass.
 
 ## Legal pages
@@ -138,6 +142,8 @@ Changing any of these means changing the external listings in the same pass, oth
 `/privacy` and `/terms` are hand-written to match what the site actually does, which is unusually little: **no analytics, no tracking cookies, no advertising pixel**. If a script is ever added that sets a cookie or tracks a visitor, the privacy policy stops being true and needs updating in the same commit, along with a consent banner.
 
 The processors named in the policy are Netlify, n8n Cloud and Google Workspace. That list has to match reality too.
+
+The client reviews section does not change the privacy policy: the visitor's browser only calls this site's own endpoint, the server asks Google for two numbers, and no visitor data goes to Google. The Terms do carry a **Google Maps content** section, because the Maps Platform terms (3.2.2) require it of any site that shows Maps content. It goes only if the reviews section goes.
 
 Both pages carry a `Last updated` date as a constant at the top of the file. Change it when the text changes.
 
@@ -157,6 +163,30 @@ Two traps:
 
 - **Do not put `w-auto`/`h-auto` on the `<Image>`.** On a replaced element that has not loaded, `width: auto` computes to 0, the box collapses, and the lazy-load observer then never fires because there is nothing to intersect. The `width`/`height` props are the sizing.
 - **The links must not become `nofollow`.** The partnership offers a real backlink; `rel="noreferrer"` alone does not stop a link being followed, which is why it is safe to keep for `target="_blank"`.
+
+## Client reviews
+
+The band under "Our services" shows the company's Google rating, review count and up to five written reviews, live from the Places API (New), with a "See all reviews" button to the Google Maps listing. Four rules shape it; read them before extending it.
+
+- **Nothing from Google may be cached, so nothing is.** The Maps Platform terms (no-caching clause, 3.2.3(b) global and 3.3.2(b) EEA) allow storing only the Place ID indefinitely and coordinates for 30 days. The rating and count cannot be kept for any time, which rules out `revalidate`, ISR and prerendering them into HTML. So `/api/google-rating` fetches with `cache: "no-store"` and answers `Cache-Control: private, no-store`, and `GoogleReviews` is a client component that calls it after load. The home page stays static.
+- **Up to five written reviews, and they are not "the latest".** Places returns at most five, chosen by Google's relevance ranking, with no parameter to ask for the newest. `getGoogleRating` sorts them newest first, which equals the latest five only while the profile has five or fewer. True latest-five needs the Business Profile API, which returns every review and allows storing them for up to 30 days, but needs OAuth as the profile owner, a profile verified for 60+ days and an access application to Google. The section says how reviews are chosen and ordered, because Google requires that notice.
+- **Avatars go through `/api/google-avatar`, never straight to Google.** Google requires every written review to show its author's avatar, an image on Google's hosts. Loading it directly would put a Google request in every visitor's browser, which the privacy policy rules out. The route fetches the image, holds it in memory for one response and marks it no-store, so nothing is cached either. It only fetches https URLs on googleusercontent.com, including after redirects, relays only images and refuses anything over 256KB, so it is not an open proxy. The avatar is a plain <img>, not next/image, because the image optimizer would store the file. Each review also links to its author's profile and to the review on Google Maps, both required.
+- **Attribution is prescribed.** The exact words `Google Maps`, unwrapped, `translate="no"`, weight 400, 12 to 16px, in `#1F1F1F` or `#5E5E5E` (`slate` is not on Google's list), inside a container visibly set apart from the page. Never put it next to a map or a map embed.
+- **Every call costs.** Asking for `reviews` bills as Place Details Enterprise + Atmosphere: 1,000 free events a month per billing account, then USD 25 per 1,000 (price list of September 2026). Each page view that runs JavaScript is one event. The key needs a daily quota cap in Google Cloud so a script hammering the endpoint cannot run up a bill, and `robots.ts` keeps crawlers off `/api/`.
+
+It renders nothing when `GOOGLE_PLACES_API_KEY` or `site.googlePlaceId` is missing, on any API error, and while the profile has no reviews. The profile received its first review on 2026-09-15 (5.0, 1 review), and `site.googlePlaceId` is set to `ChIJA3EyIRszGQ0RQKo6mrIqhAY`, confirmed by a Text Search that returned the same listing, address and CID (469547207733455424) as Google Maps. The key is `guyshore-website-places` in the BlackElephant Google Cloud account, project Factory (`factory-502213`), so the usage bills to that billing account. It is restricted to Places API (New) with no application restriction, because Netlify has no fixed egress IP. The project-wide `GetPlaceRequest per day` quota was lowered from 125,000 to 300 as a cost cap; Factory used no Maps API in the 30 days before, so the cap affects nothing else, but re-check it if Factory ever starts using Places. Set the key in Netlify as a server variable, never `NEXT_PUBLIC_`, and in a gitignored `.env.local` for development. `REVIEWS_PREVIEW=1` in `.env.local` shows sample numbers in development only.
+
+## Portfolio
+
+Each project is a folder in `public/portfolio/<slug>/`: its screenshots plus a `details.json` with everything the site renders (name, client, category, summary, description paragraphs, deliverables, stack, link, `featured`, `order`, cover, and the images with their intrinsic sizes and alt text). The folder name is the URL: `/portfolio/<slug>`.
+
+- **Adding a project** is the folder plus one import and one entry in `src/lib/portfolio.ts`. The JSON is imported rather than read with `fs`, because the home page re-renders at runtime for the reviews, and a Netlify function is not guaranteed to have `public/` on disk. The import also makes TypeScript check each file against `PortfolioDetails`, the same guarantee `partners.json` has.
+- **`featured: true`** puts a project on the home row; `order` sorts both the row and the index.
+- **A cover can be a derived copy.** When the best screen carries something that must not be public, keep the original gitignored and publish an edited copy named `<n>-cover.png`. `kz/7-cover.png` is `kz/7.png` with the sidebar footer painted over in the sidebar color, removing the signed-in user's name and email and the Next.js dev badge.
+- **Only images listed in `images` are rendered, but every committed file in the folder is served.** The repository is public and Netlify deploys the whole of `public/`. A screenshot that shows real personal data must never be committed, not merely left out of the JSON.
+- The copy follows the site rules: American English, no em dashes, and nothing a screenshot or the client brief cannot back.
+- Detail pages emit **CreativeWork + BreadcrumbList**; the index emits an **ItemList**.
+- **Card covers are never cropped.** The frame is 2.2:1 and the image is `object-contain`, because the covers are desktop captures between 2.1:1 and 2.2:1; a narrower one shows a sliver of `mist` at the sides instead of losing its edges. No hover zoom, since scaling inside `overflow-hidden` crops. Pick covers from landscape screenshots, or the frame will letterbox heavily.
 
 ## Design system
 
@@ -178,6 +208,7 @@ Tokens are defined in the `@theme` block of `src/app/globals.css` (Tailwind v4 �
 - **Verifying a focus ring needs the transition switched off.** Tailwind v4 includes `outline-color` in `transition-colors`, which every button carries. `getComputedStyle(el).outlineColor` read straight after focus returns the frame at t=0 of a 200ms interpolation, which is the old colour, so a working ring reads as broken. Set `el.style.transition = "none"` and force a reflow before reading.
 - `.tick-rule` and `.eyebrow` are the recurring structural devices. Numbered markers appear only where the content is genuinely a sequence: the five-step method and the process block on a service page.
 - Motion lives in `globals.css`: `animate-rise-in` (hero load), `animate-float`, and `animate-bounce-hint` (the hero read-more control). Both loops opt out of the global reduced-motion reset explicitly, because snapping a loop to its end frame is worse than holding it still.
+- The one canvas animation is `Confetti` (`src/components/confetti.tsx`), used on the MVP Feasibility Check panel: white and greys, falling once per page view when a third of the panel is on screen. "Once" is deliberately not remembered between visits, because that would mean writing to localStorage, and the privacy policy says the site stores nothing on the device. It renders nothing at all under reduced motion, and it uses refs rather than state so the effect never calls setState.
 
 ## Image placeholders
 

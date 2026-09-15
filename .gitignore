@@ -40,3 +40,51 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# Portfolio screenshots that must never reach the public repository or the
+# deploy. Netlify serves every committed file under public/, whether or not
+# details.json references it. See the Portfolio section of CLAUDE.md.
+#
+# The owner's working notes, in Portuguese, with unverified links.
+public/portfolio/*/descrição.txt
+# Real personal or confidential data: names with emails and phones, tax IDs,
+# identifiable client finances, production records.
+public/portfolio/bhg/4.png
+public/portfolio/bhg/5.png
+public/portfolio/bhg/6.png
+public/portfolio/bhg/7.png
+public/portfolio/bhg/8.png
+public/portfolio/sabas/8.png
+public/portfolio/sabas/9.png
+public/portfolio/sabas/10.png
+public/portfolio/sabas/11.png
+public/portfolio/sabas/12.png
+public/portfolio/kz/6.png
+public/portfolio/kz/7.png
+public/portfolio/kz/8.png
+public/portfolio/kz/9.png
+public/portfolio/kz/10.png
+public/portfolio/kz/11.png
+public/portfolio/kz/12.png
+public/portfolio/kz/13.png
+public/portfolio/kz/26.png
+public/portfolio/solumart/1.png
+public/portfolio/solumart/2.png
+public/portfolio/solumart/3.png
+public/portfolio/solumart/4.png
+public/portfolio/solumart/5.png
+public/portfolio/solumart/7.png
+public/portfolio/solumart/8.png
+public/portfolio/solumart/9.png
+public/portfolio/solumart/10.png
+# Not personal data, but not publishable as they stand: placeholder figures
+# and testimonials, a landing page the brief does not confirm we built, a
+# third party's photo with unclear rights, an unfinished hero, a localhost bar.
+public/portfolio/kz/1.png
+public/portfolio/kz/2.png
+public/portfolio/kz/3.png
+public/portfolio/kz/4.png
+public/portfolio/kz/14.png
+public/portfolio/hubfive/1.png
+public/portfolio/hubfive/3.png
+public/portfolio/hubfive/7.png

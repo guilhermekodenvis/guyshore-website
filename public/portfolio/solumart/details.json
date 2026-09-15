@@ -1,0 +1,46 @@
+{
+  "name": "Solumart: operations system and technician app",
+  "client": "Solumart",
+  "category": "Field services",
+  "summary": "A management system to schedule field technicians and track each service's status, price, cost and expected profit, plus a mobile app where technicians see their upcoming jobs.",
+  "description": [
+    "Solumart manages projects and spot services for business clients, and its field technicians carry out the work. We built a management system to schedule every technician and follow each service from request to approval, plus a mobile app so technicians can see the activities ahead of them.",
+    "The web system's dashboard summarizes the day: today's services grouped by status, how many are running late, the five clients with the most services scheduled for today, and technician messages still waiting for a reply. Services and projects live in one table, with tabs for projects and spot services and filters by keyword, client, technician and status. Each service page brings together its status, the client and assigned technician, the date and time, the address on a map, before and after photos, a message thread, and the price, cost and expected profit of the job.",
+    "The system also manages clients, each shown with its number of projects and services this month, and users, with access levels for administrators, operators and technicians. It covers payment management and technician rosters, sends reports by WhatsApp and email, and exports data to XLSX and PDF.",
+    "Technicians use Solumart Service, the companion app, to sign in to their schedule of activities. They filter jobs by status and by month and year, and open a ticket to see the date and time, location, instructions, client, representative and before photos. Each job has a message thread where entries are marked pending or approved. The web system and the app share Solumart's globe mark and the same navy and amber palette."
+  ],
+  "deliverables": [
+    "Web management system",
+    "Daily operations dashboard",
+    "Service and project tracking with filters",
+    "Service detail page with job financials and map",
+    "Client management",
+    "User management with roles and access levels",
+    "Payment management and technician rosters",
+    "Reports sent by WhatsApp and email",
+    "XLSX and PDF export",
+    "Mobile app for field technicians"
+  ],
+  "stack": [
+    "Bubble",
+    "Make"
+  ],
+  "link": null,
+  "featured": false,
+  "order": 5,
+  "cover": "6.png",
+  "images": [
+    {
+      "file": "6.png",
+      "width": 1919,
+      "height": 870,
+      "alt": "Operations dashboard with a daily summary, delayed services count, most active clients and unanswered technician messages"
+    },
+    {
+      "file": "11.png",
+      "width": 330,
+      "height": 708,
+      "alt": "Solumart Service mobile app login screen for technicians"
+    }
+  ]
+}

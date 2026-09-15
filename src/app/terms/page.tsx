@@ -10,7 +10,7 @@ export const metadata: Metadata = {
   alternates: { canonical: "/terms" },
 };
 
-const UPDATED = "2026-08-19";
+const UPDATED = "2026-09-15";
 
 export default function TermsPage() {
   return (
@@ -81,6 +81,35 @@ export default function TermsPage() {
             partners. We link to them because we think they are useful, but we
             do not control them and we are not responsible for their content or
             their privacy practices. Read their terms when you get there.
+          </p>
+
+          {/* Required, not decorative: the Google Maps Platform terms
+              (section 3.2.2) oblige any site that shows Google Maps content
+              to say this and link both documents. Remove it only together
+              with the reviews section. */}
+          <h2>Google Maps content</h2>
+          <p>
+            Our home page can show our rating, our number of reviews and a
+            selection of reviews from Google Maps. Use of that Google Maps
+            content is subject to the current{" "}
+            <a
+              href="https://maps.google.com/help/terms_maps/"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Google Maps End User Additional Terms of Service
+              <span className="sr-only"> (opens in a new tab)</span>
+            </a>{" "}
+            and the{" "}
+            <a
+              href="https://policies.google.com/privacy"
+              target="_blank"
+              rel="noreferrer"
+            >
+              Google Privacy Policy
+              <span className="sr-only"> (opens in a new tab)</span>
+            </a>
+            .
           </p>
 
           <h2>What this site does and does not promise</h2>

@@ -1,15 +1,18 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { ButtonLink } from "@/components/button-link";
-import { ArrowRight, LinkedInMark } from "@/components/icons";
+import { ArrowRight, CheckMark, LinkedInMark } from "@/components/icons";
 import { ContactDetails } from "@/components/contact-details";
 import { ContactForm } from "@/components/contact-form";
 import { FaqList } from "@/components/faq-list";
 import { FeasibilityPanel } from "@/components/feasibility-panel";
+import { GoogleReviews } from "@/components/google-reviews";
 import { Hero } from "@/components/hero";
 import { Partners } from "@/components/partners";
+import { PortfolioCard } from "@/components/portfolio-card";
 import { ServiceCard } from "@/components/service-card";
 import { homeSchema } from "@/lib/home-schema";
+import { featuredPortfolio } from "@/lib/portfolio";
 import { method, homeServices } from "@/lib/services";
 import { founder } from "@/lib/team";
 import { site } from "@/lib/site";
@@ -75,6 +78,45 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* Client reviews, from the Google Business Profile. Renders nothing
+          until the profile has at least one review and the API key is set. */}
+      <GoogleReviews />
+
+      {/* Portfolio. Its own top border, because it has to separate from
+          whichever section precedes it: the reviews, or the services when
+          the reviews render nothing. */}
+      <section className="border-t border-[var(--color-line)]">
+        <div className="mx-auto max-w-[76rem] px-6 py-24 lg:px-10 lg:py-32">
+          <p className="eyebrow text-slate">Portfolio</p>
+          <h2 className="mt-5 max-w-[22ch] text-title">
+            Software we built for real companies.
+          </h2>
+          <p className="mt-7 max-w-[64ch] text-lead text-steel">
+            Websites, management platforms and mobile apps, each one taken from
+            the first screen to production and handed over running.
+          </p>
+
+          {/* One column until lg: three cards side by side on a tablet leave
+              each cover too small to read. */}
+          <div className="mt-16 grid gap-6 lg:grid-cols-3">
+            {featuredPortfolio.map((item) => (
+              <PortfolioCard
+                key={item.slug}
+                item={item}
+                sizes="(min-width: 1024px) 362px, 100vw"
+              />
+            ))}
+          </div>
+
+          <div className="mt-14 flex justify-center">
+            <ButtonLink href="/portfolio" variant="ghost">
+              View all projects
+              <ArrowRight className="size-5 shrink-0" />
+            </ButtonLink>
+          </div>
+        </div>
+      </section>
+
       {/* Our method */}
       <section className="border-y border-[var(--color-line)] bg-mist">
         <div className="mx-auto max-w-[76rem] px-6 py-24 lg:px-10 lg:py-32">
@@ -132,9 +174,6 @@ export default function HomePage() {
             <p className="mt-6 max-w-[54ch] text-lead text-steel">
               {founder.bio}
             </p>
-            <p className="mt-4 max-w-[54ch] text-steel">
-              EU-based engineering, working US business hours.
-            </p>
             <ButtonLink
               href={founder.linkedin}
               variant="linkedin"
@@ -148,6 +187,37 @@ export default function HomePage() {
                   site, so it is paired with a spoken equivalent. */}
               <span className="sr-only">(opens in a new tab)</span>
             </ButtonLink>
+
+            {/* The numbers sit in a row and their labels never wrap. Each
+                takes the width its own label needs instead of a fixed third
+                of the row, which is what pushed "years coding without AI"
+                onto two lines. On a phone they stack. The one highlight that
+                is a statement rather than a number runs full width below. */}
+            <div className="mt-10 max-w-[40rem] border-t border-[var(--color-line)] pt-8">
+              <ul className="grid gap-6 sm:flex sm:flex-wrap sm:gap-x-12">
+                {founder.highlights
+                  .filter((item) => item.value)
+                  .map((item) => (
+                    <li key={item.label}>
+                      <span className="block font-display text-4xl tracking-[-0.03em] text-ink">
+                        {item.value}
+                      </span>
+                      <span className="mt-1 block whitespace-nowrap text-steel">
+                        {item.label}
+                      </span>
+                    </li>
+                  ))}
+              </ul>
+
+              {founder.highlights
+                .filter((item) => !item.value)
+                .map((item) => (
+                  <p key={item.label} className="mt-6 flex gap-3 text-steel">
+                    <CheckMark className="mt-1 size-5 shrink-0 text-ink" />
+                    {item.label}
+                  </p>
+                ))}
+            </div>
           </div>
         </div>
       </section>

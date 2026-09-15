@@ -27,6 +27,13 @@ export const site = {
   description:
     "We build for non-technical founders and startups: web apps, mobile products and automations. Fixed scope, clear timelines, and full source code ownership.",
   url: "https://guyshore.com",
+  /**
+   * The Google Business Profile, as a Places API Place ID (starts with ChIJ).
+   * Not a secret: Google permits storing it indefinitely, and it is what the
+   * reviews section looks the profile up by. Empty means the section stays
+   * hidden.
+   */
+  googlePlaceId: "ChIJA3EyIRszGQ0RQKo6mrIqhAY",
   email: "business@guyshore.com",
   phone: {
     /** Spaced for reading. This is the string listings must match. */
@@ -45,6 +52,7 @@ export const site = {
 } as const;
 
 export const nav = [
+  { href: "/portfolio", label: "Portfolio" },
   { href: "/about", label: "About" },
   { href: "/blog", label: "Blog" },
 ] as const;
