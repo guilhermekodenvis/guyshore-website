@@ -3,9 +3,10 @@
  * that tracks anyone.
  *
  * Portuguese law (Lei 41/2004, art. 5) and Google's EU user consent policy
- * both require consent before the tag sets advertising cookies, so the tag is
- * not loaded at all until the visitor accepts ("basic" consent mode). A
- * refusal loads nothing.
+ * both require consent before the tag sets advertising cookies. The tag sits
+ * in the head of every page (root layout), because Google Ads cannot detect a
+ * tag that loads only after a click, and starts with consent denied (Consent
+ * Mode v2, advanced): no cookies until the visitor accepts.
  *
  * The choice itself is kept in localStorage under `guyshore-consent`. That is
  * storage on the device, but storage strictly necessary to honor the
@@ -100,6 +101,14 @@ export function saveConsent(choice: ConsentChoice): void {
   }
   panelOpen = false;
 
+  if (choice === "granted") {
+    window.gtag?.("consent", "update", {
+      ad_storage: "granted",
+      ad_user_data: "granted",
+      ad_personalization: "granted",
+    });
+  }
+
   if (previous === "granted" && choice === "denied") {
     withdraw();
     return;
@@ -108,9 +117,9 @@ export function saveConsent(choice: ConsentChoice): void {
 }
 
 /**
- * Withdrawing an earlier acceptance. A loaded script cannot be unloaded, so
- * tell Google consent is now denied, delete the first-party Google Ads
- * cookies, and reload into a page that never loads the tag.
+ * Withdrawing an earlier acceptance: tell Google consent is now denied, delete
+ * the first-party Google Ads cookies, and reload so the page starts from
+ * denied again.
  */
 function withdraw(): void {
   window.gtag?.("consent", "update", {

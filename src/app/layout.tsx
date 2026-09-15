@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { Host_Grotesk, Space_Grotesk } from "next/font/google";
+import Script from "next/script";
 import { ConsentBanner } from "@/components/consent-banner";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
+import { GOOGLE_ADS_ID } from "@/lib/consent";
 import { site } from "@/lib/site";
 import "./globals.css";
 
@@ -60,6 +62,26 @@ export default function RootLayout({
       className={`${hostGrotesk.variable} ${spaceGrotesk.variable} h-full`}
     >
       <body className="flex min-h-full flex-col">
+        {/* The Google tag, in the head of every page so Google Ads can detect
+            it. Consent starts denied unless the visitor already accepted
+            (Consent Mode v2, advanced); the banner grants it. See consent.ts. */}
+        <Script id="google-tag-consent" strategy="beforeInteractive">
+          {`window.dataLayer = window.dataLayer || [];
+function gtag(){dataLayer.push(arguments);}
+var granted = false;
+try {
+  var saved = JSON.parse(localStorage.getItem("guyshore-consent") || "null");
+  granted = !!saved && saved.v === 1 && saved.choice === "granted" && Date.now() - Date.parse(saved.at) < 395 * 864e5;
+} catch (e) {}
+var state = granted ? "granted" : "denied";
+gtag("consent", "default", { ad_storage: state, ad_user_data: state, ad_personalization: state, analytics_storage: "denied" });
+gtag("js", new Date());
+gtag("config", "${GOOGLE_ADS_ID}");`}
+        </Script>
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${GOOGLE_ADS_ID}`}
+          strategy="beforeInteractive"
+        />
         <a
           href="#main"
           className="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-[60] focus:rounded-[2px] focus:bg-ink focus:px-4 focus:py-2 focus:text-paper"
@@ -71,8 +93,7 @@ export default function RootLayout({
           {children}
         </main>
         <SiteFooter />
-        {/* The cookie banner, and the Google Ads tag it loads only on
-            consent. Last in the body so it paints above the page. */}
+        {/* The cookie banner. Last in the body so it paints above the page. */}
         <ConsentBanner />
       </body>
     </html>

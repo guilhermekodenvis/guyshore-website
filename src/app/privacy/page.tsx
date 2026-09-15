@@ -19,7 +19,7 @@ export default function PrivacyPage() {
       <PageHeader
         eyebrow="Privacy Policy"
         title="What we collect, and what we do not."
-        lead="This site has one Google tag, used for Google Ads and Google Analytics, and it loads only if you accept it. Beyond that, the only personal data we hold is what you choose to send us."
+        lead="This site has one Google tag, used for Google Ads and Google Analytics, and it sets cookies only if you accept. Beyond that, the only personal data we hold is what you choose to send us."
       />
 
       <section className="mx-auto max-w-[76rem] px-6 pb-24 lg:px-10 lg:pb-32">
@@ -60,8 +60,9 @@ export default function PrivacyPage() {
             so we can measure whether our ads work and Google can show our ads
             to people who have visited the site, and to Google Analytics, so we
             can count visits and see which pages people read. If you decline, or
-            do not choose, the tag is never loaded and none of this is
-            collected.
+            do not choose, the tag sets no cookies and sends Google only basic
+            signals without identifiers, as Google&rsquo;s consent mode
+            requires, so none of this is linked to you.
           </p>
           <p>That is the complete list. Nothing else on this site tracks you.</p>
 
@@ -79,7 +80,8 @@ export default function PrivacyPage() {
             is also a legitimate interest.
           </p>
           <p>
-            The Google tag runs only on your consent. You can withdraw it at any
+            The Google tag sets cookies and collects the data above only on your
+            consent. You can withdraw it at any
             time from <strong>Cookie settings</strong> at the bottom of every
             page, and withdrawing is as easy as accepting was.
           </p>
@@ -171,7 +173,8 @@ export default function PrivacyPage() {
           </p>
           <p>
             <strong>If you decline</strong>, no advertising or analytics cookie
-            is set and the tag is never loaded.
+            is set, and the tag sends Google only basic signals without
+            identifiers.
           </p>
           <p>
             <strong>Either way</strong>, we keep your choice in your
