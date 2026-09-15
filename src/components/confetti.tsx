@@ -8,8 +8,8 @@ import { useEffect, useRef } from "react";
  * It fires once per page view, the first time at least a third of the parent
  * is on screen, and then never again until the page is reloaded. "Once" is
  * deliberately not remembered across visits: that would need localStorage,
- * and writing to the visitor's device for a decoration is exactly the kind of
- * storage the privacy policy says the site does not do.
+ * and the only device storage the privacy policy allows is the entry that
+ * remembers the visitor's cookie choice.
  *
  * Canvas and refs only, no React state, so the effect never calls setState
  * (`react-hooks/set-state-in-effect` is an error in this repo). Visitors who

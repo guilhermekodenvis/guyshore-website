@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Host_Grotesk, Space_Grotesk } from "next/font/google";
+import { ConsentBanner } from "@/components/consent-banner";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { site } from "@/lib/site";
@@ -70,6 +71,9 @@ export default function RootLayout({
           {children}
         </main>
         <SiteFooter />
+        {/* The cookie banner, and the Google Ads tag it loads only on
+            consent. Last in the body so it paints above the page. */}
+        <ConsentBanner />
       </body>
     </html>
   );

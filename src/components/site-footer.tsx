@@ -1,6 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { ContactDetails } from "@/components/contact-details";
+import { CookieSettingsButton } from "@/components/cookie-settings-button";
 import { legalNav, nav, site } from "@/lib/site";
 
 export function SiteFooter() {
@@ -82,6 +83,9 @@ export function SiteFooter() {
                 </Link>
               </li>
             ))}
+            <li>
+              <CookieSettingsButton className="transition-colors hover:text-paper" />
+            </li>
           </ul>
         </div>
       </div>

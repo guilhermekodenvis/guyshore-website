@@ -6,12 +6,12 @@ import { site } from "@/lib/site";
 export const metadata: Metadata = {
   title: "Privacy Policy",
   description:
-    "How GuyShore handles personal data: what the contact form collects, who processes it, how long it is kept, and the rights you have over it.",
+    "How GuyShore handles personal data: what the contact form collects, the Google tag that runs only with your consent, who processes your data, how long it is kept, and your rights.",
   alternates: { canonical: "/privacy" },
 };
 
 /** Shown on the page and used as the schema's dateModified. */
-const UPDATED = "2026-08-19";
+const UPDATED = "2026-09-15";
 
 export default function PrivacyPage() {
   return (
@@ -19,7 +19,7 @@ export default function PrivacyPage() {
       <PageHeader
         eyebrow="Privacy Policy"
         title="What we collect, and what we do not."
-        lead="This site runs no analytics, sets no tracking cookies and shows no advertising. The only personal data we hold is what you choose to send us."
+        lead="This site has one Google tag, used for Google Ads and Google Analytics, and it loads only if you accept it. Beyond that, the only personal data we hold is what you choose to send us."
       />
 
       <section className="mx-auto max-w-[76rem] px-6 pb-24 lg:px-10 lg:pb-32">
@@ -53,9 +53,17 @@ export default function PrivacyPage() {
             we do not use them to build a profile of you.
           </p>
           <p>
-            That is the complete list. There is no analytics script on this
-            site, no advertising pixel and no third-party tracker.
+            <strong>Advertising and visit data, only if you accept.</strong> If
+            you accept cookies, the Google tag records that you visited, the
+            pages you view, your IP address, your browser and device, and
+            whether you arrived from one of our ads. It sends this to Google Ads,
+            so we can measure whether our ads work and Google can show our ads
+            to people who have visited the site, and to Google Analytics, so we
+            can count visits and see which pages people read. If you decline, or
+            do not choose, the tag is never loaded and none of this is
+            collected.
           </p>
+          <p>That is the complete list. Nothing else on this site tracks you.</p>
 
           <h2>Why we use it, and on what basis</h2>
           <p>
@@ -70,12 +78,17 @@ export default function PrivacyPage() {
             We use the server logs to keep the site running and secure, which
             is also a legitimate interest.
           </p>
+          <p>
+            The Google tag runs only on your consent. You can withdraw it at any
+            time from <strong>Cookie settings</strong> at the bottom of every
+            page, and withdrawing is as easy as accepting was.
+          </p>
 
           <h2>Who else handles it</h2>
           <p>
             We keep the number of companies touching your data as small as we
-            can. Each one processes it on our instructions and for no purpose
-            of their own:
+            can. These process it on our instructions and for no purpose of
+            their own:
           </p>
           <ul>
             <li>
@@ -92,16 +105,32 @@ export default function PrivacyPage() {
             </li>
           </ul>
           <p>
-            We do not sell personal data, and we do not share it with anyone
-            for marketing.
+            <strong>Google Ads and Google Analytics</strong>, run by Google
+            Ireland Limited, are different. If you accept the tag, Google
+            receives the advertising and visit data described above and also
+            uses it under its own terms, which are explained in{" "}
+            <a
+              href="https://policies.google.com/technologies/partner-sites"
+              target="_blank"
+              rel="noreferrer"
+            >
+              how Google uses information from sites that use its services
+              <span className="sr-only"> (opens in a new tab)</span>
+            </a>
+            .
+          </p>
+          <p>
+            We do not sell personal data. Apart from the Google tag, which you
+            can decline, we do not share it with anyone for marketing.
           </p>
 
           <h2>Data leaving the European Economic Area</h2>
           <p>
-            The providers above are United States companies and your data may
-            be processed there. Those transfers rely on the European
-            Commission&rsquo;s standard contractual clauses, or on the EU to US
-            Data Privacy Framework where the provider is certified under it.
+            The providers above are United States companies or part of United
+            States groups, and your data may be processed there. Those transfers
+            rely on the European Commission&rsquo;s standard contractual
+            clauses, or on the EU to US Data Privacy Framework where the
+            provider is certified under it.
           </p>
 
           <h2>How long we keep it</h2>
@@ -111,6 +140,11 @@ export default function PrivacyPage() {
             as the working relationship lasts and then for the period our
             accounting and tax obligations require. Server logs are kept for a
             short retention window by our host and are not archived by us.
+          </p>
+          <p>
+            The Google Ads cookie expires after 90 days. We remember your cookie
+            choice for up to 13 months if you accept and 6 months if you
+            decline, and then ask again.
           </p>
 
           <h2>Your rights</h2>
@@ -127,11 +161,26 @@ export default function PrivacyPage() {
             live.
           </p>
 
-          <h2>Cookies</h2>
+          <h2>Cookies and storage on your device</h2>
           <p>
-            This site sets no cookies of its own. It does not use cookies for
-            analytics, personalization or advertising, which is why you are not
-            being asked to accept any.
+            <strong>If you accept</strong>, the Google tag sets the{" "}
+            <code>_gcl_au</code> cookie, which links a visit to an ad you
+            clicked and lasts 90 days. Google Analytics runs without setting its
+            own cookies on this site. Google may also read or set cookies on its
+            own domains, under its own policy.
+          </p>
+          <p>
+            <strong>If you decline</strong>, no advertising or analytics cookie
+            is set and the tag is never loaded.
+          </p>
+          <p>
+            <strong>Either way</strong>, we keep your choice in your
+            browser&rsquo;s local storage under the name{" "}
+            <code>guyshore-consent</code>, so we do not ask on every page. It
+            holds only your choice and the date you made it, and exists so that
+            your decision is respected. You can change your mind at any time
+            from <strong>Cookie settings</strong> at the bottom of every page;
+            withdrawing an acceptance deletes the Google Ads cookie.
           </p>
 
           <h2>Children</h2>
@@ -144,7 +193,9 @@ export default function PrivacyPage() {
           <p>
             If we change how we handle personal data, we will update this page
             and change the date at the top. Material changes will be described
-            rather than quietly folded in.
+            rather than quietly folded in. The change of {UPDATED} added the
+            Google tag, for Google Ads and Google Analytics, and the choice to
+            accept or decline it.
           </p>
 
           <h2>Getting in touch</h2>

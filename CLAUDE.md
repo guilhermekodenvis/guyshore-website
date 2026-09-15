@@ -139,13 +139,25 @@ Changing any of these means changing the external listings in the same pass, oth
 
 ## Legal pages
 
-`/privacy` and `/terms` are hand-written to match what the site actually does, which is unusually little: **no analytics, no tracking cookies, no advertising pixel**. If a script is ever added that sets a cookie or tracks a visitor, the privacy policy stops being true and needs updating in the same commit, along with a consent banner.
+`/privacy` and `/terms` are hand-written to match what the site actually does: **one Google tag, for Google Ads with Google Analytics linked to it, that loads only with consent, and nothing else**. See Consent and Google Ads. Any other script that sets a cookie, reads from the device or tracks a visitor makes the privacy policy false and must go behind the same consent, with the policy updated in the same commit.
 
-The processors named in the policy are Netlify, n8n Cloud and Google Workspace. That list has to match reality too.
+The processors named in the policy are Netlify, n8n Cloud and Google Workspace, with Google Ads and Google Analytics described separately because Google also uses that data for its own purposes. That list has to match reality too.
 
-The client reviews section does not change the privacy policy: the visitor's browser only calls this site's own endpoint, the server asks Google for two numbers, and no visitor data goes to Google. The Terms do carry a **Google Maps content** section, because the Maps Platform terms (3.2.2) require it of any site that shows Maps content. It goes only if the reviews section goes.
+The client reviews section does not change the privacy policy: the visitor's browser only calls this site's own endpoints, including for reviewer avatars, and no visitor data goes to Google through it. The Terms do carry a **Google Maps content** section, because the Maps Platform terms (3.2.2) require it of any site that shows Maps content. It goes only if the reviews section goes.
 
 Both pages carry a `Last updated` date as a constant at the top of the file. Change it when the text changes.
+
+## Consent and Google Ads
+
+The Google Ads tag (`AW-18077342694`, the constant `GOOGLE_ADS_ID` in `src/lib/consent.ts`) sets advertising cookies and sends visit data to Google. GuyShore is established in Portugal, so Lei 41/2004 art. 5 and Google's own EU user consent policy both require consent first. The rules the implementation follows:
+
+- **Basic consent mode: no consent, no tag.** `ConsentBanner` renders the tag only once the stored choice is `granted`. A visitor who declines or has not chosen never contacts Google. When it does load, it declares consent default denied and then updates to granted (Consent Mode v2), with `analytics_storage` left denied.
+- **The tag also reports to Google Analytics, and that link is not in this code.** Loading `gtag/js?id=AW-18077342694` sends hits to GA4 property `G-EF3ENX72GF` as well, because that destination is attached to the Google tag in the Google account. A headless run after consent caught the request; before consent nothing is sent. The banner and the privacy policy disclose it. With `analytics_storage` denied, GA4 measures without setting `_ga` cookies, which is why the policy names only `_gcl_au`. If the GA4 destination is removed in the Google tag settings, take it out of the banner and the policy in the same pass.
+- **Declining is as easy as accepting.** Decline and Accept are the same button, same size, side by side, on the first and only layer. "Cookie settings" in every footer reopens the banner, and withdrawing an earlier acceptance deletes the `_gcl_*` cookies and reloads so the tag is gone.
+- **The choice lives in localStorage as `guyshore-consent`**: `{ v, choice, at }`. Storage strictly necessary to honor the visitor's decision is exempt from consent, and the privacy policy names it. Acceptance is honored for 13 months and refusal for 6, after CNIL's guidance, then the banner asks again. Bump `VERSION` to re-ask everyone when the purposes change.
+- **Read it with `useSyncExternalStore`, never an effect.** `react-hooks/set-state-in-effect` is an error here; the store in `consent.ts` notifies subscribers directly. The server snapshot is `pending`, so the banner never renders into static HTML and appears after hydration, fixed-position, shifting nothing.
+- **Conversions are not set up.** The base tag only records visits. Counting a lead or a sale needs a conversion label from Google Ads and a `gtag('event', 'conversion', ...)` call on the event, which does not exist yet.
+- **Adding another tracker** means putting it behind the same consent check and naming it in the privacy policy, in the same commit.
 
 ## Partners
 
@@ -208,7 +220,7 @@ Tokens are defined in the `@theme` block of `src/app/globals.css` (Tailwind v4 â
 - **Verifying a focus ring needs the transition switched off.** Tailwind v4 includes `outline-color` in `transition-colors`, which every button carries. `getComputedStyle(el).outlineColor` read straight after focus returns the frame at t=0 of a 200ms interpolation, which is the old colour, so a working ring reads as broken. Set `el.style.transition = "none"` and force a reflow before reading.
 - `.tick-rule` and `.eyebrow` are the recurring structural devices. Numbered markers appear only where the content is genuinely a sequence: the five-step method and the process block on a service page.
 - Motion lives in `globals.css`: `animate-rise-in` (hero load), `animate-float`, and `animate-bounce-hint` (the hero read-more control). Both loops opt out of the global reduced-motion reset explicitly, because snapping a loop to its end frame is worse than holding it still.
-- The one canvas animation is `Confetti` (`src/components/confetti.tsx`), used on the MVP Feasibility Check panel: white and greys, falling once per page view when a third of the panel is on screen. "Once" is deliberately not remembered between visits, because that would mean writing to localStorage, and the privacy policy says the site stores nothing on the device. It renders nothing at all under reduced motion, and it uses refs rather than state so the effect never calls setState.
+- The one canvas animation is `Confetti` (`src/components/confetti.tsx`), used on the MVP Feasibility Check panel: white and greys, falling once per page view when a third of the panel is on screen. "Once" is deliberately not remembered between visits, because that would mean writing to localStorage, and the only device storage the privacy policy allows is the cookie-choice entry. It renders nothing at all under reduced motion, and it uses refs rather than state so the effect never calls setState.
 
 ## Image placeholders
 

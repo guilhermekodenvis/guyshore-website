@@ -67,7 +67,7 @@ ${line("Contact", "/contact", `Contact form, plus the address, phone and email a
 
 ## Legal
 
-${line("Privacy Policy", "/privacy", "What we collect and who processes it. The site sets no tracking cookies and runs no analytics or advertising pixel.")}
+${line("Privacy Policy", "/privacy", "What we collect and who processes it. A Google tag for Google Ads and Google Analytics loads only if the visitor accepts it, and nothing else tracks visitors.")}
 ${line("Terms of Use", "/terms", "The terms covering use of this website.")}
 `;
 
