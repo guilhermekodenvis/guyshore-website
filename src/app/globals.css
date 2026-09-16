@@ -278,6 +278,346 @@
     outline-color: var(--color-paper);
   }
 
+  /* -------------------------------------------------------------------------
+     The header, and its two states.
+
+     Attached (page at the top): a full-width bar with a hairline under it,
+     the way the header has always looked. Detached (scrolled): the same
+     element becomes a floating pill, inset from the edges, made of the
+     translucent material Apple calls Liquid Glass. Content scrolls under it.
+
+     Everything that changes between the two states is a length, a color or a
+     filter with the same function list on both sides, so each property
+     interpolates and the morph can be interrupted at any scroll position:
+     a CSS transition re-targets from its current value, which is what the
+     Apple fluid-interfaces rules ask for. Nothing here animates width or
+     max-width; the pill's width comes from its two insets.
+  ------------------------------------------------------------------------- */
+  .nav-shell {
+    --row-h: 4.5rem;
+    --row-px: 1.5rem;
+    --glass-blur: 12px;
+    --glass-saturate: 1;
+    /* One curve for the shell and everything inside it. A custom property
+       rather than `transition-timing-function: inherit`, which reads the
+       parent element: for `.nav-mark` that is the wordmark link, whose
+       value is the initial `ease`, so the mark shrank on a different curve
+       from the box around it. The bezier stands in for browsers without
+       linear(); the spring is set under @supports below. */
+    --nav-ease: cubic-bezier(0.22, 1, 0.36, 1);
+    position: absolute;
+    /* Its own stacking context, so `.nav-glass` can sit at z-index -1:
+       behind the row, still above the page. No filter, opacity or mask on
+       this element, each of which would make it a backdrop root again. */
+    z-index: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    margin-inline: auto;
+    border-radius: 0;
+    transition-property: top, left, right, border-radius;
+    transition-duration: 0.5s;
+    transition-timing-function: var(--nav-ease);
+  }
+
+  /* A critically damped spring (Apple's damping 1.0, response 0.4s),
+     sampled into linear(). No overshoot: nothing threw this bar, it just
+     came away from the edge. Selected with @supports because var() cannot
+     fall back to an earlier declaration: a substitution the browser cannot
+     parse computes to `ease`, not to the bezier. */
+  @supports (transition-timing-function: linear(0, 1)) {
+    .nav-shell {
+      --nav-ease: linear(
+        0 0%, 0.0596 5%, 0.186 10%, 0.3294 15%, 0.4656 20%, 0.584 25%,
+        0.6819 30%, 0.7601 35%, 0.821 40%, 0.8677 45%, 0.9029 50%,
+        0.9292 55%, 0.9487 60%, 0.963 65%, 0.9734 70%, 0.9809 75%,
+        0.9864 80%, 0.9903 85%, 0.9931 90%, 0.9951 95%, 1 100%
+      );
+    }
+  }
+
+  /* The material, on a child of the shell rather than the shell itself: an
+     element with backdrop-filter is the backdrop root for its descendants,
+     so the services dropdown, which hangs below the bar, would otherwise
+     sample the shell's empty surface and its own blur would do nothing
+     (confirmed in Chrome, and Firefox is the same). `inset: 0` and the
+     inherited radius follow the shell through the morph and when it grows
+     to hold the mobile menu. The plain rgba line is the fallback for
+     browsers without color-mix() (Safari before 16.2), where the bar would
+     otherwise have no background at all. */
+  .nav-glass {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    background-color: rgba(255, 255, 255, 0.85);
+    background-color: color-mix(in oklab, var(--color-paper) 85%, transparent);
+    /* Identity brightness() and contrast() keep this list the same length
+       as the island one, so the filter interpolates through the morph
+       instead of jumping; the zero-alpha shadows do the same for
+       box-shadow. */
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(1) contrast(1);
+    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(1) contrast(1);
+    box-shadow:
+      inset 0 -6px 10px -8px rgba(24, 24, 27, 0),
+      0 12px 28px -10px rgba(24, 24, 27, 0),
+      0 30px 64px -24px rgba(24, 24, 27, 0);
+    pointer-events: none;
+    transition-property:
+      background-color, box-shadow, -webkit-backdrop-filter, backdrop-filter;
+    transition-duration: 0.5s;
+    transition-timing-function: var(--nav-ease);
+  }
+
+  /* The lighting, on the pseudo-elements of the glass layer so it paints
+     over the blurred result without opening a new backdrop root. A gradient
+     cannot interpolate, so each layer is fixed and fades in by opacity when
+     the bar detaches. ::before is the body: a gentle vertical drift, lighter
+     at the top and a touch denser at the underside, which is what makes a
+     white slab over a white page read as material rather than paint.
+     ::after is the specular: one wide elliptical glow along the top edge
+     that wraps both end caps by itself. */
+  .nav-glass::before,
+  .nav-glass::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+  }
+
+  .nav-glass::before {
+    background: linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.12) 0%,
+      rgba(255, 255, 255, 0.07) 25%,
+      rgba(255, 255, 255, 0.03) 50%,
+      rgba(255, 255, 255, 0) 72%,
+      rgba(24, 24, 27, 0.035) 100%
+    );
+  }
+
+  .nav-glass::after {
+    background: radial-gradient(
+      115% 130% at 50% -45%,
+      rgba(255, 255, 255, 0.3) 0%,
+      rgba(255, 255, 255, 0.1) 50%,
+      rgba(255, 255, 255, 0) 78%
+    );
+  }
+
+  /* The hairline under the attached bar. A pseudo-element rather than a
+     border so it can fade without changing the box. */
+  .nav-shell::after {
+    content: "";
+    position: absolute;
+    inset: auto 0 0 0;
+    height: 1px;
+    background-color: rgba(24, 24, 27, 0.12);
+    background-color: var(--color-line);
+    opacity: 1;
+    pointer-events: none;
+    transition: opacity 0.3s ease;
+  }
+
+  /* The rim of the glass: a 1px ring drawn with a gradient, bright where
+     light would catch the top edge and darker along the underside, which is
+     what makes the pill read as a slab of material rather than a tinted box.
+     Padding plus a mask that excludes the content box leaves only the ring. */
+  .nav-shell::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    /* Top to bottom, not corner to corner: on a 985x56 pill a 135deg
+       gradient runs almost its whole ramp along the top edge (t from 0 to
+       0.95 as x crosses the bar) and again along the bottom edge 56px
+       later, so both edges read bright, then dark, then bright. Lit from
+       above, the top edge is uniformly bright and the underside uniformly
+       dark, with the end caps sweeping between the two along their curve. */
+    background: linear-gradient(
+      to bottom,
+      rgba(255, 255, 255, 0.72) 0%,
+      rgba(255, 255, 255, 0.44) 30%,
+      rgba(255, 255, 255, 0.2) 55%,
+      rgba(255, 255, 255, 0) 88%,
+      rgba(24, 24, 27, 0.04) 100%
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.35s ease;
+  }
+
+  .nav-shell[data-detached="true"] {
+    --row-h: 3.5rem;
+    --row-px: 1rem;
+    --glass-blur: 22px;
+    --glass-saturate: 1.8;
+    top: 0.625rem;
+    left: max(0.75rem, calc((100% - 74rem) / 2));
+    right: max(0.75rem, calc((100% - 74rem) / 2));
+    /* Half the attached height: a full pill at every height the row passes
+       through, and still a length the transition can interpolate. 9999px
+       passed the clamp (half the box) at 0.4% of the curve, so the corners
+       were fully round on the second frame and never morphed. */
+    border-radius: 2.25rem;
+  }
+
+  /* Brightened and slightly flattened backdrop under 68% paper: smoky grey
+     over the ink sections, milky over the white ones. A faint dark inset
+     band at the underside, and a large, faint, two-layer shadow with no
+     contact line, which is what separates glass from a pill with a drop
+     shadow. Steel labels measure 5.6:1 over the black panel; below a 66%
+     tint they fail. */
+  .nav-shell[data-detached="true"] .nav-glass {
+    background-color: rgba(255, 255, 255, 0.68);
+    background-color: color-mix(in oklab, var(--color-paper) 68%, transparent);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(1.06) contrast(0.9);
+    backdrop-filter: blur(var(--glass-blur)) saturate(var(--glass-saturate)) brightness(1.06) contrast(0.9);
+    box-shadow:
+      inset 0 -6px 10px -8px rgba(24, 24, 27, 0.08),
+      0 12px 28px -10px rgba(24, 24, 27, 0.07),
+      0 30px 64px -24px rgba(24, 24, 27, 0.16);
+  }
+
+  .nav-shell[data-detached="true"]::after {
+    opacity: 0;
+  }
+
+  .nav-shell[data-detached="true"]::before,
+  .nav-shell[data-detached="true"] .nav-glass::before,
+  .nav-shell[data-detached="true"] .nav-glass::after {
+    opacity: 1;
+  }
+
+  /* With the mobile menu open the island grows to hold it; a full pill radius
+     on a tall box would round off the menu's corners into semicircles. */
+  .nav-shell[data-detached="true"][data-open="true"] {
+    border-radius: 1.5rem;
+  }
+
+  /* The specular is sized in percentages of the box, so when the island
+     grows to hold the mobile menu it is pinned to the row strip instead of
+     blooming over the whole menu. */
+  .nav-shell[data-open="true"] .nav-glass::after {
+    background-size: 100% 3.5rem;
+    background-repeat: no-repeat;
+  }
+
+  .nav-row {
+    height: var(--row-h);
+    padding-inline: var(--row-px);
+    transition:
+      height 0.5s var(--nav-ease),
+      padding 0.5s var(--nav-ease);
+  }
+
+  @media (min-width: 64rem) {
+    .nav-shell {
+      --row-px: 2.5rem;
+    }
+    .nav-shell[data-detached="true"] {
+      --row-px: 1.5rem;
+    }
+  }
+
+  .nav-mark {
+    width: 2.5rem;
+    height: 2.5rem;
+    transition:
+      width 0.5s var(--nav-ease),
+      height 0.5s var(--nav-ease);
+  }
+
+  .nav-shell[data-detached="true"] .nav-mark {
+    width: 2.25rem;
+    height: 2.25rem;
+  }
+
+  .nav-mobile {
+    padding-inline: var(--row-px);
+    padding-bottom: 1.5rem;
+    background-color: var(--color-paper);
+    /* The header is sticky and the shell absolute, so a menu taller than
+       the viewport has no way to scroll its tail into view. Cap it at the
+       space below the row, less the island's top inset and a margin, and
+       scroll inside instead. */
+    max-height: calc(100dvh - var(--row-h) - 1.5rem);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+
+  .nav-shell[data-detached="true"] .nav-mobile {
+    background-color: transparent;
+  }
+
+  /* The services dropdown: the same material, one level down. */
+  .glass-panel {
+    position: relative;
+    border: 1px solid rgba(255, 255, 255, 0.7);
+    border-radius: 2px;
+    background-color: color-mix(in oklab, var(--color-paper) 78%, transparent);
+    -webkit-backdrop-filter: blur(22px) saturate(1.8);
+    backdrop-filter: blur(22px) saturate(1.8);
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.6),
+      0 1px 1px rgba(24, 24, 27, 0.05),
+      0 18px 40px -12px rgba(24, 24, 27, 0.22);
+  }
+
+  /* A visitor who asked for less transparency gets a frosted-solid bar; one
+     who asked for more contrast gets a solid bar with a defined edge. Both
+     keep the island geometry, only the material changes. */
+  @media (prefers-reduced-transparency: reduce) {
+    .nav-glass,
+    .nav-shell[data-detached="true"] .nav-glass,
+    .glass-panel {
+      background-color: color-mix(in oklab, var(--color-paper) 97%, transparent);
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+    }
+  }
+
+  /* Both states, not only the island: between 0 and 16px of scroll content
+     would still pass under a translucent bar for a visitor who asked for
+     more contrast. On the full-width bar the ink ring only doubles the
+     hairline. */
+  @media (prefers-contrast: more) {
+    .nav-glass,
+    .nav-shell[data-detached="true"] .nav-glass,
+    .glass-panel {
+      background-color: var(--color-paper);
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+      box-shadow: 0 0 0 1px var(--color-ink);
+    }
+    .nav-shell[data-detached="true"]::before,
+    .nav-shell[data-detached="true"] .nav-glass::before,
+    .nav-shell[data-detached="true"] .nav-glass::after {
+      opacity: 0;
+    }
+  }
+
+  /* No backdrop-filter at all: nothing to blur behind, so go nearly solid. */
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .nav-glass,
+    .nav-shell[data-detached="true"] .nav-glass,
+    .glass-panel {
+      background-color: color-mix(in oklab, var(--color-paper) 97%, transparent);
+    }
+  }
+
   .prose table {
     width: 100%;
     border-collapse: collapse;
