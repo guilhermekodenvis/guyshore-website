@@ -1,6 +1,6 @@
 import { ButtonLink } from "@/components/button-link";
 import { Confetti } from "@/components/confetti";
-import { ArrowUpRight, CheckMark } from "@/components/icons";
+import { ArrowRight, CheckMark } from "@/components/icons";
 import { feasibility } from "@/lib/feasibility";
 
 /**
@@ -47,13 +47,6 @@ export function FeasibilityPanel() {
           <p className="mt-6 max-w-[46ch] text-lead text-paper/80">
             {feasibility.lead}
           </p>
-
-          <p className="mt-8 flex flex-wrap items-baseline gap-x-4 gap-y-1">
-            <span className="font-display text-4xl tracking-[-0.03em] lg:text-5xl">
-              {feasibility.price}
-            </span>
-            <span className="text-paper/70">{feasibility.turnaround}</span>
-          </p>
         </div>
 
         {/* The rule separates the two blocks when they are stacked. From lg
@@ -73,15 +66,10 @@ export function FeasibilityPanel() {
           <ButtonLink
             href={feasibility.cta.href}
             variant="inverse"
-            target="_blank"
-            rel="noreferrer"
             className="mt-10"
           >
             {feasibility.cta.label}
-            {/* The arrow says the link leaves the site to a sighted reader;
-                this says it to everyone else. */}
-            <span className="sr-only">(opens in a new tab)</span>
-            <ArrowUpRight className="size-4 shrink-0" />
+            <ArrowRight className="size-4 shrink-0" />
           </ButtonLink>
         </div>
       </div>

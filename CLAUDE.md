@@ -61,7 +61,7 @@ Turbopack caches aggressively in dev. After renaming an export, stale HMR errors
 - `faq.ts` — home-page FAQ entries.
 - `team.ts` — `founder`, including the LinkedIn URL and the `highlights` rendered under the LinkedIn button. An entry with `value: null` renders as a full-width statement instead of a number.
 - `partners.json` — the partner logos, their links and their 1x box sizes. The only file to edit to add, remove or reorder a partner; `partners.ts` just types it.
-- `feasibility.ts` — the MVP Feasibility Check panel: copy, price, deliverables, and the Stripe payment link. The only place that URL appears.
+- `feasibility.ts` — the MVP Feasibility Check panel: copy, deliverables, and the button, which scrolls to the home contact form.
 - `portfolio.ts` — types and orders the portfolio. The content itself lives in `public/portfolio/<slug>/details.json`; see the Portfolio section.
 - `google-reviews.ts` — the server-side Places API read behind the client reviews section, served to the browser by `src/app/api/google-rating/route.ts`; see Client reviews.
 - `contact.ts` — form shapes and the initial action state.
@@ -117,7 +117,7 @@ Be honest about what `llms.txt` buys: no crawler has publicly committed to readi
 - `/services` (`src/app/services/page.tsx`) lists all seven, one per row. Long descriptions side by side invite comparison rather than reading, which is why it is not a grid.
 - `/services/[slug]` renders hero → direct answer → who this is for → deliverables → process → FAQ → contact, and is statically generated via `generateStaticParams`.
 
-Each detail page emits a `@graph` of **Service + FAQPage + BreadcrumbList**, all derived from the same object the page renders. There is no `offers` node: **services** publish no prices, scope and cost are quoted per project, and markup must not claim what the page does not show. The one exception on the whole site is the MVP Feasibility Check, which publishes `$275` on the home page; the home schema does not describe it yet, so nothing is claimed there either.
+Each detail page emits a `@graph` of **Service + FAQPage + BreadcrumbList**, all derived from the same object the page renders. There is no `offers` node: nothing on the site publishes a price, scope and cost are quoted per project, and markup must not claim what the page does not show. The MVP Feasibility Check showed `$275, delivered in 7 days` until 2026-09-16; that was removed too.
 
 The contact form on a detail page posts `source: "service-<slug>"`, so the automation can tell which page produced a lead.
 
@@ -271,7 +271,7 @@ A healthy submission shows up in the Netlify function log as a ~3s invocation; a
 
 The site's own CTAs all route to the contact form. The hero used to carry a "Book a 1-hour consultation" button that only pointed at `/contact`; it was removed rather than left pretending. The one real booking link is the Calendly for the vibe-coding consulting session (`calendly.com/guilherme-blackelephant/vibe-coding-consulting`), and it appears only inside the blog post that sells that session, not in site chrome.
 
-**The MVP Feasibility Check button points at a Stripe *test* link.** `buy.stripe.com/test_...` accepts Stripe test cards only and charges nobody, so the panel currently sells nothing. Swap `feasibility.cta.href` for the live payment link before the section is published. It is the only place the URL appears.
+**The MVP Feasibility Check takes no payment.** Its button scrolls to the home contact form (`#contact`), and the lead arrives with `source: "home"` like any other, so the automation cannot yet tell a feasibility request apart. The Stripe test link it used before is kept in a comment in `feasibility.ts` in case payment comes back; it would need swapping for a live link first.
 
 **That Calendly event is mis-branded and is a known pending fix.** Its page title is "Vibe coding - consulting - Guilherme Kodenvis", its locale is `pt` and its timezone is `America/Sao_Paulo`. Nothing on it says GuyShore, and it is written for a Portuguese speaker. Any post that is not about vibe coding, and any English-speaking visitor, lands somewhere that does not match the page they came from. Reusing it is a deliberate stopgap: when a properly branded event exists, replace the URL in every `PostCta` that carries it.
 
