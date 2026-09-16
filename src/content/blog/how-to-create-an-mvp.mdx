@@ -1,0 +1,155 @@
+export const meta = {
+  title: "How to Create an MVP?",
+  seoTitle: "How to Create an MVP? Build It Yourself With AI (2026)",
+  description:
+    "You want to build your own software, SaaS or MVP, but don't know where to start. We put together this step-by-step guide to help you with your project.",
+  date: "2026-09-16",
+  author: "Guy Sartori",
+  readingTime: "8 min read",
+  tags: ["MVP", "AI", "Founders"],
+  faq: [
+    {
+      question: "How much does it cost to create an MVP?",
+      answer:
+        "If you build it yourself with an AI coding tool, your starting cost is that tool, $20 to $100 a month as of September 2026, plus a domain name. Supabase, Cloudflare, Netlify and Resend all have free tiers, and costs grow once real users arrive.",
+    },
+    {
+      question: "How can AI be used to create an MVP?",
+      answer:
+        "AI coding tools such as Claude Code, Codex and Cursor turn plain-English instructions into an MVP's blueprint, database, screens and hosting setup, but they build only what you describe. You still set the scope, write the business rules, review the database design and check that no user can see another user's data.",
+    },
+    {
+      question: "Is it cheaper to build an app yourself?",
+      answer:
+        "In cash, yes: you pay for an AI subscription and a domain name. You also pay in time, and you carry the risk if security or payments go wrong. Before the app takes payments or stores sensitive data, have an engineer review it.",
+    },
+  ],
+};
+
+An MVP (minimum viable product) is the simplest version of your product that solves one problem for early users. To create an MVP with AI, choose an AI coding tool, write a blueprint of the core features, structure the database, build the screens, add security and file uploads, host it for free, then improve it with user feedback.
+
+At GuyShore we build MVPs, and these are the tools we would give a founder building alone.
+
+## Step 1: Choose your AI coding tool
+
+The AI writes the code, so its subscription is your main cost.
+
+| Tool | Model | Plan | Monthly price (September 2026) |
+|---|---|---|---|
+| [Claude Code](https://claude.com/pricing) | Opus 5 | Max 5x | $100 |
+| [Codex](https://learn.chatgpt.com/docs/pricing) | GPT-6 Astra | Pro 5x | $100 |
+| [Cursor](https://cursor.com/pricing) | Opus 5, GPT-5.6 Sol and others | Pro+ | $60 |
+
+- **Claude Code** uses Opus 5 as its [default model](https://code.claude.com/docs/en/model-config) on Max 5x. The $20 Pro plan includes it too, with Sonnet 5 and lower limits.
+- **Codex** comes with the $20 Plus plan too, where OpenAI estimates 5 to 45 GPT-6 Astra messages per 5 hours, against 25 to 225 on Pro 5x.
+- **Cursor** is a code editor that bills by usage for models from several companies. It recommends Pro+ for daily use of its AI agent, which its [pricing guide](https://cursor.com/docs/models-and-pricing) puts at $60 to $100 a month in total.
+
+Pick Claude Code or Codex to let the AI drive while you review, or Cursor to see every file. Start on a $20 plan and upgrade when its limits cut your build sessions short.
+
+## Step 2: Create a blueprint of your MVP's core features
+
+The blueprint schedules everything the AI has to build: each module, its features and business rules, in build order. The AI knows only the rules you give it.
+
+Open your tool in an empty project folder and paste:
+
+```text
+Help me write the blueprint for my MVP. Do not write any code yet.
+Product: [who it is for, and the one job it does]
+Users: [each type of user and what they can do]
+Business rules: [every rule, e.g. "free cancellation up to 24h before"]
+Modules: [e.g. sign-up, bookings, payments, admin]
+Stack: Next.js, Supabase, Cloudflare R2 and Turnstile, [Vercel or Netlify]
+
+Ask me your questions a few at a time. Then write BLUEPRINT.md: the
+scope, a "not in version one" list, each module with its features,
+rules and data, and a build schedule in phases with a test for each.
+Phase 1 is the smallest version a real customer can use.
+```
+
+Keep `BLUEPRINT.md`, a plain text file, in the project. Ask the AI to create the file your tool reads each session (`CLAUDE.md` for Claude Code, `AGENTS.md` for Codex and Cursor) with two instructions: read the blueprint before any task, and commit to Git after each working change so you can undo mistakes. When a rule changes, update the blueprint first.
+
+<PostCta
+  title="Rather have the blueprint and costs worked out for you?"
+  body="The MVP Feasibility Check gives you a testable preview of your MVP, a complete blueprint with every deliverable and its deadline, the development cost and expected ROI, and a written analysis of running costs: servers, AI, automations and email."
+  href="https://guyshore.com/#mvp-feasibility-check"
+  label="See the MVP Feasibility Check"
+/>
+
+## Step 3: Structure your database in Supabase
+
+[Supabase](https://supabase.com/pricing) gives you a database, user logins and file storage in one account. As of September 2026 the Free plan includes a 500 MB database, 1 GB of storage and 50,000 monthly active users. It has no backups, and free projects pause after a week of inactivity. Pro starts at $25 a month.
+
+1. Sign up at [supabase.com](https://supabase.com/dashboard/sign-up), create a project, save the database password, and pick the region closest to your users.
+2. Click **Connect** and ask the AI to save the Project URL and publishable key in `.env.local`, a private settings file it keeps out of GitHub.
+3. Before real users sign up, connect an email service through [custom SMTP](https://supabase.com/docs/guides/auth/auth-smtp): Supabase's built-in email reaches only your project team.
+
+Then ask the AI for the tables:
+
+```text
+Read BLUEPRINT.md and design the Supabase database for Phase 1.
+First describe every table, its columns and relations in plain
+English, and wait for my approval. Then write the SQL as a migration,
+with Row Level Security enabled on every table, only the grants each
+role needs, and policies that match the business rules. Create views
+with security_invoker = true and keep the secret key server-side.
+Explain each policy in one sentence.
+```
+
+Review the plain-English version as the business owner, while mistakes are cheap to fix. Then paste the SQL into the Supabase **SQL Editor** and press **Run**.
+
+[Row Level Security](https://supabase.com/docs/guides/database/postgres/row-level-security) (RLS) decides who can read and change each record. Once the tables exist, run the [Security Advisor](https://supabase.com/docs/guides/observability/advisors): the step is done when it flags no table left open to anyone with your project URL.
+
+## Step 4: Build the frontend from a design you like
+
+Paste a screenshot of an interface you like into the chat with this prompt. The AI builds your design system (colors, fonts, spacing and components) from its style, without its logo, name or images.
+
+```text
+Use the attached screenshot for style only. Do not copy its logo,
+name, images or text, and pick free fonts close to its fonts.
+Create my MVP's design system from it (colors, fonts, spacing, radius,
+buttons, inputs, tables, cards) in DESIGN.md, plus a page showing every
+component. Start the app, give me the link, and wait for my approval.
+Then build the Phase 1 screens from BLUEPRINT.md with those components.
+```
+
+Before you approve, check the component page in a full browser window and in one narrowed to phone width. Then build module by module, testing each screen as a customer. Once login works, sign in with two test accounts and confirm neither sees the other's data.
+
+## Step 5: Add security and file uploads with Cloudflare
+
+**Put your domain on Cloudflare.** Add your domain (buy one if needed) to a free Cloudflare account and switch to the nameservers it gives you. Its [proxy](https://developers.cloudflare.com/dns/proxy-status/) adds free [Universal SSL](https://developers.cloudflare.com/ssl/edge-certificates/universal-ssl/) and unmetered [DDoS protection](https://developers.cloudflare.com/ddos-protection/) to a server you run, but [Vercel advises against it](https://vercel.com/kb/guide/cloudflare-with-vercel) and Netlify [cannot issue your certificate](https://docs.netlify.com/manage/domains/troubleshooting-tips/) while it is on. Set records that point to your host to **DNS only**.
+
+**Stop bots on forms.** [Turnstile](https://developers.cloudflare.com/turnstile/plans/) is free for up to 20 widgets as of September 2026, and works without routing your traffic through Cloudflare. Add it to sign-up, login and contact forms. For sign-up and login, paste its secret key into Supabase's [CAPTCHA protection](https://supabase.com/docs/guides/auth/auth-captcha). For other forms, your server checks each visitor's token with the [Siteverify API](https://developers.cloudflare.com/turnstile/get-started/server-side-validation/).
+
+**Store user uploads.** Past Supabase's free 1 GB, use [R2](https://developers.cloudflare.com/r2/pricing/), Cloudflare's file storage. It is free up to 10 GB-month of storage plus a monthly allowance of operations, and downloads (egress) cost nothing. Cloudflare bills usage past that. With [presigned URLs](https://developers.cloudflare.com/r2/api/s3/presigned-urls/), your server checks the user is signed in, then gives the browser a short-lived upload link. Anyone holding it can use it until it expires, so keep the bucket private. Ask the AI to add your domain to the bucket's [CORS](https://developers.cloudflare.com/r2/buckets/cors/) rules, or uploads fail.
+
+**Keep keys out of the frontend.** The Supabase publishable key can sit in browser code, which anyone can read, because RLS guards the data. R2 access keys, the Turnstile secret key and Supabase secret keys belong in server environment variables, never in one whose name starts with `NEXT_PUBLIC_`, which Next.js [sends to the browser](https://nextjs.org/docs/app/guides/environment-variables). Before each deploy, have the AI scan the frontend for secrets. Our guide to [vibe coding security risks](/blog/vibe-coding) covers other ways AI-built apps leak data.
+
+## Step 6: Host your MVP for free on Vercel or Netlify
+
+Create a free [GitHub](https://github.com/pricing) account and ask the AI to push (upload) the project to a private repository. Import it into Vercel or Netlify and paste every variable from `.env.local` into the host's environment variables before the first deploy. The host republishes after each push. Both free plans have a catch, as of September 2026.
+
+**[Vercel Hobby](https://vercel.com/docs/plans/hobby)** is free, but its [fair use guidelines](https://vercel.com/docs/limits/fair-use-guidelines) limit it to non-commercial personal use and count any deployment made for anyone's financial gain, including taking payments or advertising a product. A startup's free beta can count, so budget for Pro, at $20 per developer seat a month, or start on Netlify.
+
+**[Netlify Free](https://www.netlify.com/pricing/)** gives you 300 credits a month as a hard limit, so it never bills you. Each publish to your live site costs 15 credits, so 20 publishes alone use all 300, and when credits run out Netlify [pauses all your sites](https://docs.netlify.com/manage/accounts-and-billing/billing/billing-for-credit-based-plans/how-credits-work/). We found no non-commercial clause in its terms. Test on deploy previews, which cost no credits, and publish in batches. The Personal plan costs $9 a month for 1,000 credits.
+
+Add your domain in the host's dashboard and create the DNS records it lists in Cloudflare. Then watch early users try the beta, and add to the blueprint only what their feedback shows they need.
+
+## Bonus step: Automate reports and emails at zero cost
+
+**Supabase Cron.** A [Cron](https://supabase.com/docs/guides/cron) job calls an Edge Function (server code Supabase hosts) on a schedule to build and send a weekly report or reminder. As of September 2026 the Free plan includes 500,000 of those calls a month, with [2 seconds of CPU](https://supabase.com/docs/guides/functions/limits) each. [Resend](https://resend.com/pricing) sends the email free, up to 3,000 a month and 100 a day. Verify your domain in Resend first, or it [sends only to your own address](https://resend.com/docs/knowledge-base/403-error-resend-dev-domain).
+
+**AWS Lambda.** For heavier jobs like PDFs, [Lambda](https://aws.amazon.com/lambda/pricing/) is always free up to 1 million requests and 400,000 GB-seconds of compute a month, and [EventBridge Scheduler](https://aws.amazon.com/eventbridge/pricing/) triggers it free up to 14 million invocations a month. New [AWS Free plan](https://aws.amazon.com/free/) accounts close after 6 months or when their credits run out, unless you upgrade to the Paid plan, which keeps the always-free limits.
+
+**n8n.** [n8n Cloud](https://n8n.io/pricing/), a visual workflow builder, costs €24 a month billed monthly on Starter, after a 14-day trial. The self-hosted [Community Edition](https://docs.n8n.io/choose-how-to-use-n8n) is free software, but you pay for and maintain its server.
+
+## How to create an MVP for the price of your AI tool
+
+Supabase, Cloudflare, Netlify, Resend and Lambda each have a free tier for building and testing. That leaves one monthly bill to start: your AI tool, at $20 to $100 on the plans in Step 1, plus a domain name paid yearly. You can build real software for roughly that amount.
+
+Free tiers have limits, and you start paying once real users arrive: Supabase Pro for backups, Vercel Pro for a commercial product, a paid email plan past 100 emails a day. Put those numbers in your blueprint before launch.
+
+If the idea hasn't survived real conversations yet, start with [what to do when you have an app idea](/blog/i-have-an-app-idea). If you'd rather hand the build to a team, see our [MVP development](/services/mvp-development) service.
+
+## Frequently asked questions
+
+<PostFaq items={meta.faq} />
