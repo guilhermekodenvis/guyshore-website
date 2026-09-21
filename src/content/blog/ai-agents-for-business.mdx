@@ -1,0 +1,118 @@
+export const meta = {
+  title: "AI Agents for Business: What Agentic AI Can Do for Your Company",
+  seoTitle: "AI Agents for Business: Agentic AI Explained (2026)",
+  description:
+    "What agentic AI is, five jobs AI agents can do for your business, 2026 prices from free to $150,000+, and how to build one safely.",
+  date: "2026-09-21",
+  author: "Guy Sartori",
+  readingTime: "5 min read",
+  tags: ["AI agents", "Agentic AI", "Automation", "AI"],
+  image: "/blog/ai-agents-for-business/og.png",
+  faq: [
+    {
+      question: "Can a small business use AI agents?",
+      answer:
+        "Yes. Start with one narrow task on a tool you already use, such as answering support questions or sorting new leads, and keep a person approving anything that leaves the company.",
+    },
+    {
+      question: "How long does it take to build an AI agent?",
+      answer:
+        "A simple agent on n8n or Zapier can be running within days, depending on how many tools it connects. For custom builds, the agency SoftTeco estimates 4 to 6 weeks for a prototype and 12 to 20 weeks for a complex agent.",
+    },
+    {
+      question: "What is an agentic AI workflow?",
+      answer:
+        "An agentic workflow is a process where an AI agent handles the steps that need judgment and fixed automation handles the rest. Most business agents run this way, inside a tool such as n8n or Zapier, with a person approving the risky steps.",
+    },
+    {
+      question: "What are the best AI agents for business?",
+      answer:
+        "Intercom Fin handles support, Salesforce Agentforce and Microsoft Copilot Studio work inside those products, and n8n or Zapier Agents cover no-code tasks. Start with an agent inside software your team already uses.",
+    },
+  ],
+};
+
+Agentic AI is artificial intelligence that is given a goal and a set of tools and decides its own steps to reach it, such as reading an email, checking your CRM and drafting the reply. An AI agent is one program that works this way. Agents take repetitive work off your team, but they cost money to run and can be tricked, so they need limits. GuyShore builds AI agents for US companies.
+
+## AI agents vs agentic AI: what is the difference?
+
+An AI agent is a single program that works toward a goal with the tools you give it. Agentic AI is the wider approach, where one system can combine several agents. Some people search for it as "AI agentics."
+
+| Type | What it does |
+|---|---|
+| Chatbot or generative AI | Answers questions and writes text |
+| Automation | Runs the same fixed steps every time |
+| AI agent | Chooses its next step and acts through your tools |
+
+Use a plain automation when the steps never change, and add an agent only where a step needs judgment, as [Anthropic advises](https://www.anthropic.com/engineering/building-effective-agents). Watch for "agent washing" too: Gartner [estimated](https://www.gartner.com/en/newsroom/press-releases/2025-06-25-gartner-predicts-over-40-percent-of-agentic-ai-projects-will-be-canceled-by-end-of-2027) in June 2025 that only about 130 of the thousands of agentic AI vendors are real.
+
+## What can AI agents do for your business? 5 examples
+
+Start with weekly work where each case needs a small decision:
+
+- **Customer support:** answer common questions from your help docs and hand the rest to a person.
+- **Lead qualification:** research each new lead, score it and record it in your CRM.
+- **Sales follow-up:** draft the next email for a salesperson to approve.
+- **Invoices:** match them against purchase orders and flag mismatches.
+- **Reporting:** pull numbers from several tools into a weekly summary.
+
+For scale, Intercom's Fin support agent costs [$0.99 per resolution](https://fin.ai/pricing). In a [PwC survey](https://www.pwc.com/us/en/tech-effect/ai-analytics/ai-agent-survey.html) of 300 US executives published in May 2025, 66% of companies adopting agents reported higher productivity and 57% reported cost savings.
+
+## Agentic AI trends in 2026
+
+- **Agents are arriving inside the software you already pay for.** Gartner [predicts](https://www.gartner.com/en/newsroom/press-releases/2025-08-26-gartner-predicts-40-percent-of-enterprise-apps-will-feature-task-specific-ai-agents-by-2026-up-from-less-than-5-percent-in-2025) that 40% of enterprise apps will include task-specific AI agents by the end of 2026, up from under 5% in 2025.
+- **Large companies are pulling ahead.** In McKinsey's [The state of AI in 2026](https://www.mckinsey.com/capabilities/quantumblack/our-insights/the-state-of-ai), 40% of respondents at companies with over $1 billion in revenue are scaling AI agents, up from 27%. At smaller companies the share stayed at 22%.
+- **One standard now connects agents to your tools.** The Model Context Protocol (MCP) links an agent to your CRM, inbox or database, and the Linux Foundation [now hosts it](https://www.linuxfoundation.org/press/linux-foundation-announces-the-formation-of-the-agentic-ai-foundation).
+
+## How much does an AI agent cost?
+
+Prices as of September 2026:
+
+| Option | Typical price | Best for |
+|---|---|---|
+| Buy it inside a product | [$2 per conversation](https://www.salesforce.com/agentforce/pricing/) on Salesforce Agentforce, [$200 a month for 25,000 credits](https://www.microsoft.com/en-us/microsoft-365-copilot/pricing/copilot-studio) on Microsoft Copilot Studio | Tools you already use |
+| Build it with no-code tools | [Free](https://n8n.io/pricing/) on self-hosted n8n, [400 activities a month](https://zapier.com/pricing) free on Zapier Agents | One low-stakes task |
+| Have it custom built | $10,000 to $30,000+ for a rules-based agent, $40,000 to $150,000+ for a goal-based agent that plans its own steps ([SoftTeco estimate](https://softteco.com/blog/ai-agent-development-cost)) | Several systems, customer data or money |
+
+Running it costs extra. AI models bill per million tokens, the chunks of text they read and write: Anthropic charges [$1 in and $5 out](https://claude.com/pricing) for Claude Haiku 4.5. For a small agent, connecting your systems costs more than the tokens, and one estimate puts yearly upkeep at [15% to 30% of the build](https://thinklytics.com/insights/ai-agent-development-cost-2026). Set a spending cap before launch.
+
+## How to create your own AI agent
+
+1. **Pick one narrow task** that happens often and has a clear finish line, such as sorting inbound leads.
+2. **Write down how your team does it today** and collect 20 to 50 real past cases to test against.
+3. **Choose a tool.** The [n8n AI Agent node](https://docs.n8n.io/integrations/builtin/cluster-nodes/root-nodes/n8n-nodes-langchain.agent) and Zapier Agents need no code. Developers can use the [Claude Agent SDK](https://code.claude.com/docs/en/agent-sdk/overview), the [OpenAI Agents SDK](https://openai.github.io/openai-agents-python/) or [LangGraph](https://www.langchain.com/langgraph).
+4. **Connect only the data the task needs**, read-only at first.
+5. **Require approval** for anything that sends, pays or deletes.
+6. **Launch to a small group**, log every action and compare time saved and errors with the old process.
+
+Gartner predicted in June 2025 that over 40% of agentic AI projects would be canceled by the end of 2027 because of rising costs, unclear value or weak risk controls. Starting narrow and measuring the result lowers that risk.
+
+## AI agent security: risks and best practices
+
+Assume someone will try to trick your agent. Hidden instructions in an email, web page or PDF can take it over, an attack called prompt injection. Anthropic [says](https://www.anthropic.com/research/prompt-injection-defenses) no browser agent is immune to it, and OWASP ranks goal hijacking first in its [Top 10 for Agentic Applications](https://genai.owasp.org/resource/owasp-top-10-for-agentic-applications-for-2026/). Six practices limit the damage:
+
+- Give each agent its own login with a named owner, never a shared admin account.
+- Grant the minimum access, read-only by default.
+- Have a person approve sending, paying, deleting and bulk changes.
+- Treat every email, file and web page the agent reads as untrusted.
+- Set spending caps and timeouts, so a runaway loop cannot run up your bill.
+- Log every action and keep an off switch you have tested.
+
+IBM's [2026 Cost of a Data Breach study](https://newsroom.ibm.com/2026-07-29-ibm-study-one-in-four-malicious-breaches-are-ai-enabled,-costing-companies-6-million-on-average) found that one in four malicious breaches were AI-enabled, at an average cost of $6 million.
+
+## Who to hire: an AI agent development company or DIY
+
+Build it yourself when the task lives in one or two tools, the stakes are low and someone on your team knows Zapier or n8n. Hire help when the agent has to reach several systems, handles customer data or money, or needs permissions, logs and approvals. Before you sign, ask the provider to show you a working agent and how it catches failures.
+
+GuyShore is an [AI agent development company](/services/automations-and-integrations) in Lisbon that works with US companies remotely. We find where your team loses time to manual work, connect your systems, add AI agents only where a step needs judgment, and monitor them so a failure does not go unnoticed.
+
+<PostCta
+  title="Need an AI agent for your business?"
+  body="Tell us about one repetitive task, and we will tell you whether an agent, a plain automation or no change at all is the right fix."
+  href="/services/automations-and-integrations#contact"
+  label="Talk to GuyShore"
+/>
+
+## Frequently asked questions
+
+<PostFaq items={meta.faq} />
