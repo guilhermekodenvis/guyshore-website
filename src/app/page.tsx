@@ -43,6 +43,10 @@ export default function HomePage() {
 
       <FeasibilityPanel />
 
+      {/* Client reviews, from the Google Business Profile. Renders nothing
+          until the profile has at least one review and the API key is set. */}
+      <GoogleReviews />
+
       {/* Our services */}
       <section
         id="services"
@@ -50,14 +54,13 @@ export default function HomePage() {
       >
         <p className="eyebrow text-slate">Our services</p>
         <h2 className="mt-5 max-w-[24ch] text-title">
-          MVP &amp; Software Development Company for Non-Technical Founders and
-          Startups.
+          Software that takes work off your team and lets your startup scale.
         </h2>
         <p className="mt-7 max-w-[68ch] text-lead text-steel">
-          We build production software for founders and startups: web apps,
-          SaaS platforms, mobile products and the automations that run behind
-          them. Fixed scope, clear timelines, and full source code ownership
-          from day one.
+          We use serious engineering to take work off companies and help
+          startups scale. Can you say today how much money your company loses
+          every year to human error in its operations? Can you count how many
+          times you wanted a machine to do a job that should be simple?
         </p>
 
         {/* Two per row from md up, one per row below it. `items-stretch` is
@@ -78,13 +81,8 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Client reviews, from the Google Business Profile. Renders nothing
-          until the profile has at least one review and the API key is set. */}
-      <GoogleReviews />
-
-      {/* Portfolio. Its own top border, because it has to separate from
-          whichever section precedes it: the reviews, or the services when
-          the reviews render nothing. */}
+      {/* Portfolio. Its own top border, to separate it from the services
+          above. */}
       <section className="border-t border-[var(--color-line)]">
         <div className="mx-auto max-w-[76rem] px-6 py-24 lg:px-10 lg:py-32">
           <p className="eyebrow text-slate">Portfolio</p>

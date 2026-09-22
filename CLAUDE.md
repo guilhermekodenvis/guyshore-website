@@ -66,7 +66,7 @@ Turbopack caches aggressively in dev. After renaming an export, stale HMR errors
 - `google-reviews.ts` — the server-side Places API read behind the client reviews section, served to the browser by `src/app/api/google-rating/route.ts`; see Client reviews.
 - `contact.ts` — form shapes and the initial action state.
 
-**Home page composition** (`src/app/page.tsx`): hero (owns the first screen alone) → partners → MVP Feasibility Check → our services (four cards, then a centred link to `/services`) → client reviews (renders nothing until there is something real to show) → portfolio (the featured projects, then a link to `/portfolio`) → our method → who we are → FAQ → contact. Each block is either a component in `src/components/` or a section rendered straight from a `src/lib` module.
+**Home page composition** (`src/app/page.tsx`): hero (owns the first screen alone) → partners → MVP Feasibility Check → client reviews (renders nothing until there is something real to show) → our services (four cards, then a centred link to `/services`) → portfolio (the featured projects, then a link to `/portfolio`) → our method → who we are → FAQ → contact. Each block is either a component in `src/components/` or a section rendered straight from a `src/lib` module.
 
 **Blog is MDX compiled by `@next/mdx`.** Posts are `.mdx` files in `src/content/blog/`; the filename is the slug. Each post exports a `meta` object (title, description, date, author, readingTime, tags) alongside its default component — named `meta`, not `metadata`, so it is never confused with the Next.js route-metadata convention.
 
@@ -178,7 +178,7 @@ Two traps:
 
 ## Client reviews
 
-The band under "Our services" shows the company's Google rating, review count and up to five written reviews, live from the Places API (New), with a "See all reviews" button to the Google Maps listing. Four rules shape it; read them before extending it.
+The band under the MVP Feasibility Check shows the company's Google rating, review count and up to five written reviews, live from the Places API (New), with a "See all reviews" button to the Google Maps listing. Four rules shape it; read them before extending it.
 
 - **Nothing from Google may be cached, so nothing is.** The Maps Platform terms (no-caching clause, 3.2.3(b) global and 3.3.2(b) EEA) allow storing only the Place ID indefinitely and coordinates for 30 days. The rating and count cannot be kept for any time, which rules out `revalidate`, ISR and prerendering them into HTML. So `/api/google-rating` fetches with `cache: "no-store"` and answers `Cache-Control: private, no-store`, and `GoogleReviews` is a client component that calls it after load. The home page stays static.
 - **Up to five written reviews, and they are not "the latest".** Places returns at most five, chosen by Google's relevance ranking, with no parameter to ask for the newest. `getGoogleRating` sorts them newest first, which equals the latest five only while the profile has five or fewer. True latest-five needs the Business Profile API, which returns every review and allows storing them for up to 30 days, but needs OAuth as the profile owner, a profile verified for 60+ days and an access application to Google. The section says how reviews are chosen and ordered, because Google requires that notice.
