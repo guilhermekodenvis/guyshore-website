@@ -48,8 +48,8 @@ export function Hero() {
         <p
           className={`animate-rise-in order-3 mx-auto ${BLOCK} text-lead text-steel lg:order-none lg:col-start-3 lg:row-start-1 lg:mr-0 lg:ml-auto lg:self-center`}
         >
-          Web apps, SaaS platforms, mobile products or automations built from
-          scratch to production-ready software.
+          You may be missing the opportunity of the century if you do not
+          start investing in technology now.
         </p>
       </div>
 

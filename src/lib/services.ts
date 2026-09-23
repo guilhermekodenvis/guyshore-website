@@ -34,7 +34,7 @@ export const services: ServiceItem[] = [
     title: "MVP Development",
     onHome: true,
     description:
-      "If you are a startup or a non-technical founder and you need to test the market fit of your billion-dollar idea, we can help. We handle everything from scratch to deploy. You explain your idea end to end, we design your product and deliver it working on schedule, so you can launch and start testing as early as possible.",
+      "Perfect for startups getting ready to scale. Get software or an app that is secure. Give your customers the best experience, in both technology and design. Have a team of skilled engineers ready to handle new needs as they come up.",
     eyebrow: "MVP Development",
     h1: "MVP development that reaches real users.",
     lead: "We take your idea from a conversation to a product in production, built so the first version can be tested by real customers instead of demoed to a room.",
