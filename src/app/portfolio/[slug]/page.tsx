@@ -238,7 +238,7 @@ export default async function PortfolioItemPage({ params }: Params) {
         </section>
       ) : null}
 
-      <section className="on-ink bg-ink text-paper">
+      <section className="on-ink bg-ink text-paper" data-nav-tone="dark">
         <div className="mx-auto flex max-w-[76rem] flex-wrap items-end justify-between gap-10 px-6 py-20 lg:px-10 lg:py-24">
           <div>
             <p className="eyebrow text-paper/70">Your project</p>

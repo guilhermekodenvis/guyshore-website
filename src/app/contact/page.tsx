@@ -17,7 +17,10 @@ export default function ContactPage() {
         decorative fill below:
           <Image src="/contact-banner.jpg" alt="" fill className="object-cover" priority />
       */}
-      <div className="relative h-[400px] w-full overflow-hidden bg-ink">
+      <div
+        className="relative h-[400px] w-full overflow-hidden bg-ink"
+        data-nav-tone="dark"
+      >
         <div
           aria-hidden
           className="absolute inset-0"

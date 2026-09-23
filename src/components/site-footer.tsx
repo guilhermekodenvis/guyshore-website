@@ -6,7 +6,7 @@ import { legalNav, nav, site } from "@/lib/site";
 
 export function SiteFooter() {
   return (
-    <footer className="mt-auto bg-ink text-paper">
+    <footer className="mt-auto bg-ink text-paper" data-nav-tone="dark">
       <div className="mx-auto max-w-[76rem] px-6 py-16 lg:px-10 lg:py-20">
         <div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr]">
           <div>

@@ -3,8 +3,15 @@
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState, useSyncExternalStore } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { ArrowRight, ChevronDown } from "@/components/icons";
+import { NavLens } from "@/components/nav-lens";
+import {
+  getServerSnapshot as getToneServerSnapshot,
+  getSnapshot as getToneSnapshot,
+  scheduleNavToneUpdate,
+  subscribe as subscribeTone,
+} from "@/lib/nav-tone";
 import {
   getServerSnapshot,
   getSnapshot,
@@ -15,6 +22,7 @@ import { nav, site } from "@/lib/site";
 
 export function SiteHeader() {
   const pathname = usePathname();
+  const shell = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
   const detached = useSyncExternalStore(
@@ -22,6 +30,18 @@ export function SiteHeader() {
     getSnapshot,
     getServerSnapshot,
   );
+  const tone = useSyncExternalStore(
+    subscribeTone,
+    getToneSnapshot,
+    getToneServerSnapshot,
+  );
+
+  // A client-side navigation swaps the page under the header without a
+  // scroll event, so the dark sections have to be measured again. The
+  // store does the measuring; this only asks for it.
+  useEffect(() => {
+    scheduleNavToneUpdate();
+  }, [pathname]);
 
   const closeMenu = () => {
     setOpen(false);
@@ -37,10 +57,15 @@ export function SiteHeader() {
        transparent and lets pointer events through, otherwise the empty space
        around the island would swallow clicks on the content beneath it. */
     <header className="pointer-events-none sticky top-0 z-50 h-[4.5rem]">
+      {/* `group` is what the tone variants below hang off. With the mobile
+          menu open the island is a tall panel of chrome, so it stays light
+          whatever is behind it. */}
       <div
-        className="nav-shell pointer-events-auto"
+        ref={shell}
+        className="group nav-shell pointer-events-auto"
         data-detached={detached}
         data-open={open}
+        data-tone={open ? "light" : tone}
       >
         {/* The material lives on a child, not on the shell: an element with
             backdrop-filter is the backdrop root for everything inside it, so
@@ -48,6 +73,10 @@ export function SiteHeader() {
             shell's own surface instead of the page and its blur would do
             nothing (`.nav-glass` in globals.css). */}
         <div className="nav-glass" aria-hidden="true" />
+        {/* The sheens and the dark ring live on this layer's pseudo-elements
+            so the glass layer keeps one job (see globals.css). */}
+        <div className="nav-sheen" aria-hidden="true" />
+        <NavLens shell={shell} />
         <div className="nav-row mx-auto flex max-w-[76rem] items-center justify-between">
           {/* Wordmark and links share the left; the call to action stands alone
               on the right. */}
@@ -59,9 +88,9 @@ export function SiteHeader() {
                 width={40}
                 height={40}
                 priority
-                className="nav-mark shrink-0"
+                className="nav-mark shrink-0 transition-[filter] duration-300 group-data-[tone=dark]:brightness-0 group-data-[tone=dark]:invert"
               />
-              <span className="font-display text-xl font-bold tracking-[-0.03em] lowercase">
+              <span className="font-display text-xl font-bold tracking-[-0.03em] lowercase transition-colors duration-300 group-data-[tone=dark]:text-paper">
                 {site.wordmark}
               </span>
             </Link>
@@ -81,14 +110,16 @@ export function SiteHeader() {
                   type="button"
                   aria-expanded={servicesOpen}
                   onClick={() => setServicesOpen((value) => !value)}
-                  className={`eyebrow flex items-center gap-1.5 transition-colors hover:text-ink ${
-                    servicesActive ? "text-ink" : "text-steel"
+                  className={`eyebrow flex items-center gap-1.5 transition-colors hover:text-ink group-data-[tone=dark]:hover:text-paper ${
+                    servicesActive
+                      ? "text-ink group-data-[tone=dark]:text-paper"
+                      : "text-steel group-data-[detached=true]:text-ink group-data-[tone=dark]:text-paper/80"
                   }`}
                 >
                   <span
                     className={
                       servicesActive
-                        ? "border-b-2 border-ink pb-1"
+                        ? "border-b-2 border-ink pb-1 group-data-[tone=dark]:border-paper"
                         : "border-b-2 border-transparent pb-1"
                     }
                   >
@@ -142,14 +173,16 @@ export function SiteHeader() {
                   <Link
                     key={item.href}
                     href={item.href}
-                    className={`eyebrow flex items-center transition-colors hover:text-ink ${
-                      active ? "text-ink" : "text-steel"
+                    className={`eyebrow flex items-center transition-colors hover:text-ink group-data-[tone=dark]:hover:text-paper ${
+                      active
+                        ? "text-ink group-data-[tone=dark]:text-paper"
+                        : "text-steel group-data-[detached=true]:text-ink group-data-[tone=dark]:text-paper/80"
                     }`}
                   >
                     <span
                       className={
                         active
-                          ? "border-b-2 border-ink pb-1"
+                          ? "border-b-2 border-ink pb-1 group-data-[tone=dark]:border-paper"
                           : "border-b-2 border-transparent pb-1"
                       }
                     >
@@ -166,7 +199,7 @@ export function SiteHeader() {
               1.76:1 over an ink section. Ink clears 3:1 in both states. */}
           <Link
             href="/contact"
-            className="hidden rounded-full bg-ink px-5 py-2 font-body text-sm font-semibold text-paper transition-colors hover:bg-steel focus-visible:outline-ink md:inline-flex"
+            className="hidden rounded-full bg-ink px-5 py-2 font-body text-sm font-semibold text-paper transition-colors hover:bg-steel focus-visible:outline-ink group-data-[tone=dark]:bg-paper group-data-[tone=dark]:text-ink group-data-[tone=dark]:hover:bg-mist group-data-[tone=dark]:focus-visible:outline-paper md:inline-flex"
           >
             Contact us
           </Link>
@@ -179,7 +212,7 @@ export function SiteHeader() {
             onClick={() => setOpen((value) => !value)}
             aria-expanded={open}
             aria-controls="mobile-nav"
-            className="eyebrow -mr-3 flex min-h-11 items-center px-3 text-steel md:hidden"
+            className="eyebrow -mr-3 flex min-h-11 items-center px-3 text-steel transition-colors group-data-[detached=true]:text-ink group-data-[tone=dark]:text-paper/80 md:hidden"
           >
             {open ? "Close" : "Menu"}
           </button>

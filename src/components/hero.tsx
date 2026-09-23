@@ -33,6 +33,9 @@ export function Hero() {
             height={320}
             priority
             className="w-[clamp(10rem,20vw,17rem)] drop-shadow-[0_18px_40px_rgba(0,0,0,0.18)]"
+            /* A line drawing on transparent: the header island stays clear glass
+               over it (see nav-tone.ts). */
+            data-nav-luma="light"
           />
         </div>
 

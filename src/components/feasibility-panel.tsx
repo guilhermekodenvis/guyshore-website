@@ -35,6 +35,7 @@ export function FeasibilityPanel() {
     <section
       id={feasibility.id}
       className="on-ink relative flex min-h-[100dvh] items-center overflow-hidden bg-ink text-paper"
+      data-nav-tone="dark"
     >
       <Confetti />
 

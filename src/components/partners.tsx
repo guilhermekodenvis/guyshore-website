@@ -31,6 +31,7 @@ export function Partners() {
                   alt={partner.name}
                   width={partner.width}
                   height={partner.height}
+                  data-nav-luma="light"
                 />
                 <span className="sr-only">(opens in a new tab)</span>
               </a>
