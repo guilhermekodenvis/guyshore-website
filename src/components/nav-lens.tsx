@@ -43,7 +43,7 @@ export const NAV_LENS_ID = "nav-lens";
    straight edges; STRENGTH the peak displacement; EDGE_MIN the share kept on
    the straight edges; DIRECTION -1 samples inward (a thick glass edge;
    outward reads transparent under backdrop-filter). PRE is the settle blur,
-   BLUR the island's total frost, BLUR_ATTACHED the attached bar's blur(12px)
+   BLUR the island's total blur (clear glass), BLUR_ATTACHED the attached bar's blur(12px)
    the filter must match on entry. Kept in sync with globals.css. */
 const BAND = 18;
 const BAND_EDGE = 12;
@@ -51,7 +51,7 @@ const STRENGTH = 22;
 const EDGE_MIN = 0.7;
 const DIRECTION = -1;
 const PRE = 3;
-const BLUR = 11;
+const BLUR = 4;
 const BLUR_ATTACHED = 12;
 const DURATION = 500;
 const DPR = 2;

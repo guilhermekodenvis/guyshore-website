@@ -485,14 +485,16 @@
     border-radius: 2.25rem;
   }
 
-  /* The island, light tone. This plain blur is the whole material for
-     Safari and Firefox, which never get the lens. The inset shadow is a
-     touch of edge density so the ring reads over white too. */
+  /* The island, light tone: clear glass. The page stays sharp under it
+     (a 4px blur only takes the edge off) and the rim does the work of
+     saying "glass". This plain blur is the whole material for Safari and
+     Firefox, which never get the lens. The inset shadow is a touch of edge
+     density so the ring reads over white too. */
   .nav-shell[data-detached="true"] .nav-glass {
-    background-color: rgba(255, 255, 255, 0.2);
-    background-color: color-mix(in oklab, var(--color-paper) 20%, transparent);
-    -webkit-backdrop-filter: blur(11px) saturate(1.2) brightness(1.03);
-    backdrop-filter: blur(11px) saturate(1.2) brightness(1.03);
+    background-color: rgba(255, 255, 255, 0.14);
+    background-color: color-mix(in oklab, var(--color-paper) 14%, transparent);
+    -webkit-backdrop-filter: blur(4px) saturate(1.2) brightness(1.03);
+    backdrop-filter: blur(4px) saturate(1.2) brightness(1.03);
     box-shadow:
       inset 0 0 8px -2px rgba(24, 24, 27, 0.12),
       0 8px 24px -10px rgba(24, 24, 27, 0.18),
@@ -538,9 +540,9 @@
       0 24px 48px -24px rgba(0, 0, 0, 0.4);
   }
 
-  /* The mixed tone: something dark, or an image, under part of the island.
-     The same light glass with a milky tint, so ink labels read over
-     anything; still translucent, still the same ring and sheen. */
+  /* The mixed tone: something dark, an image or a large heading under part
+     of the island. The same light glass with a milky tint, so ink labels
+     read over anything; still translucent, still the same ring and sheen. */
   .nav-shell[data-detached="true"][data-tone="mixed"] .nav-glass {
     background-color: rgba(255, 255, 255, 0.62);
     background-color: color-mix(in oklab, var(--color-paper) 62%, transparent);
