@@ -8,6 +8,7 @@ import { FaqList } from "@/components/faq-list";
 import { FeasibilityPanel } from "@/components/feasibility-panel";
 import { GoogleReviews } from "@/components/google-reviews";
 import { Hero } from "@/components/hero";
+import { LatestPosts } from "@/components/latest-posts";
 import { Partners } from "@/components/partners";
 import { PortfolioCard } from "@/components/portfolio-card";
 import { ServiceCard } from "@/components/service-card";
@@ -219,6 +220,9 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Latest posts: the three newest, then a link to the blog index. */}
+      <LatestPosts />
 
       {/* FAQ */}
       <section className="border-t border-[var(--color-line)] bg-mist">

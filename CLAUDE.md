@@ -66,7 +66,7 @@ Turbopack caches aggressively in dev. After renaming an export, stale HMR errors
 - `google-reviews.ts` — the server-side Places API read behind the client reviews section, served to the browser by `src/app/api/google-rating/route.ts`; see Client reviews.
 - `contact.ts` — form shapes and the initial action state.
 
-**Home page composition** (`src/app/page.tsx`): hero (owns the first screen alone) → partners → MVP Feasibility Check → client reviews (renders nothing until there is something real to show) → our services (four cards, then a centred link to `/services`) → portfolio (the featured projects, then a link to `/portfolio`) → our method → who we are → FAQ → contact. Each block is either a component in `src/components/` or a section rendered straight from a `src/lib` module.
+**Home page composition** (`src/app/page.tsx`): hero (owns the first screen alone) → partners → MVP Feasibility Check → client reviews (renders nothing until there is something real to show) → our services (four cards, then a centred link to `/services`) → portfolio (the featured projects, then a link to `/portfolio`) → our method → who we are → latest posts (`LatestPosts`, the three newest from `getAllPosts`, then a link to `/blog`; renders nothing while there are none) → FAQ → contact. Each block is either a component in `src/components/` or a section rendered straight from a `src/lib` module.
 
 **Blog is MDX compiled by `@next/mdx`.** Posts are `.mdx` files in `src/content/blog/`; the filename is the slug. Each post exports a `meta` object (title, description, date, author, readingTime, tags) alongside its default component — named `meta`, not `metadata`, so it is never confused with the Next.js route-metadata convention.
 
