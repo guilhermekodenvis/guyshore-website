@@ -1,0 +1,154 @@
+export const meta = {
+  title: "What Are Agent Skills? Turn Repeated AI Prompts Into Workflows",
+  seoTitle: "What Are Agent Skills? Examples for Business",
+  description: "Learn what Agent Skills are, how they differ from prompts and MCP, and how businesses can use them to make repetitive AI work more consistent.",
+  date: "2026-11-05",
+  author: "Guy Sartori",
+  readingTime: "7 min read",
+  tags: ["Agent Skills", "AI", "Automation", "Business workflows"],
+  faq: [
+    {
+      question: "Do Agent Skills train the AI model?",
+      answer: "No. A skill supplies instructions and supporting resources when the agent performs a task. It does not change the model's trained weights or guarantee that the agent will follow every instruction correctly.",
+    },
+    {
+      question: "Do you need to code to create an Agent Skill?",
+      answer: "A basic skill can be written in plain language in a SKILL.md file. Scripts are optional. Connecting business systems, enforcing permissions and running tasks unattended may still require technical work.",
+    },
+    {
+      question: "Are Agent Skills the same as AI agents?",
+      answer: "No. An agent is the system that performs work using a model and tools. A skill is a reusable set of instructions and resources that the agent can load for a particular task.",
+    },
+    {
+      question: "Can you reuse a skill across different AI tools?",
+      answer: "The open format supports reuse across compatible tools, but the environment still matters. A skill that depends on a particular connector, script runtime or file tool needs those capabilities in its new host. Test it again after moving it.",
+    },
+  ],
+};
+
+You ask an AI to prepare a client proposal. Then you explain your services, preferred structure, writing style and pricing rules. Next week, you explain them again.
+
+**Agent Skills package instructions, examples and supporting files so a compatible AI agent can reuse them when a task calls for them.** They give the agent a documented way to approach the work. They do not train a new model or guarantee a correct result.
+
+For a business owner, the interesting question is simple: which parts of your team's knowledge could become a reusable procedure instead of another long prompt?
+
+## What are Agent Skills?
+
+An Agent Skill is a folder with a `SKILL.md` file describing a task and how to perform it. It can also contain templates, reference documents and scripts. The [open format's documentation](https://agentskills.io/home) describes how an agent discovers a skill from its name and description, then loads the full instructions when needed.
+
+Think of a proposal skill containing your approved proposal structure, a service catalog and instructions for handling missing information. The client notes change with each request. The procedure stays available for reuse.
+
+The practical benefit is having one place to maintain that procedure. When your proposal structure changes, update the skill and its references rather than hunting through old conversations for the best prompt.
+
+## Why are Agent Skills getting attention?
+
+There is a recent development behind the interest. On October 22, 2026, Anthropic [announced the donation of Agent Skills to the Agentic AI Foundation](https://www.anthropic.com/news/donating-agent-skills-to-the-agentic-ai-foundation), under the Linux Foundation. It reported that more than 70 agent platforms had integrated the standard.
+
+Skills themselves are older. Anthropic [introduced them in October 2025](https://www.anthropic.com/research/equipping-agents-for-the-real-world-with-agent-skills) and published the open standard that December. The October 2026 announcement concerns governance and continued interoperability, not the invention of a new feature.
+
+Those adoption figures come from Anthropic. They show ecosystem activity, not proof that a skill will save your company money. That takes a test against your own work.
+
+For teams already experimenting with [AI agents for business](/blog/ai-agents-for-business), skills offer a concrete next step: document how a recurring job should be done, then measure whether the agent does it better with those instructions.
+
+## Agent Skills vs. prompts vs. MCP: what is the difference?
+
+These terms describe different parts of a working setup.
+
+| Component | What it contributes | Proposal example |
+|---|---|---|
+| Prompt | The request for this particular task | "Draft a proposal from these discovery notes." |
+| Agent Skill | A reusable procedure and supporting resources | Follow the approved structure and flag missing requirements. |
+| MCP connection | A standard way to access external tools or data | Read an authorized client record from the CRM. |
+| Automation | A configured trigger and sequence of actions | Create a review task when a proposal draft is ready. |
+
+The [Model Context Protocol](https://modelcontextprotocol.io/docs/getting-started/intro), or MCP, standardizes connections between AI applications and external systems. A skill can describe how to use an available connection, but writing that instruction does not create the connection or grant access.
+
+A saved prompt may be enough for a short task you perform occasionally. A skill becomes useful when the procedure needs several reference files, has exceptions to handle or should be maintained across a team.
+
+## Five Agent Skills examples for small businesses
+
+These are illustrative workflows, not claims about client results. Each starts with supplied information and ends with a draft a person can review.
+
+| Task | What goes in | What the skill defines | What a person checks |
+|---|---|---|---|
+| Client proposals | Discovery notes and approved service details | Sections, scope boundaries and missing-information rules | Prices, commitments and delivery dates |
+| Weekly reports | A dated export of business metrics | Definitions, comparisons and report structure | Calculations and explanations for changes |
+| Support replies | A customer question and current policy | Tone, relevant policy and escalation conditions | Exceptions and promises to customers |
+| Meeting follow-ups | Meeting notes or a transcript | Action-item format and rules for unknown owners | Who agreed to do what and by when |
+| Marketing reviews | A draft and a brand guide | Terminology, voice and claims to flag | Accuracy, evidence and final wording |
+
+Choose a task with a recognizable good answer. If two people on your team cannot agree on what the output should contain, writing down the process is the first job.
+
+## A practical example: from meeting notes to a proposal draft
+
+Imagine a small agency receives discovery notes for a booking website. The notes mention appointment reminders and online payments, but do not specify the payment provider or cancellation rules.
+
+A useful proposal skill should expose those gaps. A polished proposal that silently invents the answers creates more work later.
+
+Here is a starting instruction template for that workflow. It is the procedure you would place inside a skill, not a complete installation package:
+
+```text
+Task: Prepare a proposal draft from supplied discovery notes.
+
+Inputs:
+- Discovery notes
+- Approved service catalog
+- Approved proposal template
+- Pricing and delivery details, if explicitly provided
+
+Procedure:
+1. Identify the client's stated problem and desired outcome.
+2. Separate confirmed requirements from assumptions.
+3. Map confirmed requirements to the service catalog.
+4. Draft: Summary, Scope, Deliverables, Exclusions,
+   Open Questions and Next Steps.
+5. Mark missing information as "Needs confirmation."
+6. Do not invent prices, deadlines or client commitments.
+7. Return the draft and a separate reviewer checklist.
+
+Keep the result as a draft. Do not send it to the client.
+```
+
+For the booking website, the reviewer checklist should ask about the payment provider and cancellation policy. It should not quietly choose either one.
+
+Add one approved sample proposal as a reference. Remove confidential client details before sharing the skill with other users. Keep the service catalog dated so a reviewer can see whether the draft used current information.
+
+Then try the procedure on five past projects, including one with contradictory notes and one with incomplete information. This is a suggested starting test, not a statistical benchmark. Count unsupported promises, missed questions and the minutes needed to reach an acceptable draft. Compare those results with your current approach.
+
+If the output looks better but takes longer to correct, revise the procedure before expanding it.
+
+## When is a skill enough, and when do you need automation?
+
+A skill can be enough when you start the task yourself, supply the inputs and review the result. Drafting a proposal from uploaded notes is a good example.
+
+You need more infrastructure when the process must run every Monday, retrieve records from several systems, update a CRM or send an email. That requires triggers, connections, permissions, error handling and a way to see what happened.
+
+For example, a weekly reporting process might collect data on a schedule, validate the totals, ask an agent to draft a commentary using a skill, and place the result in a review queue. The skill handles the writing procedure. The surrounding workflow handles execution and delivery.
+
+This is where [automations and integrations](/services/automations-and-integrations) become relevant. Start by mapping the complete process, including failures, rather than assuming a longer instruction file will run the business process for you.
+
+If you are still validating a product idea, the same discipline applies to [creating an MVP with AI](/blog/how-to-create-an-mvp): define the rules before asking the tool to build around them.
+
+## What can go wrong with Agent Skills?
+
+**Old instructions can produce convincing, outdated work.** Give each business skill an owner. Review it when the underlying process, policy or service changes.
+
+**A skill can depend on tools the agent does not have.** Check the destination environment before sharing it. A portable file format does not make every integration portable.
+
+**Downloaded skills can include executable code.** Anthropic's [engineering guide](https://www.anthropic.com/research/equipping-agents-for-the-real-world-with-agent-skills) advises using trusted sources and auditing unfamiliar skills. Review scripts and external connections before giving them access to business data.
+
+**Instructions are not an access-control system.** A sentence saying "do not send" is useful guidance, but a production workflow should enforce that boundary through tool permissions or an approval step. Give a drafting agent only the access its task requires.
+
+**The agent can still misunderstand the task.** Keep examples of failures and rerun them after changing the skill. Measure the finished result, including review time, rather than counting how many skills your team installed.
+
+## Frequently asked questions
+
+<PostFaq items={meta.faq} />
+
+## What task are you tired of explaining to AI?
+
+The best first candidate is a task you repeat often, with inputs you can identify and an output you know how to check. Write down the procedure, test it on past work and keep the parts that improve the result.
+
+Send me one example of a repetitive task, the tools you use, and what a good result looks like. I can help you work out whether an Agent Skill, an automation, or a custom integration is the right fit.
+
+**[Email Guy at guysartori96@gmail.com](mailto:guysartori96@gmail.com?subject=Agent%20Skills%20for%20my%20business).**
