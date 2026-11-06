@@ -15,5 +15,5 @@ export const feasibility = {
  "Recommendations on what to connect, automate or keep under human review",
  "A written action plan with a recommended first workflow and next steps",
  ],
- cta: { label: "Request my €50 consultation", href: "#contact" },
+ cta: { label: "Request my consultation", href: "https://calendly.com/guysartori96/30min" },
 } as const;
