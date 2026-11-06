@@ -21,7 +21,7 @@ export async function LatestPosts() {
       <div className="mx-auto max-w-[76rem] px-6 py-24 lg:px-10 lg:py-32">
         <p className="eyebrow text-slate">Blog</p>
         <h2 className="mt-5 max-w-[22ch] text-title">
-          Plain-English guides for founders who build software.
+          Practical guides to AI, automation and building software.
         </h2>
         <p className="mt-7 max-w-[64ch] text-lead text-steel">
           What an MVP costs, where to start with an app idea, what AI agents

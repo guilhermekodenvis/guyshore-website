@@ -1,3 +1,5 @@
+import { home } from "@/lib/home";
+import { feasibility } from "@/lib/feasibility";
 import { faq } from "@/lib/faq";
 import { homeServices } from "@/lib/services";
 import { site } from "@/lib/site";
@@ -8,9 +10,7 @@ const ORIGIN = "https://guyshore.com";
  * The search-facing name for each card, keyed by slug. The cards use short
  * titles ("App Development"); search wants the unambiguous phrasing.
  *
- * No `offers` node anywhere: the page stopped publishing prices, and a price
- * in the markup that a visitor cannot see on the page is exactly what Google's
- * structured-data guidelines call out.
+ * The consultation Offer matches the visible price on the home page.
  */
 const SEARCH_NAMES: Record<string, string> = {
   "mvp-development": "MVP Development",
@@ -54,8 +54,7 @@ export const homeSchema = {
       email: site.email,
       telephone: site.phone.e164,
       logo: `${ORIGIN}/og-image.png`,
-      description:
-        "GuyShore is an MVP and custom software development company for non-technical founders and startups. We build web apps, SaaS platforms, and mobile products from scratch, and take stalled AI-generated prototypes to production.",
+      description: home.about,
       founder: {
         "@type": "Person",
         name: "Guy Sartori",
@@ -72,6 +71,9 @@ export const homeSchema = {
       },
       areaServed: { "@type": "Country", name: "United States" },
       knowsAbout: [
+        "Small business automation",
+        "Workflow automation",
+        "Business systems integration",
         "MVP development",
         "custom software development",
         "mobile app development",
@@ -91,6 +93,15 @@ export const homeSchema = {
       inLanguage: "en-US",
     },
     ...serviceGraph,
+    {
+      "@type": "Service",
+      "@id": ORIGIN + "/#automation-consultation",
+      name: feasibility.eyebrow,
+      description: feasibility.lead,
+      provider: { "@id": ORIGIN + "/#organization" },
+      url: ORIGIN + "/#" + feasibility.id,
+      offers: { "@type": "Offer", price: feasibility.price, priceCurrency: feasibility.currency, url: ORIGIN + "/#" + feasibility.id, description: feasibility.priceNote },
+    },
     {
       "@type": "FAQPage",
       "@id": `${ORIGIN}/#faq`,

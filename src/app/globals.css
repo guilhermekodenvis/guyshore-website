@@ -486,15 +486,15 @@
   }
 
   /* The island, light tone: clear glass. The page stays sharp under it
-     (a 4px blur only takes the edge off) and the rim does the work of
+     (a 2px blur barely softens it) and the rim does the work of
      saying "glass". This plain blur is the whole material for Safari and
      Firefox, which never get the lens. The inset shadow is a touch of edge
      density so the ring reads over white too. */
   .nav-shell[data-detached="true"] .nav-glass {
     background-color: rgba(255, 255, 255, 0.14);
     background-color: color-mix(in oklab, var(--color-paper) 14%, transparent);
-    -webkit-backdrop-filter: blur(4px) saturate(1.2) brightness(1.03);
-    backdrop-filter: blur(4px) saturate(1.2) brightness(1.03);
+    -webkit-backdrop-filter: blur(2px) saturate(1.2) brightness(1.03);
+    backdrop-filter: blur(2px) saturate(1.2) brightness(1.03);
     box-shadow:
       inset 0 0 8px -2px rgba(24, 24, 27, 0.12),
       0 8px 24px -10px rgba(24, 24, 27, 0.18),
@@ -690,6 +690,164 @@
       background-color: color-mix(in oklab, var(--color-paper) 97%, transparent);
     }
     .nav-shell[data-detached="true"][data-tone="dark"] .nav-glass {
+      background-color: color-mix(in oklab, var(--color-ink) 97%, transparent);
+    }
+  }
+
+  /* -------------------------------------------------------------------------
+     The cookie banner, in the island's material (consent-banner.tsx).
+
+     A card of text cannot sit on clear glass the way six labels can: a
+     heading or the ink footer under it would fight the paragraph. So this
+     is Apple's thicker glass, the one its alerts use: the same ring, sheen
+     and float shadow as the island, a lit top edge, and a body tinted and
+     blurred enough to carry a paragraph over anything. On Chromium desktop
+     the rim still bends the page (glass-card-lens.tsx).
+
+     The same rules as the island: the material lives on `.consent-surface`,
+     a child, and nothing on `.consent-glass` may make it a backdrop root
+     (no opacity, filter, mask). --consent-blur is read by the lens script
+     too, so the fallback blur and the lens cannot drift apart.
+  ------------------------------------------------------------------------- */
+  .consent-glass {
+    --consent-blur: 16px;
+    --consent-tint: 74%;
+    border-radius: 1.75rem;
+  }
+
+  .consent-surface {
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    border-radius: inherit;
+    pointer-events: none;
+    background-color: rgba(255, 255, 255, 0.74);
+    background-color: color-mix(in oklab, var(--color-paper) var(--consent-tint), transparent);
+    -webkit-backdrop-filter: blur(var(--consent-blur)) saturate(1.6) brightness(1.03);
+    backdrop-filter: blur(var(--consent-blur)) saturate(1.6) brightness(1.03);
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.6),
+      inset 0 0 8px -2px rgba(24, 24, 27, 0.12),
+      0 8px 24px -10px rgba(24, 24, 27, 0.18),
+      0 24px 48px -24px rgba(24, 24, 27, 0.14);
+    transition-property: background-color, box-shadow;
+    transition-duration: 0.5s;
+    transition-timing-function: cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* Over an ink section: the island's dark tone, smoky glass lifted a
+     little above the ink so the card still reads as a surface, one dim
+     ring, dark float shadow. The text flips to paper in consent-banner.tsx. */
+  .consent-glass[data-tone="dark"] .consent-surface {
+    background-color: rgba(255, 255, 255, 0.1);
+    background-color: color-mix(in oklab, var(--color-paper) 10%, transparent);
+    box-shadow:
+      inset 0 1px 0 0 rgba(255, 255, 255, 0.14),
+      inset 0 0 8px -2px rgba(255, 255, 255, 0.06),
+      0 8px 24px -10px rgba(0, 0, 0, 0.45),
+      0 24px 48px -24px rgba(0, 0, 0, 0.4);
+  }
+
+  .consent-glass::before,
+  .consent-surface::after {
+    transition: opacity 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  .consent-glass[data-tone="dark"]::before {
+    opacity: 0.45;
+  }
+
+  .consent-glass[data-tone="dark"] .consent-surface::after {
+    opacity: 0.4;
+  }
+
+  /* The cap sheen of the island, on the card's top corners. */
+  .consent-surface::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background:
+      radial-gradient(28px 20px at 18px 14px, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0) 70%),
+      radial-gradient(28px 20px at calc(100% - 18px) 14px, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0) 70%),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0) 30%);
+  }
+
+  /* The island's light 1px ring. */
+  .consent-glass::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    pointer-events: none;
+    background:
+      radial-gradient(70% 120% at 0% 0%, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0) 60%),
+      radial-gradient(70% 120% at 100% 100%, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0) 60%),
+      linear-gradient(to bottom, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.3) 40%, rgba(255, 255, 255, 0.3) 60%, rgba(255, 255, 255, 0.5) 100%);
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    mask-composite: exclude;
+  }
+
+  /* Chromium desktop only, set by glass-card-lens.tsx after it has drawn the
+     map at the card's size. Never set by anything else: Safari and Firefox
+     would paint no backdrop at all. */
+  .consent-glass[data-lens="on"] .consent-surface {
+    -webkit-backdrop-filter: url(#consent-lens) saturate(1.6) brightness(1.03);
+    backdrop-filter: url(#consent-lens) saturate(1.6) brightness(1.03);
+  }
+
+  @media (prefers-reduced-transparency: reduce), (prefers-contrast: more) {
+    .consent-glass .consent-surface,
+    .consent-glass[data-lens="on"] .consent-surface {
+      background-color: rgba(255, 255, 255, 0.97);
+      background-color: color-mix(in oklab, var(--color-paper) 97%, transparent);
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+    }
+    /* Tone-aware: the text is already paper under the dark tone. */
+    .consent-glass[data-tone="dark"] .consent-surface {
+      background-color: rgba(24, 24, 27, 0.97);
+      background-color: color-mix(in oklab, var(--color-ink) 97%, transparent);
+    }
+    .consent-glass::before,
+    .consent-glass[data-tone="dark"]::before,
+    .consent-surface::after,
+    .consent-glass[data-tone="dark"] .consent-surface::after {
+      opacity: 0;
+    }
+  }
+
+  @media (prefers-contrast: more) {
+    .consent-glass .consent-surface {
+      box-shadow: 0 0 0 1px var(--color-ink);
+    }
+    .consent-glass[data-tone="dark"] .consent-surface {
+      box-shadow: 0 0 0 1px var(--color-paper);
+    }
+  }
+
+  @media (forced-colors: active) {
+    .consent-glass .consent-surface,
+    .consent-glass[data-lens="on"] .consent-surface {
+      background-color: Canvas;
+      border: 1px solid CanvasText;
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+    }
+  }
+
+  @supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .consent-glass .consent-surface {
+      background-color: color-mix(in oklab, var(--color-paper) 97%, transparent);
+    }
+    .consent-glass[data-tone="dark"] .consent-surface {
       background-color: color-mix(in oklab, var(--color-ink) 97%, transparent);
     }
   }

@@ -34,7 +34,7 @@ export const services: ServiceItem[] = [
     title: "MVP Development",
     onHome: true,
     description:
-      "Perfect for startups getting ready to scale. Get software or an app that is secure. Give your customers the best experience, in both technology and design. Have a team of skilled engineers ready to handle new needs as they come up.",
+      "Your MVP, finally finished. Turn a business idea or stalled prototype into a focused product real customers can use, with a clear scope and source code you own.",
     eyebrow: "MVP Development",
     h1: "MVP development that reaches real users.",
     lead: "We take your idea from a conversation to a product in production, built so the first version can be tested by real customers instead of demoed to a room.",
@@ -135,7 +135,7 @@ export const services: ServiceItem[] = [
     title: "App Development",
     onHome: true,
     description:
-      "Your app has never been closer to launching. We will build it properly and publish it to both the Apple and Android stores.",
+      "Give customers and staff a simpler way to book, request services and track progress. We build mobile apps connected to your business systems and help you launch them.",
     eyebrow: "App Development",
     h1: "Mobile apps, built and published to both stores.",
     lead: "We build iOS and Android apps and take them through review to the App Store and Google Play, so the project ends with something people can download.",
@@ -236,7 +236,7 @@ export const services: ServiceItem[] = [
     title: "Software Development",
     onHome: true,
     description:
-      "If your company is growing and you are starting to feel the need to bring in technology and stop running your operation on spreadsheets, talk to us and we will solve it.",
+      "Replace disconnected spreadsheets with software built around your operations. Manage customers, jobs and reporting in one place, with integrations that keep information moving.",
     eyebrow: "Software Development",
     h1: "Custom software that fits how you actually work.",
     lead: "When the spreadsheet becomes the bottleneck, we build the system that replaces it, shaped around your process instead of forcing your process into someone else's product.",
@@ -337,7 +337,7 @@ export const services: ServiceItem[] = [
     title: "Automations and Integrations",
     onHome: true,
     description:
-      "Have you noticed how much bureaucratic work happens inside your company? A lot of it can be automated. Automation at company level can hand you back up to 60% of that time and save a great deal of cash.",
+      "Connect your forms, CRM, email and business tools. Automate repetitive data entry, follow-ups and reporting, with clear rules, error handling and human approval where it matters.",
     eyebrow: "Automations and Integrations",
     h1: "Automate the work nobody should be doing by hand.",
     lead: "Copying data between systems, chasing approvals, sending the same email again. We find that work, automate it, and give the hours back to the people who were spending them.",
@@ -739,7 +739,9 @@ export const services: ServiceItem[] = [
 ];
 
 /** The four core services: the home grid and the header dropdown. */
-export const homeServices = services.filter((service) => service.onHome);
+const homeServiceOrder = ["automations-and-integrations", "software-development", "mvp-development", "app-development"];
+export const homeServices = services.filter((service) => service.onHome)
+  .sort((a, b) => homeServiceOrder.indexOf(a.slug) - homeServiceOrder.indexOf(b.slug));
 
 export function getService(slug: string): ServiceItem | undefined {
   return services.find((service) => service.slug === slug);
@@ -750,12 +752,12 @@ export const method = [
   {
     step: "01",
     title: "Identifying the problem",
-    body: "You tell us what problems you face today and what your goals are for the future. We identify the opportunities in your idea that can pay off in the short, medium and long term.",
+    body: "We review the steps your team repeats, the tools involved and where information gets delayed or copied by hand. Together, we choose a workflow worth improving.",
   },
   {
     step: "02",
     title: "Proposing the solution",
-    body: "We present everything that will be built, the investment, the delivery timeline, the running costs (servers, databases, integrations and so on) and the expected return on that investment.",
+    body: "We present everything that will be built, the investment, the delivery timeline, the running costs (servers, databases, integrations and so on) and how we will measure the result.",
   },
   {
     step: "03",

@@ -46,16 +46,16 @@ export async function submitContact(
 
   const webhook = process.env.N8N_CONTACT_WEBHOOK_URL;
 
-  // Without a webhook configured the submission reaches nobody, so say so in
-  // the server log rather than pretending it was delivered.
+  // Without a webhook the message cannot be delivered. Preserve the form and
+  // tell the visitor instead of showing a false success confirmation.
   if (!webhook) {
     console.warn(
       "[contact] N8N_CONTACT_WEBHOOK_URL is not set; submission was not delivered",
-      values,
     );
     return {
-      status: "success",
-      message: "Thanks. We read every message and reply within one working day.",
+      status: "error",
+      message: `We could not send your message. Please email us at ${site.email} or call ${site.phone.display}.`,
+      values,
     };
   }
 

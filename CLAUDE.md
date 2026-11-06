@@ -61,12 +61,12 @@ Turbopack caches aggressively in dev. After renaming an export, stale HMR errors
 - `faq.ts` — home-page FAQ entries.
 - `team.ts` — `founder`, including the LinkedIn URL and the `highlights` rendered under the LinkedIn button. An entry with `value: null` renders as a full-width statement instead of a number.
 - `partners.json` — the partner logos, their links and their 1x box sizes. The only file to edit to add, remove or reorder a partner; `partners.ts` just types it.
-- `feasibility.ts` — the MVP Feasibility Check panel: copy, deliverables, and the button, which scrolls to the home contact form.
+- `feasibility.ts` — the Small Business Automation Consultation panel: copy, deliverables, and the button, which scrolls to the home contact form.
 - `portfolio.ts` — types and orders the portfolio. The content itself lives in `public/portfolio/<slug>/details.json`; see the Portfolio section.
 - `google-reviews.ts` — the server-side Places API read behind the client reviews section, served to the browser by `src/app/api/google-rating/route.ts`; see Client reviews.
 - `contact.ts` — form shapes and the initial action state.
 
-**Home page composition** (`src/app/page.tsx`): hero (owns the first screen alone) → partners → MVP Feasibility Check → client reviews (renders nothing until there is something real to show) → our services (four cards, then a centred link to `/services`) → portfolio (the featured projects, then a link to `/portfolio`) → our method → who we are → latest posts (`LatestPosts`, the three newest from `getAllPosts`, then a link to `/blog`; renders nothing while there are none) → FAQ → contact. Each block is either a component in `src/components/` or a section rendered straight from a `src/lib` module.
+**Home page composition** (`src/app/page.tsx`): hero (owns the first screen alone) → partners → Small Business Automation Consultation → client reviews (renders nothing until there is something real to show) → our services (four cards, then a centred link to `/services`) → portfolio (the featured projects, then a link to `/portfolio`) → our method → who we are → latest posts (`LatestPosts`, the three newest from `getAllPosts`, then a link to `/blog`; renders nothing while there are none) → FAQ → contact. Each block is either a component in `src/components/` or a section rendered straight from a `src/lib` module.
 
 **Blog is MDX compiled by `@next/mdx`.** Posts are `.mdx` files in `src/content/blog/`; the filename is the slug. Each post exports a `meta` object (title, description, date, author, readingTime, tags) alongside its default component — named `meta`, not `metadata`, so it is never confused with the Next.js route-metadata convention.
 
@@ -117,7 +117,7 @@ Be honest about what `llms.txt` buys: no crawler has publicly committed to readi
 - `/services` (`src/app/services/page.tsx`) lists all seven, one per row. Long descriptions side by side invite comparison rather than reading, which is why it is not a grid.
 - `/services/[slug]` renders hero → direct answer → who this is for → deliverables → process → FAQ → contact, and is statically generated via `generateStaticParams`.
 
-Each detail page emits a `@graph` of **Service + FAQPage + BreadcrumbList**, all derived from the same object the page renders. There is no `offers` node: nothing on the site publishes a price, scope and cost are quoted per project, and markup must not claim what the page does not show. The MVP Feasibility Check showed `$275, delivered in 7 days` until 2026-09-16; that was removed too.
+Each detail page emits a `@graph` of **Service + FAQPage + BreadcrumbList**, all derived from the same object the page renders. Service detail pages have no offers node. The home consultation has a EUR 50 Offer derived from the same data as its visible price; implementation is quoted separately. The Small Business Automation Consultation showed `$275, delivered in 7 days` until 2026-09-16; that was removed too.
 
 The contact form on a detail page posts `source: "service-<slug>"`, so the automation can tell which page produced a lead.
 
@@ -195,7 +195,7 @@ Two traps:
 
 ## Client reviews
 
-The band under the MVP Feasibility Check shows the company's Google rating, review count and up to five written reviews, live from the Places API (New), with a "See all reviews" button to the Google Maps listing. Four rules shape it; read them before extending it.
+The band under the Small Business Automation Consultation shows the company's Google rating, review count and up to five written reviews, live from the Places API (New), with a "See all reviews" button to the Google Maps listing. Four rules shape it; read them before extending it.
 
 - **Nothing from Google may be cached, so nothing is.** The Maps Platform terms (no-caching clause, 3.2.3(b) global and 3.3.2(b) EEA) allow storing only the Place ID indefinitely and coordinates for 30 days. The rating and count cannot be kept for any time, which rules out `revalidate`, ISR and prerendering them into HTML. So `/api/google-rating` fetches with `cache: "no-store"` and answers `Cache-Control: private, no-store`, and `GoogleReviews` is a client component that calls it after load. The home page stays static.
 - **Up to five written reviews, and they are not "the latest".** Places returns at most five, chosen by Google's relevance ranking, with no parameter to ask for the newest. `getGoogleRating` sorts them newest first, which equals the latest five only while the profile has five or fewer. True latest-five needs the Business Profile API, which returns every review and allows storing them for up to 30 days, but needs OAuth as the profile owner, a profile verified for 60+ days and an access application to Google. The section says how reviews are chosen and ordered, because Google requires that notice.
@@ -237,7 +237,7 @@ Tokens are defined in the `@theme` block of `src/app/globals.css` (Tailwind v4 �
 - **Verifying a focus ring needs the transition switched off.** Tailwind v4 includes `outline-color` in `transition-colors`, which every button carries. `getComputedStyle(el).outlineColor` read straight after focus returns the frame at t=0 of a 200ms interpolation, which is the old colour, so a working ring reads as broken. Set `el.style.transition = "none"` and force a reflow before reading.
 - `.tick-rule` and `.eyebrow` are the recurring structural devices. Numbered markers appear only where the content is genuinely a sequence: the five-step method and the process block on a service page.
 - Motion lives in `globals.css`: `animate-rise-in` (hero load), `animate-float`, and `animate-bounce-hint` (the hero read-more control). Both loops opt out of the global reduced-motion reset explicitly, because snapping a loop to its end frame is worse than holding it still.
-- The one canvas animation is `Confetti` (`src/components/confetti.tsx`), used on the MVP Feasibility Check panel: white and greys, falling once per page view when a third of the panel is on screen. "Once" is deliberately not remembered between visits, because that would mean writing to localStorage, and the only device storage the privacy policy allows is the cookie-choice entry. It renders nothing at all under reduced motion, and it uses refs rather than state so the effect never calls setState.
+- The one canvas animation is `Confetti` (`src/components/confetti.tsx`), used on the Small Business Automation Consultation panel: white and greys, falling once per page view when a third of the panel is on screen. "Once" is deliberately not remembered between visits, because that would mean writing to localStorage, and the only device storage the privacy policy allows is the cookie-choice entry. It renders nothing at all under reduced motion, and it uses refs rather than state so the effect never calls setState.
 
 ## Image placeholders
 
@@ -288,10 +288,14 @@ A healthy submission shows up in the Netlify function log as a ~3s invocation; a
 
 The site's own CTAs all route to the contact form. The hero used to carry a "Book a 1-hour consultation" button that only pointed at `/contact`; it was removed rather than left pretending. The one real booking link is the Calendly for the vibe-coding consulting session (`calendly.com/guilherme-blackelephant/vibe-coding-consulting`), and it appears only inside the blog post that sells that session, not in site chrome.
 
-**The MVP Feasibility Check takes no payment.** Its button scrolls to the home contact form (`#contact`), and the lead arrives with `source: "home"` like any other, so the automation cannot yet tell a feasibility request apart. The Stripe test link it used before is kept in a comment in `feasibility.ts` in case payment comes back; it would need swapping for a live link first.
+**The Small Business Automation Consultation costs €50.** The button requests it through the home contact form; no payment is collected online. Implementation and software subscriptions are quoted separately. The old `mvp-feasibility-check` anchor remains as an alias for older links.
 
 **That Calendly event is mis-branded and is a known pending fix.** Its page title is "Vibe coding - consulting - Guilherme Kodenvis", its locale is `pt` and its timezone is `America/Sao_Paulo`. Nothing on it says GuyShore, and it is written for a Portuguese speaker. Any post that is not about vibe coding, and any English-speaking visitor, lands somewhere that does not match the page they came from. Reusing it is a deliberate stopgap: when a properly branded event exists, replace the URL in every `PostCta` that carries it.
 
 ## Stale content
 
 The site pivoted from a nearshore-staffing premise to the current one. The `/about` page body still carries the old framing and needs rewriting. The three old blog posts about distributed teams were deleted; the blog restarted with `vibe-coding.mdx`.
+
+## Homepage positioning (2026-11-06)
+
+`src/lib/home.ts` owns the automation-focused hero, organization description and homepage SEO copy. Keep "Your MVP, finally finished" as a secondary hero line and footer tagline. Home services and header dropdown order: automations, software, MVP, apps. The paid consultation lives in `feasibility.ts`; its price and scope must match home schema, FAQ and generated llms.txt.

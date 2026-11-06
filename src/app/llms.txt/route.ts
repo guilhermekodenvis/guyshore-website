@@ -1,3 +1,5 @@
+import { home } from "@/lib/home";
+import { feasibility } from "@/lib/feasibility";
 import { getAllPosts } from "@/lib/posts";
 import { services } from "@/lib/services";
 import { site } from "@/lib/site";
@@ -37,12 +39,11 @@ export async function GET(): Promise<Response> {
 
   const body = `# ${site.name}
 
-> ${site.description}
+> ${home.description}
 
-${site.name} is a custom software development company. We work with non-technical
-founders and startups, and we hand over the full source code. The office is in
-Lisbon, Portugal, and clients are served remotely, mostly in the United States.
-We publish no prices: scope and cost are quoted per project.
+${home.about}
+${feasibility.eyebrow}: ${feasibility.priceLabel}. ${feasibility.lead}
+${feasibility.priceNote} Request it at ${site.url}/#${feasibility.id}.
 
 Business name in listings: ${site.listingName}
 Founder: ${founder.name}, ${founder.role} (${founder.linkedin})

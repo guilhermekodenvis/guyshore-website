@@ -16,13 +16,17 @@ import { homeSchema } from "@/lib/home-schema";
 import { featuredPortfolio } from "@/lib/portfolio";
 import { method, homeServices } from "@/lib/services";
 import { founder } from "@/lib/team";
-import { site } from "@/lib/site";
+import { home } from "@/lib/home";
 
 export const metadata: Metadata = {
   // Emits <link rel="canonical" href="https://guyshore.com"/>. Next strips the
   // root trailing slash because `trailingSlash` is false; passing the absolute
   // URL with a slash does not change that.
   alternates: { canonical: "/" },
+  title: { absolute: home.title },
+  description: home.description,
+  openGraph: { type: "website", url: "/", title: home.title, description: home.description, images: [{ url: "/og-image.png", width: 1200, height: 630 }] },
+  twitter: { card: "summary_large_image", title: home.title, description: home.description, images: ["/og-image.png"] },
 };
 
 export default function HomePage() {
@@ -55,13 +59,10 @@ export default function HomePage() {
       >
         <p className="eyebrow text-slate">Our services</p>
         <h2 className="mt-5 max-w-[24ch] text-title">
-          Software that takes work off your team and lets your startup scale.
+          {home.servicesTitle}
         </h2>
         <p className="mt-7 max-w-[68ch] text-lead text-steel">
-          We use serious engineering to take work off companies and help
-          startups scale. Can you say today how much money your company loses
-          every year to human error in its operations? Can you count how many
-          times you wanted a machine to do a job that should be simple?
+          {home.servicesLead}
         </p>
 
         {/* Two per row from md up, one per row below it. `items-stretch` is
@@ -121,11 +122,10 @@ export default function HomePage() {
         <div className="mx-auto max-w-[76rem] px-6 py-24 lg:px-10 lg:py-32">
           <p className="eyebrow text-slate">Our method</p>
           <h2 className="mt-5 max-w-[24ch] text-title">
-            How do we build your software or MVP?
+            How we turn repetitive work into reliable workflows.
           </h2>
           <p className="mt-7 max-w-[64ch] text-lead text-steel">
-            You need your SaaS, software, app or automation delivered quickly
-            and done well. That is why we created our five-step method.
+            We map your process, agree on the scope, connect your tools and test the workflow before your team relies on it. You know what runs automatically and where a person stays in control.
           </p>
 
           <ol className="mt-16 border-t border-[var(--color-line)]">
@@ -147,13 +147,10 @@ export default function HomePage() {
       <section className="mx-auto max-w-[76rem] px-6 py-24 lg:px-10 lg:py-32">
         <p className="eyebrow text-slate">Who we are</p>
         <h2 className="mt-5 max-w-[24ch] text-title">
-          We specialize in MVP and software development.
+          Automation and software built around your business.
         </h2>
         <p className="mt-7 max-w-[66ch] text-lead text-steel">
-          {site.name} is an MVP and custom software development company for
-          non-technical founders and startups. We build web apps, SaaS
-          platforms, and mobile products from scratch, and take stalled
-          AI-generated prototypes to production.
+          {home.about}
         </p>
 
         <div className="mt-16 grid gap-10 border-t border-[var(--color-line)] pt-12 lg:grid-cols-[20rem_1fr] lg:gap-16">
@@ -229,7 +226,7 @@ export default function HomePage() {
         <div className="mx-auto max-w-[76rem] px-6 py-24 lg:px-10 lg:py-32">
           <p className="eyebrow text-slate">FAQ</p>
           <h2 className="mt-5 max-w-[20ch] text-title">
-            Questions we get asked most.
+            Small business automation questions, answered.
           </h2>
 
           <div className="mt-14">
@@ -247,11 +244,10 @@ export default function HomePage() {
           <div>
             <p className="eyebrow text-slate">Contact</p>
             <h2 className="mt-5 max-w-[16ch] text-title">
-              Tell us about your project.
+              What would you like to stop doing manually?
             </h2>
             <p className="mt-7 max-w-[44ch] text-lead text-steel">
-              Send us the short version and we will come back to you within one
-              working day.
+              Tell us about your business, the tools you use and one task that takes too much time. To request the €50 consultation, mention it in your message. We will reply within one working day to arrange next steps.
             </p>
             <div className="mt-10">
               <ContactDetails />

@@ -44,20 +44,21 @@ export const NAV_LENS_ID = "nav-lens";
    the straight edges; DIRECTION -1 samples inward (a thick glass edge;
    outward reads transparent under backdrop-filter). PRE is the settle blur,
    BLUR the island's total blur (clear glass), BLUR_ATTACHED the attached bar's blur(12px)
-   the filter must match on entry. Kept in sync with globals.css. */
+   the filter must match on entry. Kept in sync with globals.css. PRE must
+   stay at or under BLUR: the two blurs add in quadrature to the total. */
 const BAND = 18;
 const BAND_EDGE = 12;
 const STRENGTH = 22;
 const EDGE_MIN = 0.7;
 const DIRECTION = -1;
-const PRE = 3;
-const BLUR = 4;
+const PRE = 1.5;
+const BLUR = 2;
 const BLUR_ATTACHED = 12;
 const DURATION = 500;
 const DPR = 2;
 const SCALE = 2 * STRENGTH; // feDisplacementMap: displacement = scale * (channel - 0.5)
 
-const post = (total: number) => Math.sqrt(total * total - PRE * PRE);
+const post = (total: number) => Math.sqrt(Math.max(0, total * total - PRE * PRE));
 /* The critically damped spring --nav-ease carries as linear(). */
 const spring = (t: number) => 1 - (1 + 7.6 * t) * Math.exp(-7.6 * t);
 

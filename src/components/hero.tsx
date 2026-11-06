@@ -1,3 +1,4 @@
+import { home } from "@/lib/home";
 import Image from "next/image";
 import { ChevronDown } from "@/components/icons";
 import { feasibility } from "@/lib/feasibility";
@@ -39,17 +40,19 @@ export function Hero() {
           />
         </div>
 
+        <div className="order-2 lg:order-none lg:col-start-1 lg:row-start-1 lg:self-center">
+          <p className="eyebrow mb-6 text-slate">Your MVP, finally finished</p>
         <h1
           className={`animate-rise-in order-2 mx-auto ${BLOCK} text-display lg:order-none lg:col-start-1 lg:row-start-1 lg:mx-0 lg:self-center`}
         >
-          Your MVP, finally finished
+          {home.headline}
         </h1>
+        </div>
 
         <p
           className={`animate-rise-in order-3 mx-auto ${BLOCK} text-lead text-steel lg:order-none lg:col-start-3 lg:row-start-1 lg:mr-0 lg:ml-auto lg:self-center`}
         >
-          You may be missing the opportunity of the century if you do not
-          start investing in technology now.
+          {home.subtitle}
         </p>
       </div>
 
