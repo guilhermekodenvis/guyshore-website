@@ -35,7 +35,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
     openGraph: {
       type: "article",
       siteName: site.name,
-      locale: "en_US",
+      locale: meta.lang === "pt-PT" ? "pt_PT" : "en_US",
       url,
       title: searchTitle,
       description: meta.description,
@@ -104,7 +104,7 @@ export default async function BlogPostPage({ params }: Params) {
         },
         datePublished: meta.date,
         dateModified: meta.updated ?? meta.date,
-        inLanguage: "en-US",
+        inLanguage: meta.lang ?? "en-US",
         keywords: meta.tags.join(", "),
       },
       {
@@ -143,7 +143,7 @@ export default async function BlogPostPage({ params }: Params) {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
       />
 
-      <article>
+      <article lang={meta.lang}>
         <header className="mx-auto max-w-[76rem] px-6 pt-20 pb-12 lg:px-10 lg:pt-28">
           <Link
             href="/blog"

@@ -46,6 +46,11 @@ export type PostMeta = {
    * to be visible on the page.
    */
   faq?: { question: string; answer: string }[];
+  /**
+   * Optional BCP 47 language of a post not written in English, e.g. "pt-PT".
+   * Set on the article element, the Article schema and the Open Graph locale.
+   */
+  lang?: string;
 };
 
 export type Post = {
