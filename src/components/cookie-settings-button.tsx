@@ -7,10 +7,16 @@ import { openConsentPanel } from "@/lib/consent";
  * Withdrawing has to be as easy as consenting, so this sits in the footer of
  * every page, next to the legal links.
  */
-export function CookieSettingsButton({ className = "" }: { className?: string }) {
+export function CookieSettingsButton({
+  label,
+  className = "",
+}: {
+  label: string;
+  className?: string;
+}) {
   return (
     <button type="button" onClick={openConsentPanel} className={className}>
-      Cookie settings
+      {label}
     </button>
   );
 }

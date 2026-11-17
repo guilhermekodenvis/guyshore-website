@@ -1,6 +1,8 @@
 "use server";
 
 import type { ContactField, ContactState } from "@/lib/contact";
+import { getDictionary } from "@/lib/dictionary";
+import { hasLocale } from "@/lib/i18n";
 import { site } from "@/lib/site";
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
@@ -9,6 +11,9 @@ export async function submitContact(
   _prev: ContactState,
   formData: FormData,
 ): Promise<ContactState> {
+  // The form says which language it was shown in, so the reply matches it.
+  const lang = String(formData.get("lang") ?? "");
+  const t = getDictionary(hasLocale(lang) ? lang : "en").contactAction;
   const values: Partial<Record<ContactField, string>> = {
     name: String(formData.get("name") ?? "").trim(),
     email: String(formData.get("email") ?? "").trim(),
@@ -19,26 +24,26 @@ export async function submitContact(
 
   // Honeypot: real people leave this empty. Answer as if it succeeded.
   if (String(formData.get("website") ?? "").length > 0) {
-    return { status: "success", message: "Thanks. We will be in touch." };
+    return { status: "success", message: t.honeypot };
   }
 
   const errors: NonNullable<ContactState["errors"]> = {};
-  if (!values.name) errors.name = "Tell us who you are.";
+  if (!values.name) errors.name = t.nameRequired;
   if (!values.email) {
-    errors.email = "We need an address to reply to.";
+    errors.email = t.emailRequired;
   } else if (!EMAIL.test(values.email)) {
-    errors.email = "That address does not look complete.";
+    errors.email = t.emailInvalid;
   }
   if (!values.message) {
-    errors.message = "Tell us what you are trying to ship.";
+    errors.message = t.messageRequired;
   } else if (values.message.length < 20) {
-    errors.message = "A couple more sentences will get you a better answer.";
+    errors.message = t.messageShort;
   }
 
   if (Object.keys(errors).length > 0) {
     return {
       status: "error",
-      message: "Check the highlighted fields.",
+      message: t.checkFields,
       errors,
       values,
     };
@@ -54,7 +59,7 @@ export async function submitContact(
     );
     return {
       status: "error",
-      message: `We could not send your message. Please email us at ${site.email} or call ${site.phone.display}.`,
+      message: t.notConfigured(site.email, site.phone.display),
       values,
     };
   }
@@ -66,6 +71,7 @@ export async function submitContact(
       body: JSON.stringify({
         ...values,
         source: String(formData.get("source") ?? "website"),
+        lang: hasLocale(lang) ? lang : "en",
         submittedAt: new Date().toISOString(),
       }),
       // Never let a slow automation hang the form.
@@ -98,13 +104,13 @@ export async function submitContact(
     console.error("[contact] delivery failed", error);
     return {
       status: "error",
-      message: `Something went wrong on our side. Please email us at ${site.email}.`,
+      message: t.failed(site.email),
       values,
     };
   }
 
   return {
     status: "success",
-    message: "Thanks. We read every message and reply within one working day.",
+    message: t.success,
   };
 }

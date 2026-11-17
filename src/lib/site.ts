@@ -16,16 +16,8 @@ export const site = {
    * Changing one of them means changing the listings too.
    */
   listingName: "guyshore.com",
-  /** Browser tab title for the home page. */
-  title: "MVP & Software Development Company for Startups",
-  /** Shown in the footer, under the wordmark. */
-  tagline: "Your MVP, finally finished.",
-  /**
-   * Meta description for every page. The inner pages deliberately do not set
-   * their own, so they inherit this one from the root layout.
-   */
-  description:
-    "We build for non-technical founders and startups: web apps, mobile products and automations. Fixed scope, clear timelines, and full source code ownership.",
+  // The default title, description and the footer tagline are copy, so they
+  // live per language in `dictionary.ts` (`site` section).
   url: "https://guyshore.com",
   /**
    * The Google Business Profile, as a Places API Place ID (starts with ChIJ).
@@ -51,14 +43,18 @@ export const site = {
   },
 } as const;
 
+/**
+ * Language-neutral paths; labels come from the dictionary (`nav` section)
+ * and the path goes through `localePath` for the current language.
+ */
 export const nav = [
-  { href: "/portfolio", label: "Portfolio" },
-  { href: "/about", label: "About" },
-  { href: "/blog", label: "Blog" },
+  { href: "/portfolio", key: "portfolio" },
+  { href: "/about", key: "about" },
+  { href: "/blog", key: "blog" },
 ] as const;
 
 /** Rendered only in the footer's bottom bar, next to the copyright line. */
 export const legalNav = [
-  { href: "/privacy", label: "Privacy Policy" },
-  { href: "/terms", label: "Terms of Use" },
+  { href: "/privacy", key: "privacy" },
+  { href: "/terms", key: "terms" },
 ] as const;

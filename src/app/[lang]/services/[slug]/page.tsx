@@ -6,21 +6,38 @@ import { ContactDetails } from "@/components/contact-details";
 import { ContactForm } from "@/components/contact-form";
 import { FaqList } from "@/components/faq-list";
 import { ArrowRight, CheckMark } from "@/components/icons";
-import { getService, services } from "@/lib/services";
+import { getDictionary } from "@/lib/dictionary";
+import {
+  alternates,
+  hasLocale,
+  localePath,
+  locales,
+  ogLocale,
+  resolveLang,
+} from "@/lib/i18n";
+import { getService, getServices } from "@/lib/services";
 import { site } from "@/lib/site";
 
-type Params = { params: Promise<{ slug: string }> };
+type Params = { params: Promise<{ lang: string; slug: string }> };
 
+/** Every service exists in both languages, under the same slug. */
 export function generateStaticParams() {
-  return services.map((service) => ({ slug: service.slug }));
+  return locales.flatMap((lang) =>
+    getServices(lang).map((service) => ({ lang, slug: service.slug })),
+  );
 }
 
+export const dynamicParams = false;
+
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
-  const { slug } = await params;
-  const service = getService(slug);
+  const { lang, slug } = await params;
+  if (!hasLocale(lang)) return {};
+  const service = getService(lang, slug);
   if (!service) return {};
 
-  const url = `${site.url}/services/${slug}`;
+  const path = localePath(lang, `/services/${slug}`);
+  const url = `${site.url}${path}`;
+  const t = getDictionary(lang).serviceDetail;
   // The lead is written to work as a search snippet, so it doubles as the
   // meta description. These pages are the one place that overrides the shared
   // site description, because each ranks for a different intent.
@@ -29,11 +46,11 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   return {
     title: service.title,
     description,
-    alternates: { canonical: `/services/${slug}` },
+    alternates: alternates(lang, `/services/${slug}`),
     openGraph: {
       type: "article",
       siteName: site.name,
-      locale: "en_US",
+      locale: ogLocale[lang],
       url,
       title: `${service.title} · ${site.name}`,
       description,
@@ -42,7 +59,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
           url: "/og-image.png",
           width: 1200,
           height: 630,
-          alt: `${service.title} by ${site.name}`,
+          alt: t.by(service.title, site.name),
         },
       ],
     },
@@ -56,11 +73,15 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 }
 
 export default async function ServiceDetailPage({ params }: Params) {
+  const lang = await resolveLang(params);
   const { slug } = await params;
-  const service = getService(slug);
+  const service = getService(lang, slug);
   if (!service) notFound();
 
-  const url = `${site.url}/services/${slug}`;
+  const t = getDictionary(lang).serviceDetail;
+  const home = getDictionary(lang).common.home;
+  const href = (path: string) => localePath(lang, path);
+  const url = `${site.url}${href(`/services/${slug}`)}`;
 
   /**
    * Service, FAQPage and BreadcrumbList, all derived from the same module the
@@ -80,7 +101,7 @@ export default async function ServiceDetailPage({ params }: Params) {
         areaServed: { "@type": "Country", name: "United States" },
         hasOfferCatalog: {
           "@type": "OfferCatalog",
-          name: `${service.title} deliverables`,
+          name: t.catalog(service.title),
           itemListElement: service.deliverables.map((item) => ({
             "@type": "OfferCatalog",
             name: item,
@@ -99,12 +120,17 @@ export default async function ServiceDetailPage({ params }: Params) {
       {
         "@type": "BreadcrumbList",
         itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Home", item: site.url },
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: home,
+            item: `${site.url}${lang === "en" ? "" : href("/")}`,
+          },
           {
             "@type": "ListItem",
             position: 2,
-            name: "Services",
-            item: `${site.url}/services`,
+            name: t.servicesCrumb,
+            item: `${site.url}${href("/services")}`,
           },
           { "@type": "ListItem", position: 3, name: service.title, item: url },
         ],
@@ -121,9 +147,12 @@ export default async function ServiceDetailPage({ params }: Params) {
 
       {/* Hero */}
       <header className="mx-auto max-w-[76rem] px-6 pt-20 pb-14 lg:px-10 lg:pt-28 lg:pb-20">
-        <nav aria-label="Breadcrumb" className="eyebrow text-slate">
-          <Link href="/services" className="transition-colors hover:text-ink">
-            Our services
+        <nav
+          aria-label={getDictionary(lang).common.breadcrumb}
+          className="eyebrow text-slate"
+        >
+          <Link href={href("/services")} className="transition-colors hover:text-ink">
+            {t.breadcrumb}
           </Link>
           <span aria-hidden className="mx-3">
             /
@@ -136,14 +165,14 @@ export default async function ServiceDetailPage({ params }: Params) {
 
         <div className="mt-10 flex flex-col gap-3 sm:flex-row">
           <ButtonLink href="#contact" className="w-full sm:w-auto">
-            Start your project
+            {t.startProject}
           </ButtonLink>
           <ButtonLink
-            href="/services"
+            href={href("/services")}
             variant="ghost"
             className="w-full sm:w-auto"
           >
-            See all services
+            {t.seeAll}
           </ButtonLink>
         </div>
 
@@ -155,7 +184,7 @@ export default async function ServiceDetailPage({ params }: Params) {
       <section className="mx-auto max-w-[76rem] px-6 pb-24 lg:px-10 lg:pb-32">
         <div className="grid gap-12 lg:grid-cols-[1.25fr_1fr] lg:gap-20">
           <div>
-            <p className="eyebrow text-slate">In short</p>
+            <p className="eyebrow text-slate">{t.inShort}</p>
             <h2 className="mt-5 max-w-[24ch] text-title">
               {service.answer.question}
             </h2>
@@ -165,7 +194,7 @@ export default async function ServiceDetailPage({ params }: Params) {
           </div>
 
           <div className="border border-[var(--color-line)] bg-mist p-7 lg:p-9">
-            <p className="eyebrow text-ink">What is included</p>
+            <p className="eyebrow text-ink">{t.included}</p>
             <ul className="mt-6 space-y-4">
               {service.answer.includes.map((item) => (
                 <li key={item} className="flex gap-3.5">
@@ -181,10 +210,8 @@ export default async function ServiceDetailPage({ params }: Params) {
       {/* Who this is for */}
       <section className="border-y border-[var(--color-line)] bg-mist">
         <div className="mx-auto max-w-[76rem] px-6 py-24 lg:px-10 lg:py-32">
-          <p className="eyebrow text-slate">Who this is for</p>
-          <h2 className="mt-5 max-w-[24ch] text-title">
-            You will recognize yourself here.
-          </h2>
+          <p className="eyebrow text-slate">{t.audienceEyebrow}</p>
+          <h2 className="mt-5 max-w-[24ch] text-title">{t.audienceTitle}</h2>
 
           <div className="mt-16 grid gap-6 sm:grid-cols-2">
             {service.audience.map((item) => (
@@ -202,11 +229,10 @@ export default async function ServiceDetailPage({ params }: Params) {
 
       {/* Deliverables */}
       <section className="mx-auto max-w-[76rem] px-6 py-24 lg:px-10 lg:py-32">
-        <p className="eyebrow text-slate">Deliverables</p>
-        <h2 className="mt-5 max-w-[24ch] text-title">What you end up with.</h2>
+        <p className="eyebrow text-slate">{t.deliverablesEyebrow}</p>
+        <h2 className="mt-5 max-w-[24ch] text-title">{t.deliverablesTitle}</h2>
         <p className="mt-7 max-w-[62ch] text-lead text-steel">
-          Everything below is handed over at the end of the project. Nothing on
-          this list depends on us staying involved.
+          {t.deliverablesLead}
         </p>
 
         <ul className="mt-14 grid gap-x-16 gap-y-5 border-t border-[var(--color-line)] pt-10 lg:grid-cols-2">
@@ -222,10 +248,8 @@ export default async function ServiceDetailPage({ params }: Params) {
       {/* Process. Numbered because it genuinely is a sequence. */}
       <section className="border-y border-[var(--color-line)] bg-mist">
         <div className="mx-auto max-w-[76rem] px-6 py-24 lg:px-10 lg:py-32">
-          <p className="eyebrow text-slate">Process</p>
-          <h2 className="mt-5 max-w-[24ch] text-title">
-            How the work actually runs.
-          </h2>
+          <p className="eyebrow text-slate">{t.processEyebrow}</p>
+          <h2 className="mt-5 max-w-[24ch] text-title">{t.processTitle}</h2>
 
           <ol className="mt-16 border-t border-[var(--color-line)]">
             {service.process.map((item, index) => (
@@ -246,9 +270,9 @@ export default async function ServiceDetailPage({ params }: Params) {
 
       {/* FAQ */}
       <section className="mx-auto max-w-[76rem] px-6 py-24 lg:px-10 lg:py-32">
-        <p className="eyebrow text-slate">FAQ</p>
+        <p className="eyebrow text-slate">{t.faqEyebrow}</p>
         <h2 className="mt-5 max-w-[24ch] text-title">
-          Questions we get about {service.title}.
+          {t.faqTitle(service.title)}
         </h2>
 
         <div className="mt-14">
@@ -264,30 +288,31 @@ export default async function ServiceDetailPage({ params }: Params) {
         <div className="mx-auto max-w-[76rem] scroll-mt-24 px-6 py-24 lg:px-10 lg:py-32">
           <div className="grid gap-14 lg:grid-cols-[1fr_1.15fr] lg:gap-24">
             <div>
-              <p className="eyebrow text-slate">Contact</p>
-              <h2 className="mt-5 max-w-[16ch] text-title">
-                Tell us about your project.
-              </h2>
+              <p className="eyebrow text-slate">{t.contactEyebrow}</p>
+              <h2 className="mt-5 max-w-[16ch] text-title">{t.contactTitle}</h2>
               <p className="mt-7 max-w-[44ch] text-lead text-steel">
-                Send us the short version and we will come back to you within
-                one working day.
+                {t.contactLead}
               </p>
               <div className="mt-10">
-                <ContactDetails />
+                <ContactDetails lang={lang} />
               </div>
 
               <Link
-                href="/services"
+                href={href("/services")}
                 className="mt-10 flex items-center gap-2 font-body text-[0.9375rem] font-semibold tracking-[-0.01em] text-ink transition-colors hover:text-steel"
               >
-                Browse the other services
+                {t.browseOther}
                 <ArrowRight className="size-5 shrink-0" />
               </Link>
             </div>
 
             {/* Same short form as /contact, tagged so the automation can tell
                 which service page produced the lead. */}
-            <ContactForm fields="short" source={`service-${service.slug}`} />
+            <ContactForm
+              lang={lang}
+              fields="short"
+              source={`service-${service.slug}`}
+            />
           </div>
         </div>
       </section>

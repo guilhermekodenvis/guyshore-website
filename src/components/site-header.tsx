@@ -17,11 +17,32 @@ import {
   getSnapshot,
   subscribe,
 } from "@/lib/scroll-detached";
-import { homeServices } from "@/lib/services";
+import { getDictionary } from "@/lib/dictionary";
+import {
+  htmlLang,
+  localePath,
+  locales,
+  splitPath,
+  type Locale,
+} from "@/lib/i18n";
 import { nav, site } from "@/lib/site";
 
-export function SiteHeader() {
+type Props = {
+  lang: Locale;
+  /** The home services, already in `lang`, for the dropdown and the menu. */
+  services: { slug: string; title: string }[];
+  /** Each post's language versions keyed by its public path (posts.ts). */
+  posts: Record<string, Partial<Record<Locale, string>>>;
+};
+
+export function SiteHeader({ lang, services, posts }: Props) {
   const pathname = usePathname();
+  // Language-neutral path. The server sees the rewritten `/en/...` and the
+  // browser `/...`; splitPath gives both sides the same answer, so the
+  // active states and the switch hydrate without a mismatch.
+  const { path } = splitPath(pathname);
+  const t = getDictionary(lang);
+  const href = (p: string) => localePath(lang, p);
   const shell = useRef<HTMLDivElement>(null);
   const [open, setOpen] = useState(false);
   const [servicesOpen, setServicesOpen] = useState(false);
@@ -47,7 +68,63 @@ export function SiteHeader() {
     setOpen(false);
     setServicesOpen(false);
   };
-  const servicesActive = pathname.startsWith("/services");
+  const servicesActive = path.startsWith("/services");
+
+  /**
+   * Where the switch sends each language: the same page in that language. A
+   * blog post goes to its translation when it has one, otherwise to the
+   * other language's blog, since posts are not all translated.
+   */
+  const switchHref = (target: Locale) => {
+    if (path.startsWith("/blog/")) {
+      return posts[localePath(lang, path)]?.[target] ?? localePath(target, "/blog");
+    }
+    return localePath(target, path);
+  };
+
+  const languageSwitch = (
+    <div
+      role="group"
+      aria-label={t.nav.language}
+      // Each label carries the same 2px transparent border and pb-1 as the
+      // nav links, so the letters share their baseline.
+      className="eyebrow flex items-center gap-1 [&_a]:border-b-2 [&_a]:border-transparent [&_a]:pb-1 [&_span[aria-current]]:border-b-2 [&_span[aria-current]]:border-transparent [&_span[aria-current]]:pb-1"
+    >
+      {locales.map((l, index) => (
+        <span key={l} className="flex items-center gap-1">
+          {index > 0 ? (
+            <span
+              aria-hidden
+              className="pb-1.5 text-slate group-data-[tone=dark]:text-paper/50"
+            >
+              /
+            </span>
+          ) : null}
+          {l === lang ? (
+            <span
+              aria-current="true"
+              className="flex min-h-11 items-center px-1 text-ink group-data-[tone=dark]:text-paper"
+            >
+              {l.toUpperCase()}
+            </span>
+          ) : (
+            // A full page load on purpose: <html lang>, the metadata and
+            // every string change with the language.
+            <a
+              href={switchHref(l)}
+              hrefLang={htmlLang[l]}
+              lang={htmlLang[l]}
+              title={t.nav.switchTo}
+              aria-label={t.nav.switchTo}
+              className="flex min-h-11 items-center px-1 text-slate transition-colors hover:text-ink group-data-[tone=dark]:text-paper/60 group-data-[tone=dark]:hover:text-paper"
+            >
+              {l.toUpperCase()}
+            </a>
+          )}
+        </span>
+      ))}
+    </div>
+  );
 
   return (
     /* The header keeps a fixed 4.5rem layout box so the hero's
@@ -80,8 +157,8 @@ export function SiteHeader() {
         <div className="nav-row mx-auto flex max-w-[76rem] items-center justify-between">
           {/* Wordmark and links share the left; the call to action stands alone
               on the right. */}
-          <div className="flex items-center gap-10">
-            <Link href="/" className="flex items-center gap-2.5">
+          <div className="flex items-center gap-6 md:gap-5 lg:gap-10">
+            <Link href={href("/")} className="flex items-center gap-2.5">
               <Image
                 src="/logo-mark.png"
                 alt=""
@@ -95,7 +172,7 @@ export function SiteHeader() {
               </span>
             </Link>
 
-            <nav className="hidden items-center gap-9 md:flex">
+            <nav className="hidden items-center gap-5 md:flex lg:gap-9">
               {/* Hover opens it for pointers; the button keeps it reachable by
                   keyboard and touch. Escape closes without an effect. */}
               <div
@@ -123,7 +200,7 @@ export function SiteHeader() {
                         : "border-b-2 border-transparent pb-1"
                     }
                   >
-                    Services
+                    {t.nav.services}
                   </span>
                   <ChevronDown
                     className={`mb-1.5 size-3.5 transition-transform duration-200 ${
@@ -138,10 +215,10 @@ export function SiteHeader() {
                         hangs below the bar over page content rather than on
                         top of another translucent surface. */}
                     <div className="glass-panel w-[20rem] p-2">
-                      {homeServices.map((service) => (
+                      {services.map((service) => (
                         <Link
                           key={service.slug}
-                          href={`/services/${service.slug}`}
+                          href={href(`/services/${service.slug}`)}
                           onClick={closeMenu}
                           className="block px-4 py-3 font-body text-[0.9375rem] font-semibold tracking-[-0.01em] text-steel transition-colors hover:bg-ink/6 hover:text-ink"
                         >
@@ -149,11 +226,11 @@ export function SiteHeader() {
                         </Link>
                       ))}
                       <Link
-                        href="/services"
+                        href={href("/services")}
                         onClick={closeMenu}
                         className="mt-2 flex items-center justify-between gap-2 border-t border-[var(--color-line)] px-4 pt-4 pb-3 font-body text-[0.9375rem] font-semibold tracking-[-0.01em] text-ink transition-colors hover:text-steel"
                       >
-                        View all services
+                        {t.nav.viewAllServices}
                         <ArrowRight className="size-5 shrink-0" />
                       </Link>
                     </div>
@@ -168,11 +245,11 @@ export function SiteHeader() {
                   row, sat 3px higher. The chevron's mb-1.5 re-centres it on
                   the text rather than on the text plus its underline gap. */}
               {nav.map((item) => {
-                const active = pathname.startsWith(item.href);
+                const active = path.startsWith(item.href);
                 return (
                   <Link
                     key={item.href}
-                    href={item.href}
+                    href={href(item.href)}
                     className={`eyebrow flex items-center transition-colors hover:text-ink group-data-[tone=dark]:hover:text-paper ${
                       active
                         ? "text-ink group-data-[tone=dark]:text-paper"
@@ -186,7 +263,7 @@ export function SiteHeader() {
                           : "border-b-2 border-transparent pb-1"
                       }
                     >
-                      {item.label}
+                      {t.nav[item.key]}
                     </span>
                   </Link>
                 );
@@ -194,17 +271,23 @@ export function SiteHeader() {
             </nav>
           </div>
 
+          {/* The language switch is the one control on every screen size;
+              the call to action and the menu button share the right side
+              with it. */}
+          <div className="flex items-center gap-3 md:ml-4 lg:ml-0 lg:gap-6">
+          {languageSwitch}
+
           {/* The global ring is currentColor, which on this paper-on-ink pill
               is white drawn on the light island: 1.00:1 on the attached bar,
               1.76:1 over an ink section. Ink clears 3:1 in both states. */}
           <Link
-            href="/contact"
-            className="hidden rounded-full bg-ink px-5 py-2 font-body text-sm font-semibold text-paper transition-colors hover:bg-steel focus-visible:outline-ink group-data-[tone=dark]:bg-paper group-data-[tone=dark]:text-ink group-data-[tone=dark]:hover:bg-mist group-data-[tone=dark]:focus-visible:outline-paper md:inline-flex"
+            href={href("/contact")}
+            className="hidden rounded-full bg-ink px-4 py-2 font-body whitespace-nowrap lg:px-5 text-sm font-semibold text-paper transition-colors hover:bg-steel focus-visible:outline-ink group-data-[tone=dark]:bg-paper group-data-[tone=dark]:text-ink group-data-[tone=dark]:hover:bg-mist group-data-[tone=dark]:focus-visible:outline-paper md:inline-flex"
           >
-            Contact us
+            {t.common.contactUs}
           </Link>
 
-          {/* The only control in the phone header; 44px tall to match the
+          {/* The only control in the phone header besides the language switch; 44px tall to match the
               island it sits in. The negative margin cancels the padding so
               the label stays flush with the row's right edge. */}
           <button
@@ -214,8 +297,9 @@ export function SiteHeader() {
             aria-controls="mobile-nav"
             className="eyebrow -mr-3 flex min-h-11 items-center px-3 text-steel transition-colors group-data-[detached=true]:text-ink group-data-[tone=dark]:text-paper/80 md:hidden"
           >
-            {open ? "Close" : "Menu"}
+            {open ? t.nav.close : t.nav.menu}
           </button>
+          </div>
         </div>
 
         {open ? (
@@ -225,11 +309,11 @@ export function SiteHeader() {
           >
             {/* Services are listed flat rather than behind a second toggle: on a
                 phone an extra tap to reveal four links is not worth it. */}
-            <p className="eyebrow pt-5 pb-1 text-steel">Services</p>
-            {homeServices.map((service) => (
+            <p className="eyebrow pt-5 pb-1 text-steel">{t.nav.services}</p>
+            {services.map((service) => (
               <Link
                 key={service.slug}
-                href={`/services/${service.slug}`}
+                href={href(`/services/${service.slug}`)}
                 onClick={closeMenu}
                 className="block border-b border-[var(--color-line)] py-3 font-body text-steel"
               >
@@ -237,30 +321,30 @@ export function SiteHeader() {
               </Link>
             ))}
             <Link
-              href="/services"
+              href={href("/services")}
               onClick={closeMenu}
               className="flex items-center gap-2 border-b border-[var(--color-line)] py-4 font-body text-lg font-semibold tracking-[-0.02em]"
             >
-              View all services
+              {t.nav.viewAllServices}
               <ArrowRight className="size-5 shrink-0" />
             </Link>
 
             {nav.map((item) => (
               <Link
                 key={item.href}
-                href={item.href}
+                href={href(item.href)}
                 onClick={closeMenu}
                 className="block border-b border-[var(--color-line)] py-4 font-body text-lg font-semibold tracking-[-0.02em]"
               >
-                {item.label}
+                {t.nav[item.key]}
               </Link>
             ))}
             <Link
-              href="/contact"
+              href={href("/contact")}
               onClick={closeMenu}
               className="mt-6 block rounded-full bg-ink px-5 py-3 text-center font-body font-semibold text-paper focus-visible:outline-ink"
             >
-              Contact us
+              {t.common.contactUs}
             </Link>
           </nav>
         ) : null}

@@ -2,9 +2,14 @@ import Image from "next/image";
 import Link from "next/link";
 import { ContactDetails } from "@/components/contact-details";
 import { CookieSettingsButton } from "@/components/cookie-settings-button";
+import { getDictionary } from "@/lib/dictionary";
+import { localePath, type Locale } from "@/lib/i18n";
 import { legalNav, nav, site } from "@/lib/site";
 
-export function SiteFooter() {
+export function SiteFooter({ lang }: { lang: Locale }) {
+  const t = getDictionary(lang);
+  const href = (p: string) => localePath(lang, p);
+
   return (
     <footer className="mt-auto bg-ink text-paper" data-nav-tone="dark">
       <div className="mx-auto max-w-[76rem] px-6 py-16 lg:px-10 lg:py-20">
@@ -25,45 +30,45 @@ export function SiteFooter() {
                 {site.wordmark}
               </p>
             </div>
-            <p className="mt-4 max-w-sm text-paper/70">{site.tagline}</p>
+            <p className="mt-4 max-w-sm text-paper/70">{t.site.tagline}</p>
           </div>
 
           <div>
-            <p className="eyebrow text-paper/50">Site</p>
+            <p className="eyebrow text-paper/50">{t.footer.site}</p>
             <ul className="mt-5 space-y-3">
               <li>
                 <Link
-                  href="/services"
+                  href={href("/services")}
                   className="text-paper/80 transition-colors hover:text-paper"
                 >
-                  Services
+                  {t.nav.services}
                 </Link>
               </li>
               {nav.map((item) => (
                 <li key={item.href}>
                   <Link
-                    href={item.href}
+                    href={href(item.href)}
                     className="text-paper/80 transition-colors hover:text-paper"
                   >
-                    {item.label}
+                    {t.nav[item.key]}
                   </Link>
                 </li>
               ))}
               <li>
                 <Link
-                  href="/contact"
+                  href={href("/contact")}
                   className="text-paper/80 transition-colors hover:text-paper"
                 >
-                  Contact
+                  {t.nav.contact}
                 </Link>
               </li>
             </ul>
           </div>
 
           <div>
-            <p className="eyebrow text-paper/50">Office</p>
+            <p className="eyebrow text-paper/50">{t.footer.office}</p>
             <div className="mt-5">
-              <ContactDetails tone="inverse" />
+              <ContactDetails lang={lang} tone="inverse" />
             </div>
           </div>
         </div>
@@ -76,15 +81,18 @@ export function SiteFooter() {
             {legalNav.map((item) => (
               <li key={item.href}>
                 <Link
-                  href={item.href}
+                  href={href(item.href)}
                   className="transition-colors hover:text-paper"
                 >
-                  {item.label}
+                  {t.footer[item.key]}
                 </Link>
               </li>
             ))}
             <li>
-              <CookieSettingsButton className="transition-colors hover:text-paper" />
+              <CookieSettingsButton
+                label={t.footer.cookieSettings}
+                className="transition-colors hover:text-paper"
+              />
             </li>
           </ul>
         </div>

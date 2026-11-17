@@ -2,6 +2,8 @@
 
 import { site } from "@/lib/site";
 import type { SubscribeState } from "@/lib/subscribe";
+import { getDictionary } from "@/lib/dictionary";
+import { hasLocale } from "@/lib/i18n";
 
 const EMAIL = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
 
@@ -19,22 +21,24 @@ export async function subscribeToBlog(
   formData: FormData,
 ): Promise<SubscribeState> {
   const email = String(formData.get("email") ?? "").trim();
+  const lang = String(formData.get("lang") ?? "");
+  const t = getDictionary(hasLocale(lang) ? lang : "en").subscribeAction;
 
   // Honeypot: real people leave this empty. Answer as if it succeeded.
   if (String(formData.get("website") ?? "").length > 0) {
-    return { status: "success", message: "You are on the list." };
+    return { status: "success", message: t.onList };
   }
 
   if (!email) {
     return {
       status: "error",
-      message: "We need an address to send the articles to.",
+      message: t.emailRequired,
     };
   }
   if (!EMAIL.test(email)) {
     return {
       status: "error",
-      message: "That address does not look complete.",
+      message: t.emailInvalid,
       email,
     };
   }
@@ -48,7 +52,7 @@ export async function subscribeToBlog(
       "[subscribe] N8N_CONTACT_WEBHOOK_URL is not set; subscription was not delivered",
       { email },
     );
-    return { status: "success", message: "You are on the list." };
+    return { status: "success", message: t.onList };
   }
 
   try {
@@ -62,6 +66,7 @@ export async function subscribeToBlog(
         need: "",
         message: "Wants to receive new articles by email.",
         source: String(formData.get("source") ?? "blog-subscribe"),
+        lang: hasLocale(lang) ? lang : "en",
         submittedAt: new Date().toISOString(),
       }),
       signal: AbortSignal.timeout(10_000),
@@ -92,13 +97,13 @@ export async function subscribeToBlog(
     console.error("[subscribe] delivery failed", error);
     return {
       status: "error",
-      message: `Something went wrong on our side. Email us at ${site.email} and we will add you.`,
+      message: t.failed(site.email),
       email,
     };
   }
 
   return {
     status: "success",
-    message: "You are on the list. New articles land in your inbox.",
+    message: t.success,
   };
 }

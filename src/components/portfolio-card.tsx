@@ -6,6 +6,8 @@ import {
   portfolioImageSrc,
   type PortfolioItem,
 } from "@/lib/portfolio";
+import { getDictionary } from "@/lib/dictionary";
+import { localePath, type Locale } from "@/lib/i18n";
 
 /**
  * One project on the home row and on the portfolio index.
@@ -19,13 +21,15 @@ import {
  * one column until lg, the index is two from md.
  */
 export function PortfolioCard({
+  lang,
   item,
   sizes,
 }: {
+  lang: Locale;
   item: PortfolioItem;
   sizes: string;
 }) {
-  const href = `/portfolio/${item.slug}`;
+  const href = localePath(lang, `/portfolio/${item.slug}`);
   const cover = portfolioCover(item);
 
   return (
@@ -63,7 +67,7 @@ export function PortfolioCard({
           href={href}
           className="mt-6 inline-flex items-center gap-2 self-start font-body text-[0.9375rem] font-semibold tracking-[-0.01em] text-ink transition-colors hover:text-steel"
         >
-          View project
+          {getDictionary(lang).cards.viewProject}
           <span className="sr-only">: {item.name}</span>
           <ArrowRight className="size-5 shrink-0 transition-transform duration-200 group-hover:translate-x-1" />
         </Link>

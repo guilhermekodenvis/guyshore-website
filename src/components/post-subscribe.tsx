@@ -2,7 +2,9 @@
 
 import Link from "next/link";
 import { useActionState, useId } from "react";
-import { subscribeToBlog } from "@/app/blog/actions";
+import { subscribeToBlog } from "@/app/actions/subscribe";
+import { getDictionary } from "@/lib/dictionary";
+import { localePath, type Locale } from "@/lib/i18n";
 import { initialSubscribeState } from "@/lib/subscribe";
 
 /**
@@ -12,7 +14,8 @@ import { initialSubscribeState } from "@/lib/subscribe";
  * Deliberately on `mist` rather than `ink`: a post may already end with a dark
  * `PostCta`, and two black blocks in a row read as one long slab.
  */
-export function PostSubscribe() {
+export function PostSubscribe({ lang }: { lang: Locale }) {
+  const t = getDictionary(lang).subscribe;
   const [state, formAction, pending] = useActionState(
     subscribeToBlog,
     initialSubscribeState,
@@ -24,14 +27,12 @@ export function PostSubscribe() {
       <div className="mx-auto max-w-[76rem] px-6 py-20 lg:px-10 lg:py-24">
         <div className="grid gap-10 lg:grid-cols-[1fr_1fr] lg:gap-24">
           <div>
-            <p className="eyebrow text-slate">Newsletter</p>
+            <p className="eyebrow text-slate">{t.eyebrow}</p>
             <h2 className="mt-5 max-w-[20ch] text-title">
-              Get the next article by email.
+              {t.title}
             </h2>
             <p className="mt-6 max-w-[46ch] text-lead text-steel">
-              We write when we have something worth saying about building
-              software, usually once or twice a month. No sequences, no
-              upsells, and you can leave in one click.
+              {t.lead}
             </p>
           </div>
 
@@ -49,7 +50,7 @@ export function PostSubscribe() {
                   htmlFor={`${id}-email`}
                   className="eyebrow block text-slate"
                 >
-                  Your email
+                  {t.email}
                 </label>
 
                 <div className="mt-4 flex flex-col gap-3 sm:flex-row">
@@ -59,7 +60,7 @@ export function PostSubscribe() {
                     type="email"
                     autoComplete="email"
                     defaultValue={state.email ?? ""}
-                    placeholder="you@company.com"
+                    placeholder={t.placeholder}
                     aria-invalid={state.status === "error"}
                     aria-describedby={
                       state.status === "error" ? `${id}-error` : undefined
@@ -71,7 +72,7 @@ export function PostSubscribe() {
                     disabled={pending}
                     className="inline-flex shrink-0 items-center justify-center rounded-full bg-ink px-7 py-3 font-body text-[0.9375rem] font-semibold text-paper transition-colors hover:bg-steel disabled:opacity-60"
                   >
-                    {pending ? "Signing up…" : "Subscribe"}
+                    {pending ? t.signingUp : t.submit}
                   </button>
                 </div>
 
@@ -92,14 +93,15 @@ export function PostSubscribe() {
                 </div>
 
                 <input type="hidden" name="source" value="blog-subscribe" />
+                <input type="hidden" name="lang" value={lang} />
 
                 <p className="mt-5 text-[0.9375rem] text-slate">
-                  Prefer to talk about a project?{" "}
+                  {t.preferTalk}{" "}
                   <Link
-                    href="/contact"
+                    href={localePath(lang, "/contact")}
                     className="text-steel underline decoration-ink decoration-2 underline-offset-[3px] transition-colors hover:text-ink"
                   >
-                    Get in touch
+                    {t.getInTouch}
                   </Link>
                   .
                 </p>

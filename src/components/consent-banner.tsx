@@ -10,6 +10,8 @@ import {
   subscribe,
   type ConsentState,
 } from "@/lib/consent";
+import { getDictionary } from "@/lib/dictionary";
+import { localePath, type Locale } from "@/lib/i18n";
 
 /**
  * The cookie banner. The Google tag itself is in the root layout's head, so
@@ -96,7 +98,7 @@ const getServerCardTone = (): CardTone => "light";
 const BUTTON =
   "rounded-full bg-ink px-5 py-2.5 font-body text-[0.9375rem] font-semibold tracking-[-0.01em] text-paper transition-colors duration-300 hover:bg-steel focus-visible:outline-ink group-data-[tone=dark]:bg-paper group-data-[tone=dark]:text-ink group-data-[tone=dark]:hover:bg-mist group-data-[tone=dark]:focus-visible:outline-paper";
 
-export function ConsentBanner() {
+export function ConsentBanner({ lang }: { lang: Locale }) {
   const consent = useSyncExternalStore<ConsentState>(
     subscribe,
     readConsent,
@@ -109,10 +111,17 @@ export function ConsentBanner() {
   );
 
   if (consent !== "unset" && !reopened) return null;
-  return <ConsentCard reopened={reopened} />;
+  return <ConsentCard reopened={reopened} lang={lang} />;
 }
 
-function ConsentCard({ reopened }: { reopened: boolean }) {
+function ConsentCard({
+  reopened,
+  lang,
+}: {
+  reopened: boolean;
+  lang: Locale;
+}) {
+  const t = getDictionary(lang).consent;
   const card = useRef<HTMLDivElement | null>(null);
   const tone = useSyncExternalStore(subscribeCardTone, getCardTone, getServerCardTone);
 
@@ -140,21 +149,18 @@ function ConsentCard({ reopened }: { reopened: boolean }) {
         id="consent-title"
         className="eyebrow text-steel transition-colors duration-300 group-data-[tone=dark]:text-paper/75"
       >
-        Cookies
+        {t.eyebrow}
       </p>
       <p
         id="consent-body"
         className="mt-3 text-[0.9375rem] text-steel transition-colors duration-300 group-data-[tone=dark]:text-paper/85"
       >
-        We use Google&rsquo;s tag to measure whether our ads bring people here,
-        to show our ads to people who visited, and to count visits in Google
-        Analytics. It sets cookies only if you accept, and declining changes
-        nothing else on the site. Details are in our{" "}
+        {t.bodyBefore}{" "}
         <Link
-          href="/privacy"
+          href={localePath(lang, "/privacy")}
           className="font-semibold text-ink underline decoration-[var(--color-line-strong)] underline-offset-4 transition-colors duration-300 hover:decoration-ink group-data-[tone=dark]:text-paper group-data-[tone=dark]:decoration-paper/40 group-data-[tone=dark]:hover:decoration-paper"
         >
-          Privacy Policy
+          {t.privacy}
         </Link>
         .
       </p>
@@ -165,14 +171,14 @@ function ConsentCard({ reopened }: { reopened: boolean }) {
           onClick={() => saveConsent("denied")}
           className={BUTTON}
         >
-          Decline
+          {t.decline}
         </button>
         <button
           type="button"
           onClick={() => saveConsent("granted")}
           className={BUTTON}
         >
-          Accept
+          {t.accept}
         </button>
       </div>
     </div>

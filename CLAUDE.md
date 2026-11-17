@@ -8,11 +8,24 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Marketing site for GuyShore, a custom software development company (MVPs, software, apps, automations) selling to non-technical founders and startups. Office in Lisbon; clients served remotely across the US. Founder: Guy Sartori. Content is in English.
 
-Routes: home, services (index + a detail page per service), portfolio (index + a detail page per project), about, blog (index + MDX posts), contact, privacy, terms. An earlier portfolio route was deleted; the current one was rebuilt from real client projects in September 2026.
+Routes (each in English at the root and in Portuguese under `/pt`): home, services (index + a detail page per service), portfolio (index + a detail page per project), about, blog (index + MDX posts), contact, privacy, terms. An earlier portfolio route was deleted; the current one was rebuilt from real client projects in September 2026.
 
-## Site copy is American English
+## Two languages: English and European Portuguese
 
-Every user-visible string on the site is written in **English, American spelling**: optimize, organize, recognize, license, color, judgment. This holds regardless of the language the request arrives in, which is usually Portuguese. Translate the intent, do not paste the Portuguese.
+Every page exists in **English (American spelling)** at the root and in **European Portuguese (pt-PT)** under `/pt`: `/about` and `/pt/about`, `/services/mvp-development` and `/pt/services/mvp-development`. A change to copy is a change in both languages, in the same commit. Requests usually arrive in Portuguese; write English copy in English and Portuguese copy in European Portuguese (equipa, contacto, utilizador, ecrã, telemóvel, "estar a" + infinitive, "a sua empresa"), never Brazilian.
+
+How it is wired:
+
+- **Routes.** Every page lives under `src/app/[lang]/`, whose layout is the root layout (`<html lang>` is `en` or `pt-PT`). `next.config.ts` rewrites an unprefixed path to `/en/...` (array form, so `public/` files, `/api`, `sitemap.xml`, `robots.txt` and `llms.txt` are untouched) and 308s a typed `/en/...` back to the root. Route handlers and metadata routes stay at `src/app/`. `[lang]/[...rest]` turns unknown paths into the localized 404, which reads the language from the path because not-found pages get no params.
+- **`src/lib/i18n.ts`** holds `locales`, `localePath(lang, path)` (build every internal href with it), `splitPath`, `alternates()` (canonical + hreflang + x-default for `generateMetadata`) and `resolveLang(params)`.
+- **`src/lib/dictionary.ts`** holds every interface string (nav, headings, labels, form and action messages, the cookie banner). `pt` is typed against `en`, so a missing key fails the build.
+- **Data modules are per language**: `getServices(lang)` (`services.en.ts` / `services.pt.ts`, same slugs and order), `getPortfolio(lang)` (`details.json` / `details.pt.json` in each project folder), `faq[lang]`, `homeCopy[lang]`, `getFeasibility(lang)`, `getFounder(lang)`, `getMethod(lang)`. The legal pages carry both texts in their own files (`PrivacyEn`/`PrivacyPt`, `TermsEn`/`TermsPt`).
+- **Client components get `lang` as a prop** from the layout or page. `SiteHeader` reads `usePathname()` only through `splitPath`, because a prerendered page sees `/en/about` on the server and `/about` in the browser; normalizing both is what keeps hydration clean.
+- **The language switch** (`EN / PT` in the header, visible at every width) is a plain `<a>`, a full load on purpose. It keeps the path; on a blog post it goes to the post's translation if it names one, otherwise to the other blog.
+- **Forms send a hidden `lang`**, so the server action answers in the same language and the n8n payload carries it.
+- **Google reviews** are requested with `?lang=`, which becomes the Places `languageCode`.
+
+Rules that still hold in both languages: **no em dashes or en dashes anywhere in site copy**, no exclamation marks, and the British-spelling grep must stay empty for English: `grep -rnoE "optimis|organis|recognis|specialis|licence|colour|judgement" src/`.
 
 Two standing rules that come from earlier corrections:
 
@@ -45,7 +58,7 @@ The installed version is newer than most training data. Consult `node_modules/ne
 
 Two constraints that have already caused failures here:
 
-- **`"use server"` modules may only export async functions.** Exporting a constant (even a plain object) from `src/app/contact/actions.ts` throws at module evaluation, and the failure surfaces as a 500 on POST rather than a build error. Shared state shapes and constants live in `src/lib/contact.ts` for exactly this reason.
+- **`"use server"` modules may only export async functions.** Exporting a constant (even a plain object) from `src/app/actions/contact.ts` throws at module evaluation, and the failure surfaces as a 500 on POST rather than a build error. Shared state shapes and constants live in `src/lib/contact.ts` for exactly this reason.
 - **`react-hooks/set-state-in-effect` is an error, not a warning.** Calling `setState` synchronously in an effect body fails lint. Prefer event handlers (see how `SiteHeader` closes the mobile menu).
 
 Route params are Promises: `{ params: Promise<{ slug: string }> }`, awaited in the component.
@@ -56,9 +69,9 @@ Turbopack caches aggressively in dev. After renaming an export, stale HMR errors
 
 **Data lives in `src/lib/`, never inline in pages.** Editing copy means editing these modules:
 
-- `site.ts` — company facts, `title` (the browser-tab title), `listingName`, address, phone, email, `nav` and `legalNav`.
-- `services.ts` — every service and its whole detail page. `services` is all seven; `homeServices` is the four with `onHome: true`, used by the home grid and the header dropdown; `getService(slug)` resolves one. Also the five-step `method`.
-- `faq.ts` — home-page FAQ entries.
+- `site.ts` — company facts, `listingName`, address, phone, email, and the language-neutral `nav` and `legalNav` (labels come from the dictionary). The default title, description and tagline are in `dictionary.ts`.
+- `services.ts` — the types and accessors; the copy is in `services.en.ts` and `services.pt.ts`. `getServices(lang)` is all seven; `getHomeServices(lang)` is the four with `onHome: true`, used by the home grid and the header dropdown; `getService(lang, slug)` resolves one. Also the five-step method (`getMethod(lang)`).
+- `faq.ts` — home-page FAQ entries, per language.
 - `team.ts` — `founder`, including the LinkedIn URL and the `highlights` rendered under the LinkedIn button. An entry with `value: null` renders as a full-width statement instead of a number.
 - `partners.json` — the partner logos, their links and their 1x box sizes. The only file to edit to add, remove or reorder a partner; `partners.ts` just types it.
 - `feasibility.ts` — the Small Business Automation Consultation panel: copy, deliverables, and the button, which scrolls to the home contact form.
@@ -67,6 +80,8 @@ Turbopack caches aggressively in dev. After renaming an export, stale HMR errors
 - `contact.ts` — form shapes and the initial action state.
 
 **Home page composition** (`src/app/page.tsx`): hero (owns the first screen alone) → partners → Small Business Automation Consultation → client reviews (renders nothing until there is something real to show) → our services (four cards, then a centred link to `/services`) → portfolio (the featured projects, then a link to `/portfolio`) → our method → who we are → latest posts (`LatestPosts`, the three newest from `getAllPosts`, then a link to `/blog`; renders nothing while there are none) → FAQ → contact. Each block is either a component in `src/components/` or a section rendered straight from a `src/lib` module.
+
+**Each language has its own blog.** A post is written in one language: `meta.lang: "pt-PT"` makes it Portuguese (served at `/pt/blog/<slug>`, listed only on `/pt/blog` and the Portuguese home), no `lang` means English (`/blog/<slug>`). The two lists never mix. A translated article is two files that name each other in `meta.translations` (`{ en: "<slug>" }` on the Portuguese one, `{ pt: "<slug>" }` on the English one); that drives the hreflang links and where the switch goes. Without it a post exists in its own language only. Portuguese posts that were first published at `/blog/<slug>` redirect to `/pt/blog/<slug>` (`next.config.ts` finds them by their `lang`). In a Portuguese post, internal links written as `/services/...` resolve to the Portuguese pages; `/blog/<slug>` links are kept as written.
 
 **Blog is MDX compiled by `@next/mdx`.** Posts are `.mdx` files in `src/content/blog/`; the filename is the slug. Each post exports a `meta` object (title, description, date, author, readingTime, tags) alongside its default component — named `meta`, not `metadata`, so it is never confused with the Next.js route-metadata convention.
 

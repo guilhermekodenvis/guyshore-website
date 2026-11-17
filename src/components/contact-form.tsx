@@ -1,13 +1,15 @@
 "use client";
 
 import { useActionState, useId } from "react";
-import { submitContact } from "@/app/contact/actions";
+import { submitContact } from "@/app/actions/contact";
 import {
   CONTACT_NEEDS,
   initialContactState,
   type ContactField,
   type ContactState,
 } from "@/lib/contact";
+import { getDictionary } from "@/lib/dictionary";
+import type { Locale } from "@/lib/i18n";
 
 const fieldClass =
   "w-full rounded-[2px] border border-[var(--color-line-strong)] bg-mist px-4 py-3 font-body text-[1rem] text-ink transition-colors placeholder:text-slate focus:border-steel";
@@ -18,9 +20,11 @@ const fieldClass =
  * same action; the extra fields are optional server-side.
  */
 export function ContactForm({
+  lang,
   fields = "full",
   source = "website",
 }: {
+  lang: Locale;
   fields?: "full" | "short";
   /** Which form this is, carried through to the automation. */
   source?: string;
@@ -30,6 +34,7 @@ export function ContactForm({
     initialContactState,
   );
   const id = useId();
+  const t = getDictionary(lang).contactForm;
 
   if (state.status === "success") {
     return (
@@ -37,7 +42,7 @@ export function ContactForm({
         role="status"
         className="rounded-[2px] border border-[var(--color-line-strong)] bg-mist p-8 lg:p-10"
       >
-        <p className="eyebrow text-ink">Message sent</p>
+        <p className="eyebrow text-ink">{t.sent}</p>
         <p className="mt-5 text-lead">{state.message}</p>
       </div>
     );
@@ -58,14 +63,14 @@ export function ContactForm({
         <Field
           id={`${id}-name`}
           name="name"
-          label="Your name"
+          label={t.name}
           state={state}
           autoComplete="name"
         />
         <Field
           id={`${id}-email`}
           name="email"
-          label={fields === "short" ? "Email" : "Work email"}
+          label={fields === "short" ? t.email : t.workEmail}
           type="email"
           state={state}
           autoComplete="email"
@@ -77,15 +82,15 @@ export function ContactForm({
           <Field
             id={`${id}-company`}
             name="company"
-            label="Company"
+            label={t.company}
             state={state}
-            optional
+            optional={t.optional}
             autoComplete="organization"
           />
 
           <div>
-            <Label htmlFor={`${id}-need`} optional>
-              What you need
+            <Label htmlFor={`${id}-need`} optional={t.optional}>
+              {t.need}
             </Label>
             <select
               id={`${id}-need`}
@@ -93,10 +98,10 @@ export function ContactForm({
               defaultValue={state.values?.need ?? ""}
               className={`${fieldClass} appearance-none`}
             >
-              <option value="">Pick one</option>
+              <option value="">{t.pickOne}</option>
               {CONTACT_NEEDS.map((need) => (
                 <option key={need} value={need}>
-                  {need}
+                  {t.needs[need]}
                 </option>
               ))}
             </select>
@@ -106,7 +111,7 @@ export function ContactForm({
 
       <div>
         <Label htmlFor={`${id}-message`}>
-          {fields === "short" ? "Message" : "What are you trying to ship?"}
+          {fields === "short" ? t.message : t.messageLong}
         </Label>
         <textarea
           id={`${id}-message`}
@@ -117,13 +122,14 @@ export function ContactForm({
           aria-describedby={
             state.errors?.message ? `${id}-message-error` : undefined
           }
-          placeholder="The product, the deadline, and what is in the way."
+          placeholder={t.placeholder}
           className={fieldClass}
         />
         <FieldError id={`${id}-message-error`} message={state.errors?.message} />
       </div>
 
       <input type="hidden" name="source" value={source} />
+      <input type="hidden" name="lang" value={lang} />
 
       {/* Honeypot: hidden from people, tempting to bots. */}
       <div aria-hidden className="hidden">
@@ -136,7 +142,7 @@ export function ContactForm({
         disabled={pending}
         className="inline-flex items-center justify-center rounded-full bg-ink px-7 py-3 font-body text-[0.9375rem] font-semibold text-paper transition-colors hover:bg-steel disabled:opacity-60"
       >
-        {pending ? "Sending…" : "Send message"}
+        {pending ? t.sending : t.send}
       </button>
     </form>
   );
@@ -148,7 +154,8 @@ function Label({
   children,
 }: {
   htmlFor: string;
-  optional?: boolean;
+  /** The word for "optional", in the form's language. */
+  optional?: string;
   children: React.ReactNode;
 }) {
   return (
@@ -157,7 +164,7 @@ function Label({
       className="mb-2.5 flex items-baseline gap-2 font-label text-[0.6875rem] tracking-[0.1em] text-steel uppercase"
     >
       {children}
-      {optional ? <span className="text-slate/70">optional</span> : null}
+      {optional ? <span className="text-slate/70">{optional}</span> : null}
     </label>
   );
 }
@@ -188,7 +195,7 @@ function Field({
   label: string;
   state: ContactState;
   type?: string;
-  optional?: boolean;
+  optional?: string;
   autoComplete?: string;
 }) {
   const error = state.errors?.[name];

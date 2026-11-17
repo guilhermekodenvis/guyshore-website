@@ -3,7 +3,9 @@
 import { useEffect, useState } from "react";
 import { ButtonLink } from "@/components/button-link";
 import { ArrowUpRight } from "@/components/icons";
+import { getDictionary, type Dictionary } from "@/lib/dictionary";
 import type { GoogleRating, GoogleReview } from "@/lib/google-reviews";
+import type { Locale } from "@/lib/i18n";
 
 /**
  * The Google rating, the review count and up to five written reviews, live.
@@ -24,13 +26,14 @@ import type { GoogleRating, GoogleReview } from "@/lib/google-reviews";
  *   weight 400, 12 to 16px, in #1F1F1F or #5E5E5E (the site's `slate` is not
  *   an allowed color), inside a container set apart from the page.
  */
-export function GoogleReviews() {
+export function GoogleReviews({ lang }: { lang: Locale }) {
+  const t = getDictionary(lang).reviews;
   const [data, setData] = useState<GoogleRating | null>(null);
 
   useEffect(() => {
     const controller = new AbortController();
 
-    fetch("/api/google-rating", { cache: "no-store", signal: controller.signal })
+    fetch(`/api/google-rating?lang=${lang}`, { cache: "no-store", signal: controller.signal })
       .then((response) => (response.status === 200 ? response.json() : null))
       .then((body: GoogleRating | null) => {
         if (body && body.count > 0) setData(body);
@@ -40,20 +43,19 @@ export function GoogleReviews() {
       });
 
     return () => controller.abort();
-  }, []);
+  }, [lang]);
 
   if (!data) return null;
 
-  const label = data.count === 1 ? "review" : "reviews";
 
   return (
     <section className="border-t border-[var(--color-line)] bg-mist">
       <div className="mx-auto max-w-[76rem] px-6 py-20 lg:px-10 lg:py-24">
         <div className="flex flex-wrap items-end justify-between gap-x-12 gap-y-10">
           <div>
-            <p className="eyebrow text-slate">Client reviews</p>
+            <p className="eyebrow text-slate">{t.eyebrow}</p>
             <h2 className="mt-5 max-w-[20ch] text-title">
-              Rated by our clients on Google.
+              {t.title}
             </h2>
           </div>
 
@@ -67,11 +69,11 @@ export function GoogleReviews() {
               <span className="font-display text-6xl tracking-[-0.04em] text-ink">
                 {data.rating.toFixed(1)}
               </span>
-              <Stars rating={data.rating} className="h-6" />
+              <Stars rating={data.rating} label={t.stars} className="h-6" />
             </span>
             <span className="mt-2 flex items-center gap-1.5 text-steel transition-colors group-hover:text-ink">
-              {data.count} {label}
-              <span className="sr-only">, opens Google Maps in a new tab</span>
+              {t.count(data.count)}
+              <span className="sr-only">{t.opensMaps}</span>
               <ArrowUpRight className="size-4 shrink-0" />
             </span>
           </a>
@@ -79,15 +81,19 @@ export function GoogleReviews() {
 
         {data.preview ? (
           <p className="mt-10 border border-dashed border-[var(--color-line-strong)] px-4 py-3 font-label text-sm text-steel">
-            Development preview with sample data. It never renders in a
-            production build.
+            {t.preview}
           </p>
         ) : null}
 
         {data.reviews.length > 0 ? (
           <ul className="mt-14 grid gap-6 md:grid-cols-2 lg:grid-cols-3">
             {data.reviews.map((review, index) => (
-              <ReviewCard key={`${review.author}-${index}`} review={review} />
+              <ReviewCard
+                key={`${review.author}-${index}`}
+                review={review}
+                t={t}
+                newTab={getDictionary(lang).common.opensNewTab}
+              />
             ))}
           </ul>
         ) : null}
@@ -99,26 +105,33 @@ export function GoogleReviews() {
             target="_blank"
             rel="noreferrer"
           >
-            See all reviews
-            <span className="sr-only">on Google Maps (opens in a new tab)</span>
+            {t.seeAll}
+            <span className="sr-only">{t.seeAllSr}</span>
             <ArrowUpRight className="size-4 shrink-0" />
           </ButtonLink>
         </div>
 
         <p className="mt-10 border-t border-[var(--color-line)] pt-6 text-sm font-normal text-[#5E5E5E]">
-          Rating and reviews from{" "}
+          {t.attributionBefore}{" "}
           <span translate="no" className="whitespace-nowrap">
             Google Maps
           </span>
-          . Google selects up to five reviews by relevance, shown here newest
-          first. Reviews are not verified by Google or by us.
+          {t.attributionAfter}
         </p>
       </div>
     </section>
   );
 }
 
-function ReviewCard({ review }: { review: GoogleReview }) {
+function ReviewCard({
+  review,
+  t,
+  newTab,
+}: {
+  review: GoogleReview;
+  t: Dictionary["reviews"];
+  newTab: string;
+}) {
   return (
     <li className="flex h-full flex-col border border-[var(--color-line)] bg-paper p-7">
       <div className="flex items-center gap-3">
@@ -133,7 +146,7 @@ function ReviewCard({ review }: { review: GoogleReview }) {
                 className="transition-colors hover:text-steel"
               >
                 {review.author}
-                <span className="sr-only"> (opens in a new tab)</span>
+                <span className="sr-only"> {newTab}</span>
               </a>
             ) : (
               review.author
@@ -141,12 +154,12 @@ function ReviewCard({ review }: { review: GoogleReview }) {
           </p>
           <p className="text-sm text-slate">
             {review.relativeTime}
-            {review.translated ? " · Translated by Google" : null}
+            {review.translated ? t.translated : null}
           </p>
         </div>
       </div>
 
-      <Stars rating={review.rating} className="mt-5 h-4" />
+      <Stars rating={review.rating} label={t.stars} className="mt-5 h-4" />
 
       <blockquote className="mt-4 flex-1 text-steel">
         <p className="line-clamp-6">{review.text}</p>
@@ -159,8 +172,8 @@ function ReviewCard({ review }: { review: GoogleReview }) {
           rel="noreferrer"
           className="mt-6 inline-flex items-center gap-1.5 self-start border-t border-[var(--color-line)] pt-5 font-body text-[0.9375rem] font-semibold tracking-[-0.01em] text-ink transition-colors hover:text-steel"
         >
-          Read on Google Maps
-          <span className="sr-only">: review by {review.author} (opens in a new tab)</span>
+          {t.readOnMaps}
+          <span className="sr-only">{t.readOnMapsSr(review.author)}</span>
           <ArrowUpRight className="size-4 shrink-0" />
         </a>
       ) : null}
@@ -202,13 +215,21 @@ function Avatar({ review }: { review: GoogleReview }) {
  * and most of a fifth rather than rounding. The label carries the value for
  * assistive tech; the drawing is decoration.
  */
-function Stars({ rating, className = "" }: { rating: number; className?: string }) {
+function Stars({
+  rating,
+  label,
+  className = "",
+}: {
+  rating: number;
+  label: (rating: string) => string;
+  className?: string;
+}) {
   const share = Math.max(0, Math.min(1, rating / 5)) * 100;
 
   return (
     <span
       role="img"
-      aria-label={`Rated ${rating.toFixed(1)} out of 5`}
+      aria-label={label(rating.toFixed(1))}
       className={`relative inline-flex self-start ${className}`}
     >
       <StarRow className="h-full text-[var(--color-line-strong)]" />

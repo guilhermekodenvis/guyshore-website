@@ -1,15 +1,25 @@
 import type { Metadata } from "next";
 import { ContactDetails } from "@/components/contact-details";
 import { ContactForm } from "@/components/contact-form";
+import { getDictionary } from "@/lib/dictionary";
+import { alternates, resolveLang } from "@/lib/i18n";
 
-export const metadata: Metadata = {
-  title: "Contact",
-  // description intentionally omitted: inherits site.description from the root
-  // layout, so every page carries the same snippet.
-  alternates: { canonical: "/contact" },
-};
+type Props = { params: Promise<{ lang: string }> };
 
-export default function ContactPage() {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const lang = await resolveLang(params);
+  return {
+    title: getDictionary(lang).contactPage.metaTitle,
+    // description intentionally omitted: inherits the site description from
+    // the root layout, so every page carries the same snippet.
+    alternates: alternates(lang, "/contact"),
+  };
+}
+
+export default async function ContactPage({ params }: Props) {
+  const lang = await resolveLang(params);
+  const t = getDictionary(lang).contactPage;
+
   return (
     <>
       {/*
@@ -40,26 +50,23 @@ export default function ContactPage() {
       </div>
 
       <section className="mx-auto max-w-[76rem] px-6 pt-16 pb-24 lg:px-10 lg:pt-20 lg:pb-32">
-        <p className="eyebrow text-slate">Contact</p>
+        <p className="eyebrow text-slate">{t.eyebrow}</p>
         <h1 className="mt-5 max-w-[20ch] text-title">
-          Let&rsquo;s talk about your challenge.
+          {t.title}
         </h1>
         <p className="mt-7 max-w-[58ch] text-lead text-steel">
-          You have a challenge and we want to solve it for you. Our goal is to
-          see your dream project finished. It is time to ship the thing you have
-          been planning for months. Send us a message and let&rsquo;s get
-          started.
+          {t.lead}
         </p>
 
         <div className="tick-rule mt-14" />
 
         <div className="mt-16 grid gap-16 lg:grid-cols-[1.5fr_1fr] lg:gap-24">
-          <ContactForm fields="short" source="contact-page" />
+          <ContactForm lang={lang} fields="short" source="contact-page" />
 
           <aside>
-            <p className="eyebrow text-slate">Reach us directly</p>
+            <p className="eyebrow text-slate">{t.reachDirectly}</p>
             <div className="mt-6">
-              <ContactDetails />
+              <ContactDetails lang={lang} />
             </div>
           </aside>
         </div>

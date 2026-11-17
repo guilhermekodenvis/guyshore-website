@@ -1,4 +1,5 @@
 import { getGoogleRating } from "@/lib/google-reviews";
+import { hasLocale } from "@/lib/i18n";
 
 /**
  * The live Google rating and review count, for the client reviews section.
@@ -14,8 +15,10 @@ export const dynamic = "force-dynamic";
 
 const NO_STORE = { "Cache-Control": "private, no-store, max-age=0" };
 
-export async function GET(): Promise<Response> {
-  const rating = await getGoogleRating();
+export async function GET(request: Request): Promise<Response> {
+  // `?lang=pt` asks Google for the reviews and relative dates in Portuguese.
+  const lang = new URL(request.url).searchParams.get("lang") ?? "en";
+  const rating = await getGoogleRating(hasLocale(lang) ? lang : "en");
 
   if (!rating) {
     return new Response(null, { status: 204, headers: NO_STORE });

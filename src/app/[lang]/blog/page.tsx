@@ -2,35 +2,44 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ButtonLink } from "@/components/button-link";
 import { PageHeader } from "@/components/page-header";
-import { formatPostDate, getAllPosts } from "@/lib/posts";
+import { getDictionary } from "@/lib/dictionary";
+import { alternates, localePath, resolveLang } from "@/lib/i18n";
+import { formatPostDate, getAllPosts, postPath } from "@/lib/posts";
 
-export const metadata: Metadata = {
-  title: "Blog",
-  // description intentionally omitted: inherits site.description from the root
-  // layout, so every page carries the same snippet.
-  alternates: { canonical: "/blog" },
-};
+type Props = { params: Promise<{ lang: string }> };
 
-export default async function BlogPage() {
-  const posts = await getAllPosts();
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const lang = await resolveLang(params);
+  return {
+    title: getDictionary(lang).blog.metaTitle,
+    // description intentionally omitted: inherits the site description from
+    // the root layout, so every page carries the same snippet.
+    alternates: alternates(lang, "/blog"),
+  };
+}
+
+/**
+ * Each language has its own blog: only the posts written in that language
+ * are listed. A post that has not been translated simply does not appear on
+ * the other blog.
+ */
+export default async function BlogPage({ params }: Props) {
+  const lang = await resolveLang(params);
+  const t = getDictionary(lang).posts;
+  const posts = await getAllPosts(lang);
 
   return (
     <>
-      <PageHeader
-        eyebrow="Blog"
-        title="Here is the content you need to stay up to date."
-        lead="We share our expertise, our hands-on experience and what is happening in the market, so you stay ahead of your competitors."
-      />
+      <PageHeader eyebrow={t.eyebrow} title={t.indexTitle} lead={t.indexLead} />
 
       <div className="mx-auto max-w-[76rem] px-6 pb-24 lg:px-10 lg:pb-32">
         {posts.length === 0 ? (
           <div className="max-w-[48ch] border-t border-[var(--color-line)] pt-10">
             <p className="text-lead text-steel">
-              The first articles are on their way. Until then, ask us directly.
-              We answer every message.
+              {t.empty}
             </p>
-            <ButtonLink href="/contact" className="mt-8">
-              Ask us a question
+            <ButtonLink href={localePath(lang, "/contact")} className="mt-8">
+              {t.askQuestion}
             </ButtonLink>
           </div>
         ) : (
@@ -38,12 +47,12 @@ export default async function BlogPage() {
             {posts.map((post) => (
               <li key={post.slug}>
                 <Link
-                  href={`/blog/${post.slug}`}
+                  href={postPath(lang, post.slug)}
                   className="grid gap-4 border-b border-[var(--color-line)] py-10 transition-colors hover:bg-mist lg:grid-cols-[11rem_1fr] lg:gap-12 lg:py-12"
                 >
                   <p className="font-label text-[0.6875rem] tracking-[0.1em] text-slate uppercase">
                     <time dateTime={post.meta.date}>
-                      {formatPostDate(post.meta.date)}
+                      {formatPostDate(post.meta.date, lang)}
                     </time>
                     <span className="mt-1 block text-steel">
                       {post.meta.readingTime}

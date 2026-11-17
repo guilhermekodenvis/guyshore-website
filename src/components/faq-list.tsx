@@ -1,13 +1,12 @@
-import { faq as homeFaq } from "@/lib/faq";
-
 export type FaqItem = { question: string; answer: string };
 
 /**
  * Native <details> so it works without JavaScript and stays keyboard-operable.
  *
- * Defaults to the home page entries; the service detail pages pass their own.
+ * The home page passes its FAQ in the current language; the service detail
+ * pages and blog posts pass their own.
  */
-export function FaqList({ items = homeFaq }: { items?: readonly FaqItem[] }) {
+export function FaqList({ items }: { items: readonly FaqItem[] }) {
   return (
     <div className="border-t border-[var(--color-line)]">
       {items.map((item) => (

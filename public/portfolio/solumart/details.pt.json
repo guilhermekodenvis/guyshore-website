@@ -1,0 +1,46 @@
+{
+  "name": "Solumart: sistema de operações e aplicação para técnicos",
+  "client": "Solumart",
+  "category": "Serviços de campo",
+  "summary": "Um sistema de gestão para agendar técnicos de campo e acompanhar o estado, o preço, o custo e o lucro previsto de cada serviço, e uma aplicação móvel onde os técnicos veem os seus próximos trabalhos.",
+  "description": [
+    "A Solumart gere projetos e serviços pontuais para clientes empresariais, e os seus técnicos de campo executam o trabalho. Construímos um sistema de gestão para agendar cada técnico e acompanhar cada serviço desde o pedido até à aprovação, e uma aplicação móvel para os técnicos verem as atividades que têm pela frente.",
+    "O painel do sistema web resume o dia: os serviços de hoje agrupados por estado, quantos estão atrasados, os cinco clientes com mais serviços agendados para hoje e as mensagens dos técnicos ainda à espera de resposta. Serviços e projetos estão numa única tabela, com separadores para projetos e serviços pontuais e filtros por palavra-chave, cliente, técnico e estado. A página de cada serviço reúne o estado, o cliente e o técnico atribuído, a data e hora, a morada num mapa, fotografias de antes e depois, uma conversa de mensagens e o preço, o custo e o lucro previsto do trabalho.",
+    "O sistema gere também os clientes, cada um apresentado com o número de projetos e serviços deste mês, e os utilizadores, com níveis de acesso para administradores, operadores e técnicos. Abrange a gestão de pagamentos e as escalas de técnicos, envia relatórios por WhatsApp e email e exporta dados para XLSX e PDF.",
+    "Os técnicos usam a Solumart Service, a aplicação complementar, para entrar na sua agenda de atividades. Filtram os trabalhos por estado e por mês e ano, e abrem uma ordem de trabalho para ver a data e hora, o local, as instruções, o cliente, o representante e as fotografias de antes. Cada trabalho tem uma conversa de mensagens em que as entradas são marcadas como pendentes ou aprovadas. O sistema web e a aplicação partilham o símbolo do globo da Solumart e a mesma paleta de azul-marinho e âmbar."
+  ],
+  "deliverables": [
+    "Sistema de gestão web",
+    "Painel diário de operações",
+    "Acompanhamento de serviços e projetos com filtros",
+    "Página de detalhe do serviço com dados financeiros do trabalho e mapa",
+    "Gestão de clientes",
+    "Gestão de utilizadores com funções e níveis de acesso",
+    "Gestão de pagamentos e escalas de técnicos",
+    "Relatórios enviados por WhatsApp e email",
+    "Exportação para XLSX e PDF",
+    "Aplicação móvel para técnicos de campo"
+  ],
+  "stack": [
+    "Bubble",
+    "Make"
+  ],
+  "link": null,
+  "featured": false,
+  "order": 5,
+  "cover": "6.png",
+  "images": [
+    {
+      "file": "6.png",
+      "width": 1919,
+      "height": 870,
+      "alt": "Painel de operações com resumo diário, número de serviços atrasados, clientes mais ativos e mensagens de técnicos por responder"
+    },
+    {
+      "file": "11.png",
+      "width": 330,
+      "height": 708,
+      "alt": "Ecrã de início de sessão da aplicação móvel Solumart Service para técnicos"
+    }
+  ]
+}

@@ -1,9 +1,9 @@
-import { home } from "@/lib/home";
-import { feasibility } from "@/lib/feasibility";
-import { getAllPosts } from "@/lib/posts";
-import { services } from "@/lib/services";
+import { getFeasibility } from "@/lib/feasibility";
+import { homeCopy } from "@/lib/home";
+import { getAllPosts, postPath } from "@/lib/posts";
+import { getServices } from "@/lib/services";
 import { site } from "@/lib/site";
-import { founder } from "@/lib/team";
+import { getFounder } from "@/lib/team";
 
 /**
  * `/llms.txt`, the curated plain-text index described at llms.txt.org.
@@ -34,8 +34,16 @@ function line(label: string, url: string, summary: string): string {
   return `- [${label}](${site.url}${url}): ${summary}`;
 }
 
+// The index is written in English; the Portuguese section of the site is
+// listed at the end with its own articles.
+const home = homeCopy.en;
+const feasibility = getFeasibility("en");
+const founder = getFounder("en");
+const services = getServices("en");
+
 export async function GET(): Promise<Response> {
-  const posts = await getAllPosts();
+  const posts = await getAllPosts("en");
+  const postsPt = await getAllPosts("pt");
 
   const body = `# ${site.name}
 
@@ -70,6 +78,14 @@ ${line("Contact", "/contact", `Contact form, plus the address, phone and email a
 
 ${line("Privacy Policy", "/privacy", "What we collect and who processes it. A Google tag for Google Ads and Google Analytics sets cookies only if the visitor accepts, and nothing else tracks visitors.")}
 ${line("Terms of Use", "/terms", "The terms covering use of this website.")}
+
+## Portuguese (pt-PT)
+
+Every page above also exists in European Portuguese under /pt, with the same path after it (for example /pt/services/mvp-development).
+
+${line(homeCopy.pt.headline, "/pt", homeCopy.pt.description)}
+${postsPt.map((post) => line(post.meta.title, postPath("pt", post.slug), `${post.meta.description} Published ${post.meta.date}.`)).join("\n")}
+${line("Blog em português", "/pt/blog", "Portuguese articles, newest first.")}
 `;
 
   return new Response(body, {

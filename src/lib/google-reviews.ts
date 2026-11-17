@@ -1,3 +1,4 @@
+import type { Locale } from "@/lib/i18n";
 import { site } from "@/lib/site";
 
 /**
@@ -45,7 +46,7 @@ export type GoogleReview = {
   avatar: string | null;
   rating: number;
   text: string;
-  /** True when Google translated the review into English for display. */
+  /** True when Google translated the review into the requested language. */
   translated: boolean;
   /** Google's own phrasing, e.g. "2 months ago". */
   relativeTime: string;
@@ -114,7 +115,9 @@ function proxiedAvatar(photoUri: string | undefined): string | null {
   }
 }
 
-export async function getGoogleRating(): Promise<GoogleRating | null> {
+export async function getGoogleRating(
+  lang: Locale = "en",
+): Promise<GoogleRating | null> {
   if (
     process.env.NODE_ENV === "development" &&
     process.env.REVIEWS_PREVIEW === "1"
@@ -128,7 +131,7 @@ export async function getGoogleRating(): Promise<GoogleRating | null> {
 
   try {
     const response = await fetch(
-      `https://places.googleapis.com/v1/places/${encodeURIComponent(placeId)}?languageCode=en`,
+      `https://places.googleapis.com/v1/places/${encodeURIComponent(placeId)}?languageCode=${lang}`,
       {
         headers: { "X-Goog-Api-Key": key, "X-Goog-FieldMask": FIELD_MASK },
         cache: "no-store",

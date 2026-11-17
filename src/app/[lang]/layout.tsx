@@ -5,8 +5,12 @@ import { ConsentBanner } from "@/components/consent-banner";
 import { SiteHeader } from "@/components/site-header";
 import { SiteFooter } from "@/components/site-footer";
 import { GOOGLE_ADS_ID } from "@/lib/consent";
+import { getDictionary } from "@/lib/dictionary";
+import { htmlLang, locales, ogLocale, resolveLang } from "@/lib/i18n";
+import { postAlternates } from "@/lib/posts";
+import { getHomeServices } from "@/lib/services";
 import { site } from "@/lib/site";
-import "./globals.css";
+import "../globals.css";
 
 // Loaded through next/font rather than a <link> to Google: self-hosted, no
 // third-party request, and no layout shift from a late swap.
@@ -22,43 +26,54 @@ const spaceGrotesk = Space_Grotesk({
   display: "swap",
 });
 
-const OG_IMAGE = {
-  url: "/og-image.png",
-  width: 1200,
-  height: 630,
-  alt: "GuyShore, MVP and software development company for non-technical founders",
-};
+type Props = { params: Promise<{ lang: string }> };
 
-export const metadata: Metadata = {
-  metadataBase: new URL(site.url),
-  title: {
-    default: site.title,
-    template: `%s · ${site.name}`,
-  },
-  description: site.description,
-  openGraph: {
-    type: "website",
-    siteName: site.name,
-    locale: "en_US",
-    url: site.url,
-    title: site.title,
-    description: site.description,
-    images: [OG_IMAGE],
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: site.title,
-    description: site.description,
-    images: [OG_IMAGE],
-  },
-};
+/** Both languages are prerendered. English is served without a prefix. */
+export function generateStaticParams() {
+  return locales.map((lang) => ({ lang }));
+}
 
-export default function RootLayout({
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const lang = await resolveLang(params);
+  const t = getDictionary(lang).site;
+  const image = { url: "/og-image.png", width: 1200, height: 630, alt: t.ogAlt };
+
+  return {
+    metadataBase: new URL(site.url),
+    title: { default: t.title, template: `%s · ${site.name}` },
+    description: t.description,
+    openGraph: {
+      type: "website",
+      siteName: site.name,
+      locale: ogLocale[lang],
+      url: site.url,
+      title: t.title,
+      description: t.description,
+      images: [image],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: t.title,
+      description: t.description,
+      images: [image],
+    },
+  };
+}
+
+export default async function RootLayout({
   children,
-}: Readonly<{ children: React.ReactNode }>) {
+  params,
+}: Readonly<{ children: React.ReactNode; params: Promise<{ lang: string }> }>) {
+  const lang = await resolveLang(params);
+  const t = getDictionary(lang);
+  // What the header needs to render the services menu and to send the
+  // language switch to the right page.
+  const services = getHomeServices(lang).map(({ slug, title }) => ({ slug, title }));
+  const posts = await postAlternates();
+
   return (
     <html
-      lang="en"
+      lang={htmlLang[lang]}
       className={`${hostGrotesk.variable} ${spaceGrotesk.variable} h-full`}
     >
       <body className="flex min-h-full flex-col">
@@ -86,15 +101,15 @@ gtag("config", "${GOOGLE_ADS_ID}");`}
           href="#main"
           className="sr-only focus:not-sr-only focus:absolute focus:top-3 focus:left-3 focus:z-[60] focus:rounded-[2px] focus:bg-ink focus:px-4 focus:py-2 focus:text-paper"
         >
-          Skip to content
+          {t.common.skipToContent}
         </a>
-        <SiteHeader />
+        <SiteHeader lang={lang} services={services} posts={posts} />
         <main id="main" className="flex-1">
           {children}
         </main>
-        <SiteFooter />
+        <SiteFooter lang={lang} />
         {/* The cookie banner. Last in the body so it paints above the page. */}
-        <ConsentBanner />
+        <ConsentBanner lang={lang} />
       </body>
     </html>
   );

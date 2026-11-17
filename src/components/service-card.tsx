@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { ArrowRight } from "@/components/icons";
+import { getDictionary } from "@/lib/dictionary";
+import { localePath, type Locale } from "@/lib/i18n";
 import type { ServiceItem } from "@/lib/services";
 
 /**
@@ -9,8 +11,14 @@ import type { ServiceItem } from "@/lib/services";
  * the copy stays selectable. `group` on the article is what lets the arrow
  * react to a hover anywhere on the card.
  */
-export function ServiceCard({ service }: { service: ServiceItem }) {
-  const href = `/services/${service.slug}`;
+export function ServiceCard({
+  lang,
+  service,
+}: {
+  lang: Locale;
+  service: ServiceItem;
+}) {
+  const href = localePath(lang, `/services/${service.slug}`);
 
   return (
     <article
@@ -29,7 +37,7 @@ export function ServiceCard({ service }: { service: ServiceItem }) {
         href={href}
         className="mt-8 inline-flex items-center gap-2 self-start font-body text-[0.9375rem] font-semibold tracking-[-0.01em] text-ink transition-colors hover:text-steel"
       >
-        Learn more about this service
+        {getDictionary(lang).cards.learnMore}
         <span className="sr-only">: {service.title}</span>
         <ArrowRight className="size-5 shrink-0 transition-transform duration-200 group-hover:translate-x-1" />
       </Link>

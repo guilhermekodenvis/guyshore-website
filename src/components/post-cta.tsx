@@ -10,17 +10,22 @@ import { ArrowUpRight } from "@/components/icons";
  *
  * `href` is external in every current use (Calendly), which is why the link
  * opens in a new tab. An internal path would need that behaviour changed.
+ *
+ * `lang` is set by the post template through the MDX components, so the
+ * screen-reader note matches the language of the post.
  */
 export function PostCta({
   title,
   body,
   href,
   label,
+  newTab = "(opens in a new tab)",
 }: {
   title: string;
   body: string;
   href: string;
   label: string;
+  newTab?: string;
 }) {
   return (
     <aside className="post-cta bg-ink px-7 py-9 text-paper lg:px-10 lg:py-11">
@@ -36,7 +41,7 @@ export function PostCta({
         className="mt-8 inline-flex items-center gap-2 rounded-full bg-paper px-6 py-3 font-body text-[0.9375rem] font-semibold tracking-[-0.01em] text-ink no-underline transition-colors hover:bg-mist"
       >
         {label}
-        <span className="sr-only">(opens in a new tab)</span>
+        <span className="sr-only">{newTab}</span>
         <ArrowUpRight className="size-4 shrink-0" />
       </Link>
     </aside>

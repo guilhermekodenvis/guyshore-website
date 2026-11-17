@@ -1,7 +1,9 @@
-import { home } from "@/lib/home";
+import { getDictionary } from "@/lib/dictionary";
+import { getFeasibility } from "@/lib/feasibility";
+import { homeCopy } from "@/lib/home";
+import type { Locale } from "@/lib/i18n";
 import Image from "next/image";
 import { ChevronDown } from "@/components/icons";
-import { feasibility } from "@/lib/feasibility";
 
 /**
  * Shared cap for the headline and the supporting line.
@@ -12,7 +14,10 @@ import { feasibility } from "@/lib/feasibility";
  */
 const BLOCK = "max-w-[34rem]";
 
-export function Hero() {
+export function Hero({ lang }: { lang: Locale }) {
+  const t = getDictionary(lang).hero;
+  const home = homeCopy[lang];
+  const feasibility = getFeasibility(lang);
   return (
     // flex-1 rather than a height of its own: the wrapper on the home page
     // gives this one screen to fill. A column, so the scroll hint can sit at
@@ -41,7 +46,7 @@ export function Hero() {
         </div>
 
         <div className="order-2 lg:order-none lg:col-start-1 lg:row-start-1 lg:self-center">
-          <p className="eyebrow mb-6 text-slate">Your MVP, finally finished</p>
+          <p className="eyebrow mb-6 text-slate">{t.eyebrow}</p>
         <h1
           className={`animate-rise-in order-2 mx-auto ${BLOCK} text-display lg:order-none lg:col-start-1 lg:row-start-1 lg:mx-0 lg:self-center`}
         >
@@ -64,10 +69,10 @@ export function Hero() {
       <div className="flex shrink-0 justify-center px-6 pb-8 lg:pb-10">
         <a
           href={`#${feasibility.id}`}
-          aria-label={`Read more about the ${feasibility.eyebrow}`}
+          aria-label={t.readMoreAbout(feasibility.eyebrow)}
           className="animate-bounce-hint inline-flex flex-col items-center gap-1 rounded-full px-4 py-2 font-body text-[0.8125rem] font-semibold tracking-[-0.01em] text-slate transition-colors duration-200 hover:text-ink"
         >
-          Read more
+          {t.readMore}
           <ChevronDown className="size-5 shrink-0" />
         </a>
       </div>

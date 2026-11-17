@@ -1,7 +1,8 @@
 import { ButtonLink } from "@/components/button-link";
 import { Confetti } from "@/components/confetti";
 import { ArrowRight, CheckMark } from "@/components/icons";
-import { feasibility } from "@/lib/feasibility";
+import { getFeasibility } from "@/lib/feasibility";
+import type { Locale } from "@/lib/i18n";
 
 /**
  * Full-viewport black panel, directly under the partner row. The hero's
@@ -30,7 +31,8 @@ import { feasibility } from "@/lib/feasibility";
  * keeps pieces that drift sideways from widening the page, and the grid is
  * `relative` so it stacks above the canvas.
  */
-export function FeasibilityPanel() {
+export function FeasibilityPanel({ lang }: { lang: Locale }) {
+  const feasibility = getFeasibility(lang);
   return (
     <section
       id={feasibility.id}
@@ -69,11 +71,11 @@ export function FeasibilityPanel() {
           <p className="mt-3 max-w-[44ch] text-sm text-paper/80">{feasibility.priceNote}</p>
 
           <ButtonLink
-            href={feasibility.cta.href}
+            href={feasibility.ctaHref}
             variant="inverse"
             className="mt-10"
           >
-            {feasibility.cta.label}
+            {feasibility.ctaLabel}
             <ArrowRight className="size-4 shrink-0" />
           </ButtonLink>
         </div>

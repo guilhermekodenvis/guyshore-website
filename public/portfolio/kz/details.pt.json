@@ -1,0 +1,111 @@
+{
+  "name": "KZ Serviços: aplicação para clientes, aplicação para prestadores e plataforma de gestão",
+  "client": "KZ Serviços",
+  "category": "Serviços a pedido",
+  "summary": "Uma plataforma de gestão, uma aplicação para clientes e uma aplicação para prestadores de serviços, para uma empresa que agenda motoristas e profissionais de serviços ao domicílio, com cada pedido acompanhado até ao pagamento.",
+  "description": [
+    "A KZ Serviços agenda dois tipos de trabalho a pedido: viagens com motorista, incluindo transporte executivo e transferes para o aeroporto, e serviços ao domicílio prestados por profissionais como eletricistas, pintores, jardineiros e empregados de limpeza. Construímos uma plataforma de gestão para a equipa, uma aplicação para os clientes pedirem viagens e serviços e uma aplicação para os prestadores de serviços consultarem os seus próximos trabalhos.",
+    "A plataforma de gestão é onde a equipa agenda cada prestador de serviços e gere as escalas de motoristas e prestadores. Os pedidos de viagem e os pedidos de serviço têm cada um o seu quadro, com uma coluna por etapa, incluindo aberto, em análise, à procura de motorista ou prestador, agendado ou atribuído, e em curso. Secções separadas listam os clientes, todos os utilizadores com a respetiva função, os motoristas com a categoria e a data de validade da carta de condução, e os prestadores com a sua avaliação, os trabalhos concluídos e a indicação de se têm terminal de pagamento ou emitem faturas. A secção financeira mostra a receita total, o montante a aguardar pagamento, um painel de receita mensal dos últimos seis meses e as cobranças pendentes e pagas, com o método de pagamento de cada uma. Os relatórios são enviados por WhatsApp e email, e os dados são exportados para XLSX e PDF.",
+    "Na aplicação para clientes, as pessoas registam-se com email, Google ou Apple, pesquisam uma origem e um destino e veem o percurso num mapa. Depois escolhem partir já ou definir uma data e hora, indicam o número de adultos e se viajam com crianças ou bagagem. Para serviços ao domicílio, escolhem uma categoria, descrevem o problema, anexam fotografias ou vídeos e agendam uma hora ou pedem alguém de imediato, acompanhando depois o pedido enquanto a plataforma procura um profissional disponível. Um ecrã de perfil reúne as viagens agendadas, os pedidos de serviço, as mensagens, uma carteira e o histórico de viagens.",
+    "A plataforma web e a aplicação para clientes seguem a identidade visual da KZ, com o amarelo da marca presente em ambas."
+  ],
+  "deliverables": [
+    "Plataforma de gestão para viagens, serviços e finanças",
+    "Agendamento e escalas de prestadores e motoristas",
+    "Quadros de etapas para pedidos de viagem e de serviço",
+    "Fichas de motoristas e prestadores com avaliações e dados da carta de condução",
+    "Acompanhamento de cobranças pendentes e pagas",
+    "Relatórios por WhatsApp e email, exportação para XLSX e PDF",
+    "Aplicação para clientes reservarem viagens e serviços ao domicílio",
+    "Aplicação para prestadores consultarem os próximos trabalhos"
+  ],
+  "stack": [
+    "Next.js",
+    "Supabase",
+    "n8n"
+  ],
+  "link": null,
+  "featured": true,
+  "order": 3,
+  "cover": "7-cover.png",
+  "images": [
+    {
+      "file": "7-cover.png",
+      "width": 1919,
+      "height": 859,
+      "alt": "Quadro de viagens da KZ com colunas para aberto, em análise, à procura de motorista, agendado e em curso"
+    },
+    {
+      "file": "5.png",
+      "width": 1918,
+      "height": 862,
+      "alt": "Ecrã de início de sessão de administração dividido entre um painel amarelo da marca e um formulário de entrada escuro"
+    },
+    {
+      "file": "17.png",
+      "width": 622,
+      "height": 869,
+      "alt": "Mapa inicial da aplicação para clientes com uma barra de pesquisa de destino e um cartão de viagem pendente"
+    },
+    {
+      "file": "20.png",
+      "width": 634,
+      "height": 867,
+      "alt": "Ecrã de pesquisa de moradas com campos de origem e destino e sugestões de locais"
+    },
+    {
+      "file": "21.png",
+      "width": 622,
+      "height": 869,
+      "alt": "Painel de reserva de viagem sobre um mapa do percurso com opções de data, hora e passageiros"
+    },
+    {
+      "file": "19.png",
+      "width": 624,
+      "height": 867,
+      "alt": "Painel de detalhes da viagem com mapa do percurso, data, número de passageiros e notas"
+    },
+    {
+      "file": "18.png",
+      "width": 622,
+      "height": 870,
+      "alt": "Lista de viagens agendadas com um mapa do percurso e um cartão de viagem pendente"
+    },
+    {
+      "file": "22.png",
+      "width": 620,
+      "height": 864,
+      "alt": "Ecrã de serviços com um botão de novo pedido, filtros por categoria e um pedido de eletricista à procura de profissional"
+    },
+    {
+      "file": "23.png",
+      "width": 618,
+      "height": 865,
+      "alt": "Seletor de categorias de serviço com mosaicos para vidraceiro, técnico de informática, pintor, jardineiro, empregado de limpeza e outros"
+    },
+    {
+      "file": "24.png",
+      "width": 617,
+      "height": 868,
+      "alt": "Formulário de pedido de serviço com descrição do problema, anexo de fotografias e vídeos, morada e opções de agendamento"
+    },
+    {
+      "file": "25.png",
+      "width": 623,
+      "height": 864,
+      "alt": "Detalhes do pedido de serviço enquanto a aplicação procura um profissional disponível"
+    },
+    {
+      "file": "15.png",
+      "width": 624,
+      "height": 871,
+      "alt": "Painel de registo da aplicação para clientes com campos de nome, email, telefone e palavra-passe e opções Google e Apple"
+    },
+    {
+      "file": "16.png",
+      "width": 629,
+      "height": 873,
+      "alt": "Painel de início de sessão da aplicação para clientes com campos de email e palavra-passe e entrada com Google e Apple"
+    }
+  ]
+}

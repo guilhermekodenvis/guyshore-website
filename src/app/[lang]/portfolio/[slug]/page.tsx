@@ -4,18 +4,30 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { ButtonLink } from "@/components/button-link";
 import { ArrowRight, ArrowUpRight, CheckMark } from "@/components/icons";
+import { getDictionary } from "@/lib/dictionary";
 import {
+  alternates,
+  hasLocale,
+  localePath,
+  locales,
+  ogLocale,
+  resolveLang,
+} from "@/lib/i18n";
+import {
+  getPortfolio,
   getPortfolioItem,
-  portfolio,
   portfolioCover,
   portfolioImageSrc,
 } from "@/lib/portfolio";
 import { site } from "@/lib/site";
 
-type Params = { params: Promise<{ slug: string }> };
+type Params = { params: Promise<{ lang: string; slug: string }> };
 
+/** Every project exists in both languages, under the same slug. */
 export function generateStaticParams() {
-  return portfolio.map((item) => ({ slug: item.slug }));
+  return locales.flatMap((lang) =>
+    getPortfolio(lang).map((item) => ({ lang, slug: item.slug })),
+  );
 }
 
 export const dynamicParams = false;
@@ -28,8 +40,9 @@ export const dynamicParams = false;
 const WIDE_SIZES = "(min-width: 1216px) 1136px, calc(100vw - 48px)";
 
 export async function generateMetadata({ params }: Params): Promise<Metadata> {
-  const { slug } = await params;
-  const item = getPortfolioItem(slug);
+  const { lang, slug } = await params;
+  if (!hasLocale(lang)) return {};
+  const item = getPortfolioItem(lang, slug);
   if (!item) return {};
 
   const cover = portfolioCover(item);
@@ -43,12 +56,12 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   return {
     title: item.name,
     description: item.summary,
-    alternates: { canonical: `/portfolio/${slug}` },
+    alternates: alternates(lang, `/portfolio/${slug}`),
     openGraph: {
       type: "article",
       siteName: site.name,
-      locale: "en_US",
-      url: `${site.url}/portfolio/${slug}`,
+      locale: ogLocale[lang],
+      url: `${site.url}${localePath(lang, `/portfolio/${slug}`)}`,
       title: `${item.name} · ${site.name}`,
       description: item.summary,
       images: [image],
@@ -63,11 +76,15 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 }
 
 export default async function PortfolioItemPage({ params }: Params) {
+  const lang = await resolveLang(params);
   const { slug } = await params;
-  const item = getPortfolioItem(slug);
+  const item = getPortfolioItem(lang, slug);
   if (!item) notFound();
 
-  const url = `${site.url}/portfolio/${slug}`;
+  const dict = getDictionary(lang);
+  const t = dict.portfolioDetail;
+  const href = (path: string) => localePath(lang, path);
+  const url = `${site.url}${href(`/portfolio/${slug}`)}`;
   const cover = portfolioCover(item);
   const gallery = item.images.filter((image) => image.file !== cover.file);
   // Desktop screens stack full width; phone screens would be absurd at that
@@ -95,12 +112,17 @@ export default async function PortfolioItemPage({ params }: Params) {
       {
         "@type": "BreadcrumbList",
         itemListElement: [
-          { "@type": "ListItem", position: 1, name: "Home", item: site.url },
+          {
+            "@type": "ListItem",
+            position: 1,
+            name: dict.common.home,
+            item: `${site.url}${lang === "en" ? "" : href("/")}`,
+          },
           {
             "@type": "ListItem",
             position: 2,
-            name: "Portfolio",
-            item: `${site.url}/portfolio`,
+            name: dict.nav.portfolio,
+            item: `${site.url}${href("/portfolio")}`,
           },
           { "@type": "ListItem", position: 3, name: item.name, item: url },
         ],
@@ -117,11 +139,11 @@ export default async function PortfolioItemPage({ params }: Params) {
 
       <header className="mx-auto max-w-[76rem] px-6 pt-16 pb-12 lg:px-10 lg:pt-24 lg:pb-16">
         <Link
-          href="/portfolio"
+          href={href("/portfolio")}
           className="eyebrow inline-flex items-center gap-2 text-slate transition-colors hover:text-ink"
         >
           <ArrowRight className="size-4 shrink-0 rotate-180" />
-          All projects
+          {t.allProjects}
         </Link>
 
         <p className="eyebrow mt-12 text-slate">{item.category}</p>
@@ -130,16 +152,16 @@ export default async function PortfolioItemPage({ params }: Params) {
 
         <dl className="mt-12 grid gap-x-10 gap-y-6 border-t border-[var(--color-line)] pt-8 sm:grid-cols-3">
           <div>
-            <dt className="eyebrow text-slate">Client</dt>
+            <dt className="eyebrow text-slate">{t.client}</dt>
             <dd className="mt-2 text-ink">{item.client}</dd>
           </div>
           <div>
-            <dt className="eyebrow text-slate">Built with</dt>
+            <dt className="eyebrow text-slate">{t.builtWith}</dt>
             <dd className="mt-2 text-ink">{item.stack.join(", ")}</dd>
           </div>
           {item.link && host ? (
             <div>
-              <dt className="eyebrow text-slate">Live</dt>
+              <dt className="eyebrow text-slate">{t.live}</dt>
               <dd className="mt-2">
                 <a
                   href={item.link}
@@ -148,7 +170,7 @@ export default async function PortfolioItemPage({ params }: Params) {
                   className="inline-flex items-center gap-1.5 text-ink transition-colors hover:text-steel"
                 >
                   {host}
-                  <span className="sr-only">(opens in a new tab)</span>
+                  <span className="sr-only">{dict.common.opensNewTab}</span>
                   <ArrowUpRight className="size-4 shrink-0" />
                 </a>
               </dd>
@@ -174,7 +196,7 @@ export default async function PortfolioItemPage({ params }: Params) {
       <section className="mx-auto max-w-[76rem] px-6 py-24 lg:px-10 lg:py-32">
         <div className="grid gap-14 lg:grid-cols-[1.35fr_1fr] lg:gap-20">
           <div>
-            <p className="eyebrow text-slate">The project</p>
+            <p className="eyebrow text-slate">{t.project}</p>
             <div className="mt-6 grid gap-5 text-lead text-steel">
               {item.description.map((paragraph) => (
                 <p key={paragraph} className="max-w-[62ch]">
@@ -185,7 +207,7 @@ export default async function PortfolioItemPage({ params }: Params) {
           </div>
 
           <div>
-            <p className="eyebrow text-slate">What we delivered</p>
+            <p className="eyebrow text-slate">{t.delivered}</p>
             <ul className="mt-6 grid gap-4 border-t border-[var(--color-line)] pt-6">
               {item.deliverables.map((deliverable) => (
                 <li key={deliverable} className="flex gap-3.5">
@@ -201,7 +223,7 @@ export default async function PortfolioItemPage({ params }: Params) {
       {gallery.length > 0 ? (
         <section className="border-t border-[var(--color-line)] bg-mist">
           <div className="mx-auto max-w-[76rem] px-6 py-24 lg:px-10 lg:py-32">
-            <p className="eyebrow text-slate">Screens</p>
+            <p className="eyebrow text-slate">{t.screens}</p>
 
             {wide.length > 0 ? (
               <div className="mt-10 grid gap-8">
@@ -241,13 +263,11 @@ export default async function PortfolioItemPage({ params }: Params) {
       <section className="on-ink bg-ink text-paper" data-nav-tone="dark">
         <div className="mx-auto flex max-w-[76rem] flex-wrap items-end justify-between gap-10 px-6 py-20 lg:px-10 lg:py-24">
           <div>
-            <p className="eyebrow text-paper/70">Your project</p>
-            <h2 className="mt-5 max-w-[20ch] text-title">
-              Need something like this built?
-            </h2>
+            <p className="eyebrow text-paper/70">{t.ctaEyebrow}</p>
+            <h2 className="mt-5 max-w-[20ch] text-title">{t.ctaTitle}</h2>
           </div>
-          <ButtonLink href="/contact" variant="inverse">
-            Tell us about your project
+          <ButtonLink href={href("/contact")} variant="inverse">
+            {t.ctaButton}
             <ArrowRight className="size-5 shrink-0" />
           </ButtonLink>
         </div>

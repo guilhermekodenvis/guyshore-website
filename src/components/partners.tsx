@@ -1,4 +1,6 @@
 import Image from "next/image";
+import { getDictionary } from "@/lib/dictionary";
+import type { Locale } from "@/lib/i18n";
 import { partners } from "@/lib/partners";
 
 /**
@@ -7,11 +9,12 @@ import { partners } from "@/lib/partners";
  * The links are deliberately not `nofollow`: the partnership offers a real
  * backlink, and `rel="noreferrer"` alone does not stop a link being followed.
  */
-export function Partners() {
+export function Partners({ lang }: { lang: Locale }) {
+  const t = getDictionary(lang).common;
   return (
     <section className="border-b border-[var(--color-line)] bg-mist">
       <div className="mx-auto max-w-[76rem] px-6 py-16 lg:px-10 lg:py-20">
-        <p className="eyebrow text-center text-slate">Our partners</p>
+        <p className="eyebrow text-center text-slate">{t.partners}</p>
 
         <ul className="mt-12 flex flex-wrap items-center justify-center gap-x-16 gap-y-10 lg:gap-x-24">
           {partners.map((partner) => (
@@ -33,7 +36,7 @@ export function Partners() {
                   height={partner.height}
                   data-nav-luma="light"
                 />
-                <span className="sr-only">(opens in a new tab)</span>
+                <span className="sr-only">{t.opensNewTab}</span>
               </a>
             </li>
           ))}

@@ -1,0 +1,59 @@
+{
+  "name": "BHG: site e plataforma de operações fiscais",
+  "client": "BHG",
+  "category": "Consultoria fiscal",
+  "summary": "Um site e uma plataforma de gestão à medida para a BHG, uma consultora fiscal brasileira: quadro de etapas para processos fiscais, contratos de clientes, honorários, comissões e relatórios exportáveis.",
+  "description": [
+    "A BHG é uma consultora fiscal brasileira que trabalha com empresas nos regimes fiscais Simples Nacional, Lucro Presumido e Lucro Real. Construímos duas coisas para a empresa: o site público, onde potenciais clientes conhecem o serviço e entram em contacto, e a plataforma de gestão que suporta toda a operação.",
+    "A plataforma abrange finanças, contratos, clientes, parceiros e movimentos fiscais. Cada processo fiscal, associado a um cliente e a um período fiscal, avança num quadro de etapas como a espera pelos ficheiros fiscais originais do cliente, a importação do SPED e a geração do ficheiro SPED para entrega. Ao abrir um processo, veem-se os ficheiros carregados, comentários que podem ser marcados como apenas internos e um botão para o fazer avançar para a etapa seguinte. Os honorários são divididos em prestações, as que estão em atraso surgem assinaladas a vermelho e cada prestação pode ser marcada como recebida ou renegociada no mesmo ecrã.",
+    "A ficha de cada cliente mostra o valor de contrato reservado, o total já consumido, um gráfico de utilização do contrato e uma previsão de quando o contrato se esgota, bem como os utilizadores do cliente e os parceiros comissionados. Os painéis dividem os resultados em vistas geral, financeira e operacional, filtradas por filial, período fiscal, regime fiscal e dimensão da empresa, com um gráfico de doze meses de honorários, comissões, custos e lucro e uma repartição dos impostos por valor. Os relatórios são construídos escolhendo colunas, podem ser guardados e recarregados e exportados para XLSX ou PDF. A plataforma também envia relatórios por WhatsApp e email.",
+    "O site, a página de início de sessão e a plataforma partilham a mesma identidade visual: o logótipo da BHG, detalhes dourados sobre um tema escuro e um botão para alternar para o modo claro."
+  ],
+  "deliverables": [
+    "Site institucional com secções sobre a empresa, serviços e perguntas frequentes",
+    "Página de início de sessão da plataforma",
+    "Painel de operações com vistas de resumo, quadro de etapas, lista e impostos",
+    "Detalhe do processo com carregamento de ficheiros, comentários internos e controlo de etapas",
+    "Gestão de clientes e contratos com previsão de utilização",
+    "Prestações de honorários com alertas de atraso e renegociação",
+    "Parceiros comissionados associados a cada cliente",
+    "Painel financeiro com receita, comissões, custos e lucro",
+    "Construtor de relatórios à medida com relatórios guardados e exportação para XLSX e PDF",
+    "Envio de relatórios por WhatsApp e email"
+  ],
+  "stack": [
+    "Next.js",
+    "Supabase",
+    "n8n"
+  ],
+  "link": null,
+  "featured": true,
+  "order": 1,
+  "cover": "9.png",
+  "images": [
+    {
+      "file": "3.png",
+      "width": 1918,
+      "height": 865,
+      "alt": "Resumo do painel de operações da BHG com separadores de vista, filtros por regime fiscal e valores principais de receita, poupança, honorários e lucro"
+    },
+    {
+      "file": "1.png",
+      "width": 1914,
+      "height": 867,
+      "alt": "Topo do site da BHG com um título sobre poupança fiscal sobre a silhueta de uma cidade, navegação superior e um botão de contacto"
+    },
+    {
+      "file": "2.png",
+      "width": 1918,
+      "height": 867,
+      "alt": "Página de início de sessão da plataforma BHG com o logótipo da BHG sobre um gradiente roxo e um botão de entrada em dourado e roxo"
+    },
+    {
+      "file": "9.png",
+      "width": 1919,
+      "height": 865,
+      "alt": "Painel financeiro com totais de receita, comissões e custos, um gráfico de barras de doze meses e um gráfico circular dos impostos por valor"
+    }
+  ]
+}

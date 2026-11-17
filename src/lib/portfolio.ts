@@ -3,6 +3,12 @@ import hubfive from "../../public/portfolio/hubfive/details.json";
 import kz from "../../public/portfolio/kz/details.json";
 import sabas from "../../public/portfolio/sabas/details.json";
 import solumart from "../../public/portfolio/solumart/details.json";
+import bhgPt from "../../public/portfolio/bhg/details.pt.json";
+import hubfivePt from "../../public/portfolio/hubfive/details.pt.json";
+import kzPt from "../../public/portfolio/kz/details.pt.json";
+import sabasPt from "../../public/portfolio/sabas/details.pt.json";
+import solumartPt from "../../public/portfolio/solumart/details.pt.json";
+import type { Locale } from "@/lib/i18n";
 
 /**
  * Portfolio projects. Each lives in its own folder under `public/portfolio/`,
@@ -56,22 +62,32 @@ export type PortfolioDetails = {
 
 export type PortfolioItem = PortfolioDetails & { slug: string };
 
-const entries: Record<string, PortfolioDetails> = {
-  bhg,
-  hubfive,
-  kz,
-  sabas,
-  solumart,
+const entries: Record<Locale, Record<string, PortfolioDetails>> = {
+  en: { bhg, hubfive, kz, sabas, solumart },
+  pt: {
+    bhg: bhgPt,
+    hubfive: hubfivePt,
+    kz: kzPt,
+    sabas: sabasPt,
+    solumart: solumartPt,
+  },
 };
 
-export const portfolio: PortfolioItem[] = Object.entries(entries)
-  .map(([slug, details]) => ({ slug, ...details }))
-  .sort((a, b) => a.order - b.order);
+export function getPortfolio(lang: Locale): PortfolioItem[] {
+  return Object.entries(entries[lang])
+    .map(([slug, details]) => ({ slug, ...details }))
+    .sort((a, b) => a.order - b.order);
+}
 
-export const featuredPortfolio = portfolio.filter((item) => item.featured);
+export function getFeaturedPortfolio(lang: Locale): PortfolioItem[] {
+  return getPortfolio(lang).filter((item) => item.featured);
+}
 
-export function getPortfolioItem(slug: string): PortfolioItem | undefined {
-  return portfolio.find((item) => item.slug === slug);
+export function getPortfolioItem(
+  lang: Locale,
+  slug: string,
+): PortfolioItem | undefined {
+  return getPortfolio(lang).find((item) => item.slug === slug);
 }
 
 export function portfolioImageSrc(item: PortfolioItem, file: string): string {

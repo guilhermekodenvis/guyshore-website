@@ -1,0 +1,76 @@
+{
+  "name": "S.Sabas: site e sistema de gestão",
+  "client": "S.Sabas Locadora",
+  "category": "Transporte executivo",
+  "summary": "Site e sistema de gestão interno para uma empresa de transporte executivo em Valinhos, no Brasil: páginas da frota, reservas, escalas de motoristas e faturação.",
+  "description": [
+    "A S.Sabas Locadora presta serviços de transporte executivo terrestre em Valinhos e na região de Campinas, no estado de São Paulo, Brasil: transferes para o aeroporto, eventos empresariais, transporte para reuniões de negócios, viagens intermunicipais e interestaduais e motoristas privados. Construímos duas coisas para a empresa: o seu site público e um sistema de gestão que organiza a operação interna.",
+    "O site tem páginas de início, veículos, categorias, sobre a empresa e contacto. Os cartões de veículo mostram a categoria, a lotação e as comodidades, e cada veículo tem uma página de detalhe com galeria de fotografias, especificações, características e o que o serviço inclui. A partir da página de um veículo, os visitantes podem reservar por WhatsApp ou pedir um orçamento. O design segue a identidade visual da S.Sabas, com detalhes a vermelho nos títulos, nas etiquetas de categoria e nos botões. O site é responsivo e tratamos também do seu alojamento e segurança.",
+    "No sistema de gestão, a equipa agenda viagens e eventos e acompanha cada um pelo seu estado, incluindo se a ordem de serviço chegou ao motorista e se o motorista a viu. Cada reserva guarda o cliente, o centro de custo, o motorista, o veículo, o voucher, o número do voo, o percurso e os horários. A vista de escala é onde se atribuem os motoristas para cada dia: mostra o número de reservas do dia e o total faturado, assinala as viagens que ainda não têm veículo atribuído e permite imprimir. Módulos separados tratam de clientes, veículos, motoristas e pessoal.",
+    "A faturação passa por um módulo de fecho, com separadores para viagens em aberto, fechos por enviar, documentação pendente, valores a receber e histórico. Cada fecho ainda não enviado mostra o montante em dívida, o número de viagens e há quantos dias está à espera. Os fechos são enviados ao cliente por email ou descarregados em XLSX, e o sistema envia também relatórios por WhatsApp e email e exporta para PDF."
+  ],
+  "deliverables": [
+    "Site com páginas de início, veículos, categorias, sobre a empresa e contacto",
+    "Listagem da frota e páginas de detalhe de cada veículo",
+    "Botões de reserva e de pedido de orçamento por WhatsApp",
+    "Layout responsivo",
+    "Alojamento e segurança",
+    "Gestão de reservas de viagens e eventos",
+    "Escala diária de motoristas com impressão",
+    "Módulos de clientes, veículos, motoristas e pessoal",
+    "Fechos de faturação enviados por email ou exportados para XLSX",
+    "Relatórios por WhatsApp e email, com exportação para PDF"
+  ],
+  "stack": [
+    "Bubble",
+    "n8n"
+  ],
+  "link": "https://www.sabas.com.br/",
+  "featured": false,
+  "order": 4,
+  "cover": "1.png",
+  "images": [
+    {
+      "file": "1.png",
+      "width": 1919,
+      "height": 911,
+      "alt": "Topo da página inicial da S.Sabas Locadora com um SUV Volvo branco e botões de WhatsApp e de veículos"
+    },
+    {
+      "file": "2.png",
+      "width": 1919,
+      "height": 859,
+      "alt": "Secção da página inicial com os serviços de transferes para o aeroporto, eventos empresariais e motorista privado"
+    },
+    {
+      "file": "3.png",
+      "width": 1919,
+      "height": 903,
+      "alt": "Secção da frota com cartões de quatro veículos que mostram a categoria, a lotação e as comodidades"
+    },
+    {
+      "file": "6.png",
+      "width": 1919,
+      "height": 905,
+      "alt": "Página de veículos com cartões de carros executivos e botões para ver detalhes"
+    },
+    {
+      "file": "4.png",
+      "width": 1919,
+      "height": 901,
+      "alt": "Página de detalhe de um veículo com galeria de fotografias, especificações, características e um botão de reserva por WhatsApp"
+    },
+    {
+      "file": "5.png",
+      "width": 1919,
+      "height": 905,
+      "alt": "Página de contacto com um formulário de mensagem e a morada e o telefone da empresa"
+    },
+    {
+      "file": "7.png",
+      "width": 1919,
+      "height": 906,
+      "alt": "Ecrã de início de sessão do sistema de gestão com o símbolo S em azul-marinho"
+    }
+  ]
+}

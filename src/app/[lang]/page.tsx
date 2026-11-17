@@ -12,55 +12,81 @@ import { LatestPosts } from "@/components/latest-posts";
 import { Partners } from "@/components/partners";
 import { PortfolioCard } from "@/components/portfolio-card";
 import { ServiceCard } from "@/components/service-card";
-import { homeSchema } from "@/lib/home-schema";
-import { featuredPortfolio } from "@/lib/portfolio";
-import { method, homeServices } from "@/lib/services";
-import { founder } from "@/lib/team";
-import { home } from "@/lib/home";
+import { getDictionary } from "@/lib/dictionary";
+import { faq } from "@/lib/faq";
+import { homeCopy } from "@/lib/home";
+import { getHomeSchema } from "@/lib/home-schema";
+import { alternates, localePath, ogLocale, resolveLang } from "@/lib/i18n";
+import { getFeaturedPortfolio } from "@/lib/portfolio";
+import { getHomeServices, getMethod } from "@/lib/services";
+import { getFounder } from "@/lib/team";
 
-export const metadata: Metadata = {
-  // Emits <link rel="canonical" href="https://guyshore.com"/>. Next strips the
-  // root trailing slash because `trailingSlash` is false; passing the absolute
-  // URL with a slash does not change that.
-  alternates: { canonical: "/" },
-  title: { absolute: home.title },
-  description: home.description,
-  openGraph: { type: "website", url: "/", title: home.title, description: home.description, images: [{ url: "/og-image.png", width: 1200, height: 630 }] },
-  twitter: { card: "summary_large_image", title: home.title, description: home.description, images: ["/og-image.png"] },
-};
+type Props = { params: Promise<{ lang: string }> };
 
-export default function HomePage() {
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const lang = await resolveLang(params);
+  const home = homeCopy[lang];
+  const url = localePath(lang, "/");
+
+  return {
+    // English emits <link rel="canonical" href="https://guyshore.com"/>: Next
+    // strips the root trailing slash because `trailingSlash` is false.
+    alternates: alternates(lang, "/"),
+    title: { absolute: home.title },
+    description: home.description,
+    openGraph: {
+      type: "website",
+      url,
+      locale: ogLocale[lang],
+      title: home.title,
+      description: home.description,
+      images: [{ url: "/og-image.png", width: 1200, height: 630 }],
+    },
+    twitter: {
+      card: "summary_large_image",
+      title: home.title,
+      description: home.description,
+      images: ["/og-image.png"],
+    },
+  };
+}
+
+export default async function HomePage({ params }: Props) {
+  const lang = await resolveLang(params);
+  const t = getDictionary(lang).home;
+  const home = homeCopy[lang];
+  const founder = getFounder(lang);
+  const href = (path: string) => localePath(lang, path);
+
   return (
     <>
       {/* Server-rendered structured data. Must stay out of a client component
           so it is present in the initial HTML for crawlers. */}
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(homeSchema) }}
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(getHomeSchema(lang)) }}
       />
 
       {/* The hero owns the first screen on its own. */}
       <div className="flex min-h-[calc(100dvh-4.5rem)] flex-col">
-        <Hero />
+        <Hero lang={lang} />
       </div>
 
-      <Partners />
+      <Partners lang={lang} />
 
-      <FeasibilityPanel />
+      <FeasibilityPanel lang={lang} />
 
       {/* Client reviews, from the Google Business Profile. Renders nothing
           until the profile has at least one review and the API key is set. */}
-      <GoogleReviews />
+      <GoogleReviews lang={lang} />
 
       {/* Our services */}
       <section
         id="services"
         className="mx-auto max-w-[76rem] scroll-mt-24 px-6 py-24 lg:px-10 lg:py-32"
       >
-        <p className="eyebrow text-slate">Our services</p>
-        <h2 className="mt-5 max-w-[24ch] text-title">
-          {home.servicesTitle}
-        </h2>
+        <p className="eyebrow text-slate">{t.servicesEyebrow}</p>
+        <h2 className="mt-5 max-w-[24ch] text-title">{home.servicesTitle}</h2>
         <p className="mt-7 max-w-[68ch] text-lead text-steel">
           {home.servicesLead}
         </p>
@@ -68,16 +94,16 @@ export default function HomePage() {
         {/* Two per row from md up, one per row below it. `items-stretch` is
             implicit in grid, so paired cards match height. */}
         <div className="mt-16 grid gap-6 md:grid-cols-2">
-          {homeServices.map((service) => (
-            <ServiceCard key={service.slug} service={service} />
+          {getHomeServices(lang).map((service) => (
+            <ServiceCard key={service.slug} lang={lang} service={service} />
           ))}
         </div>
 
         {/* The home grid is the four core services. Three more live on the
             index, which is what this leads to. */}
         <div className="mt-14 flex justify-center">
-          <ButtonLink href="/services" variant="ghost">
-            View all services
+          <ButtonLink href={href("/services")} variant="ghost">
+            {getDictionary(lang).nav.viewAllServices}
             <ArrowRight className="size-5 shrink-0" />
           </ButtonLink>
         </div>
@@ -87,21 +113,19 @@ export default function HomePage() {
           above. */}
       <section className="border-t border-[var(--color-line)]">
         <div className="mx-auto max-w-[76rem] px-6 py-24 lg:px-10 lg:py-32">
-          <p className="eyebrow text-slate">Portfolio</p>
-          <h2 className="mt-5 max-w-[22ch] text-title">
-            Software we built for real companies.
-          </h2>
+          <p className="eyebrow text-slate">{t.portfolioEyebrow}</p>
+          <h2 className="mt-5 max-w-[22ch] text-title">{t.portfolioTitle}</h2>
           <p className="mt-7 max-w-[64ch] text-lead text-steel">
-            Websites, management platforms and mobile apps, each one taken from
-            the first screen to production and handed over running.
+            {t.portfolioLead}
           </p>
 
           {/* One column until lg: three cards side by side on a tablet leave
               each cover too small to read. */}
           <div className="mt-16 grid gap-6 lg:grid-cols-3">
-            {featuredPortfolio.map((item) => (
+            {getFeaturedPortfolio(lang).map((item) => (
               <PortfolioCard
                 key={item.slug}
+                lang={lang}
                 item={item}
                 sizes="(min-width: 1024px) 362px, 100vw"
               />
@@ -109,8 +133,8 @@ export default function HomePage() {
           </div>
 
           <div className="mt-14 flex justify-center">
-            <ButtonLink href="/portfolio" variant="ghost">
-              View all projects
+            <ButtonLink href={href("/portfolio")} variant="ghost">
+              {t.viewAllProjects}
               <ArrowRight className="size-5 shrink-0" />
             </ButtonLink>
           </div>
@@ -120,16 +144,14 @@ export default function HomePage() {
       {/* Our method */}
       <section className="border-y border-[var(--color-line)] bg-mist">
         <div className="mx-auto max-w-[76rem] px-6 py-24 lg:px-10 lg:py-32">
-          <p className="eyebrow text-slate">Our method</p>
-          <h2 className="mt-5 max-w-[24ch] text-title">
-            How we turn repetitive work into reliable workflows.
-          </h2>
+          <p className="eyebrow text-slate">{t.methodEyebrow}</p>
+          <h2 className="mt-5 max-w-[24ch] text-title">{t.methodTitle}</h2>
           <p className="mt-7 max-w-[64ch] text-lead text-steel">
-            We map your process, agree on the scope, connect your tools and test the workflow before your team relies on it. You know what runs automatically and where a person stays in control.
+            {t.methodLead}
           </p>
 
           <ol className="mt-16 border-t border-[var(--color-line)]">
-            {method.map((item) => (
+            {getMethod(lang).map((item) => (
               <li
                 key={item.step}
                 className="grid gap-4 border-b border-[var(--color-line)] py-8 lg:grid-cols-[5rem_16rem_1fr] lg:gap-10"
@@ -145,13 +167,9 @@ export default function HomePage() {
 
       {/* Who we are */}
       <section className="mx-auto max-w-[76rem] px-6 py-24 lg:px-10 lg:py-32">
-        <p className="eyebrow text-slate">Who we are</p>
-        <h2 className="mt-5 max-w-[24ch] text-title">
-          Automation and software built around your business.
-        </h2>
-        <p className="mt-7 max-w-[66ch] text-lead text-steel">
-          {home.about}
-        </p>
+        <p className="eyebrow text-slate">{t.whoEyebrow}</p>
+        <h2 className="mt-5 max-w-[24ch] text-title">{t.whoTitle}</h2>
+        <p className="mt-7 max-w-[66ch] text-lead text-steel">{home.about}</p>
 
         <div className="mt-16 grid gap-10 border-t border-[var(--color-line)] pt-12 lg:grid-cols-[20rem_1fr] lg:gap-16">
           <div className="relative aspect-[4/5] overflow-hidden rounded-[2px] bg-ink">
@@ -178,10 +196,12 @@ export default function HomePage() {
               className="mt-8"
             >
               <LinkedInMark className="size-[1.15em] shrink-0" />
-              Connect with me on LinkedIn
+              {t.linkedin}
               {/* The mark says which network but not that the link leaves the
                   site, so it is paired with a spoken equivalent. */}
-              <span className="sr-only">(opens in a new tab)</span>
+              <span className="sr-only">
+                {getDictionary(lang).common.opensNewTab}
+              </span>
             </ButtonLink>
 
             {/* The numbers sit in a row and their labels never wrap. Each
@@ -218,19 +238,18 @@ export default function HomePage() {
         </div>
       </section>
 
-      {/* Latest posts: the three newest, then a link to the blog index. */}
-      <LatestPosts />
+      {/* Latest posts: the three newest in this language, then a link to the
+          blog index. */}
+      <LatestPosts lang={lang} />
 
       {/* FAQ */}
       <section className="border-t border-[var(--color-line)] bg-mist">
         <div className="mx-auto max-w-[76rem] px-6 py-24 lg:px-10 lg:py-32">
-          <p className="eyebrow text-slate">FAQ</p>
-          <h2 className="mt-5 max-w-[20ch] text-title">
-            Small business automation questions, answered.
-          </h2>
+          <p className="eyebrow text-slate">{t.faqEyebrow}</p>
+          <h2 className="mt-5 max-w-[20ch] text-title">{t.faqTitle}</h2>
 
           <div className="mt-14">
-            <FaqList />
+            <FaqList items={faq[lang]} />
           </div>
         </div>
       </section>
@@ -242,19 +261,17 @@ export default function HomePage() {
       >
         <div className="grid gap-14 lg:grid-cols-[1fr_1.15fr] lg:gap-24">
           <div>
-            <p className="eyebrow text-slate">Contact</p>
-            <h2 className="mt-5 max-w-[16ch] text-title">
-              What would you like to stop doing manually?
-            </h2>
+            <p className="eyebrow text-slate">{t.contactEyebrow}</p>
+            <h2 className="mt-5 max-w-[16ch] text-title">{t.contactTitle}</h2>
             <p className="mt-7 max-w-[44ch] text-lead text-steel">
-              Tell us about your business, the tools you use and one task that takes too much time. To request the €50 consultation, mention it in your message. We will reply within one working day to arrange next steps.
+              {t.contactLead}
             </p>
             <div className="mt-10">
-              <ContactDetails />
+              <ContactDetails lang={lang} />
             </div>
           </div>
 
-          <ContactForm fields="short" source="home" />
+          <ContactForm lang={lang} fields="short" source="home" />
         </div>
       </section>
     </>
