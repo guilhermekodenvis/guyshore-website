@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHeader } from "@/components/page-header";
-import { alternates, localePath, resolveLang } from "@/lib/i18n";
+import { localePath, resolveLang } from "@/lib/i18n";
+import { pageMetadata } from "@/lib/seo";
 import { site } from "@/lib/site";
 
 type Props = { params: Promise<{ lang: string }> };
@@ -9,13 +10,14 @@ type Props = { params: Promise<{ lang: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const lang = await resolveLang(params);
   const pt = lang === "pt";
-  return {
+  return pageMetadata({
+    lang,
+    path: "/privacy",
     title: pt ? "Política de Privacidade" : "Privacy Policy",
     description: pt
       ? "Como a GuyShore trata dados pessoais: o que o formulário de contacto recolhe, a etiqueta da Google que só funciona com o seu consentimento, quem trata os seus dados, durante quanto tempo são conservados e quais são os seus direitos."
       : "How GuyShore handles personal data: what the contact form collects, the Google tag that runs only with your consent, who processes your data, how long it is kept, and your rights.",
-    alternates: alternates(lang, "/privacy"),
-  };
+  });
 }
 
 /** Shown on the page and used as the schema's dateModified. */

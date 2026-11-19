@@ -14,8 +14,10 @@ type Entry = MetadataRoute.Sitemap[number];
  * are actually written in.
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  // Stamped once per build. Every route here is public marketing content.
-  const lastModified = new Date();
+  // Only posts carry a lastmod: their date (or the date they were revised)
+  // is a real one. A build timestamp on every page would say everything
+  // changed on every deploy, and search engines learn to ignore a lastmod
+  // that is always new.
   const abs = (path: string) => `${site.url}${path === "/" ? "" : path}`;
 
   const languagesFor = (paths: Partial<Record<Locale, string>>) => {
@@ -39,7 +41,6 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       ) as Record<Locale, string>;
       return locales.map((l) => ({
         url: abs(perLang[l]),
-        lastModified,
         changeFrequency,
         priority: priority(path),
         alternates: languagesFor(perLang),
@@ -53,7 +54,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
       const own = Object.values(paths)[0] as string;
       return {
         url: abs(own),
-        lastModified,
+        lastModified: post.meta.updated ?? post.meta.date,
         changeFrequency: "yearly" as const,
         priority: 0.6,
         alternates: languagesFor(paths),

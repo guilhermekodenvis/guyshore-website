@@ -2,26 +2,54 @@ import type { Metadata } from "next";
 import { ContactDetails } from "@/components/contact-details";
 import { ContactForm } from "@/components/contact-form";
 import { getDictionary } from "@/lib/dictionary";
-import { alternates, resolveLang } from "@/lib/i18n";
+import { resolveLang } from "@/lib/i18n";
+import { absoluteUrl, breadcrumb, pageMetadata } from "@/lib/seo";
+import { htmlLang } from "@/lib/i18n";
+import { site } from "@/lib/site";
 
 type Props = { params: Promise<{ lang: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const lang = await resolveLang(params);
-  return {
-    title: getDictionary(lang).contactPage.metaTitle,
-    // description intentionally omitted: inherits the site description from
-    // the root layout, so every page carries the same snippet.
-    alternates: alternates(lang, "/contact"),
-  };
+  const t = getDictionary(lang).contactPage;
+  return pageMetadata({ lang, path: "/contact", title: t.metaTitle, description: t.lead });
 }
 
 export default async function ContactPage({ params }: Props) {
   const lang = await resolveLang(params);
   const t = getDictionary(lang).contactPage;
+  const url = absoluteUrl(lang, "/contact");
+
+  const schema = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "ContactPage",
+        "@id": `${url}#page`,
+        url,
+        name: t.title,
+        inLanguage: lang === "en" ? "en-US" : htmlLang[lang],
+        about: { "@id": "https://guyshore.com/#organization" },
+        mainEntity: {
+          "@type": "ContactPoint",
+          contactType: "customer service",
+          email: site.email,
+          telephone: site.phone.e164,
+          availableLanguage: ["English", "Portuguese"],
+        },
+      },
+      breadcrumb(lang, getDictionary(lang).common.home, [
+        { name: t.metaTitle, path: "/contact" },
+      ]),
+    ],
+  };
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+      />
       {/*
         Full-bleed banner. Drop the real asset in here and delete the
         decorative fill below:

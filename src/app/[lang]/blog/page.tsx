@@ -3,18 +3,29 @@ import Link from "next/link";
 import { ButtonLink } from "@/components/button-link";
 import { PageHeader } from "@/components/page-header";
 import { getDictionary } from "@/lib/dictionary";
-import { alternates, localePath, resolveLang } from "@/lib/i18n";
+import { localePath, resolveLang } from "@/lib/i18n";
+import { absoluteUrl, pageMetadata } from "@/lib/seo";
 import { formatPostDate, getAllPosts, postPath } from "@/lib/posts";
 
 type Props = { params: Promise<{ lang: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const lang = await resolveLang(params);
+  const t = getDictionary(lang);
+  const meta = pageMetadata({
+    lang,
+    path: "/blog",
+    title: t.blog.metaTitle,
+    description: t.posts.indexLead,
+  });
+  // Advertise this language's RSS feed (blog/feed.xml) to readers and
+  // crawlers that look for one.
   return {
-    title: getDictionary(lang).blog.metaTitle,
-    // description intentionally omitted: inherits the site description from
-    // the root layout, so every page carries the same snippet.
-    alternates: alternates(lang, "/blog"),
+    ...meta,
+    alternates: {
+      ...meta.alternates,
+      types: { "application/rss+xml": absoluteUrl(lang, "/blog/feed.xml") },
+    },
   };
 }
 
@@ -27,9 +38,35 @@ export default async function BlogPage({ params }: Props) {
   const lang = await resolveLang(params);
   const t = getDictionary(lang).posts;
   const posts = await getAllPosts(lang);
+  const url = absoluteUrl(lang, "/blog");
+
+  // The index as a Blog with its posts, newest first.
+  const schema = {
+    "@context": "https://schema.org",
+    "@type": "Blog",
+    "@id": `${url}#blog`,
+    url,
+    name: `${getDictionary(lang).blog.metaTitle} · GuyShore`,
+    description: t.indexLead,
+    inLanguage: lang === "en" ? "en-US" : "pt-PT",
+    publisher: { "@id": "https://guyshore.com/#organization" },
+    blogPost: posts.map((post) => ({
+      "@type": "BlogPosting",
+      headline: post.meta.title,
+      description: post.meta.description,
+      url: `https://guyshore.com${postPath(lang, post.slug)}`,
+      datePublished: post.meta.date,
+      dateModified: post.meta.updated ?? post.meta.date,
+      author: { "@type": "Person", name: post.meta.author },
+    })),
+  };
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+      />
       <PageHeader eyebrow={t.eyebrow} title={t.indexTitle} lead={t.indexLead} />
 
       <div className="mx-auto max-w-[76rem] px-6 pb-24 lg:px-10 lg:pb-32">

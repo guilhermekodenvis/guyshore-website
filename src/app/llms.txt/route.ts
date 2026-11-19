@@ -1,5 +1,6 @@
 import { getFeasibility } from "@/lib/feasibility";
 import { homeCopy } from "@/lib/home";
+import { getPortfolio } from "@/lib/portfolio";
 import { getAllPosts, postPath } from "@/lib/posts";
 import { getServices } from "@/lib/services";
 import { site } from "@/lib/site";
@@ -63,6 +64,11 @@ Email: ${site.email}
 
 ${services.map((service) => line(service.title, `/services/${service.slug}`, service.lead)).join("\n")}
 ${line("All services", "/services", "Index of every service, one per row.")}
+
+## Portfolio
+
+${getPortfolio("en").map((item) => line(item.name, `/portfolio/${item.slug}`, `${item.summary} Built with ${item.stack.join(", ")}.`)).join("\n")}
+${line("All projects", "/portfolio", "Every project, with screenshots and what was delivered.")}
 
 ## Blog
 

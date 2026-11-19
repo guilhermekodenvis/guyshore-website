@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { PageHeader } from "@/components/page-header";
 import { ServiceCard } from "@/components/service-card";
 import { getDictionary } from "@/lib/dictionary";
-import { alternates, localePath, resolveLang } from "@/lib/i18n";
+import { localePath, resolveLang } from "@/lib/i18n";
+import { pageMetadata } from "@/lib/seo";
 import { getServices } from "@/lib/services";
 import { site } from "@/lib/site";
 
@@ -10,12 +11,8 @@ type Props = { params: Promise<{ lang: string }> };
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const lang = await resolveLang(params);
-  return {
-    title: getDictionary(lang).servicesIndex.metaTitle,
-    // description intentionally omitted: inherits the site description from
-    // the root layout, so every page carries the same snippet.
-    alternates: alternates(lang, "/services"),
-  };
+  const t = getDictionary(lang).servicesIndex;
+  return pageMetadata({ lang, path: "/services", title: t.metaTitle, description: t.lead });
 }
 
 /**

@@ -46,7 +46,6 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       type: "website",
       siteName: site.name,
       locale: ogLocale[lang],
-      url: site.url,
       title: t.title,
       description: t.description,
       images: [image],

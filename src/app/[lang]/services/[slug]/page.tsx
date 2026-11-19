@@ -16,6 +16,7 @@ import {
   resolveLang,
 } from "@/lib/i18n";
 import { getService, getServices } from "@/lib/services";
+import { clampDescription, pageTitle } from "@/lib/seo";
 import { site } from "@/lib/site";
 
 type Params = { params: Promise<{ lang: string; slug: string }> };
@@ -41,10 +42,10 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   // The lead is written to work as a search snippet, so it doubles as the
   // meta description. These pages are the one place that overrides the shared
   // site description, because each ranks for a different intent.
-  const description = service.lead;
+  const description = clampDescription(service.lead);
 
   return {
-    title: service.title,
+    title: pageTitle(service.title),
     description,
     alternates: alternates(lang, `/services/${slug}`),
     openGraph: {

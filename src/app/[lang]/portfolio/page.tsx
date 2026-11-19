@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import { PageHeader } from "@/components/page-header";
 import { PortfolioCard } from "@/components/portfolio-card";
 import { getDictionary } from "@/lib/dictionary";
-import { alternates, localePath, resolveLang } from "@/lib/i18n";
+import { localePath, resolveLang } from "@/lib/i18n";
+import { pageMetadata } from "@/lib/seo";
 import { getPortfolio } from "@/lib/portfolio";
 import { site } from "@/lib/site";
 
@@ -11,11 +12,12 @@ type Props = { params: Promise<{ lang: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const lang = await resolveLang(params);
   const t = getDictionary(lang).portfolioIndex;
-  return {
+  return pageMetadata({
+    lang,
+    path: "/portfolio",
     title: t.metaTitle,
     description: t.metaDescription,
-    alternates: alternates(lang, "/portfolio"),
-  };
+  });
 }
 
 export default async function PortfolioPage({ params }: Props) {

@@ -1,0 +1,157 @@
+export const meta = {
+  title: "O que são Agent Skills? Transforme prompts repetidos em procedimentos de IA",
+  seoTitle: "O que são Agent Skills? Exemplos para empresas",
+  description: "Saiba o que são Agent Skills, como diferem de prompts e do MCP, e como as empresas as podem usar para tornar o trabalho repetitivo com IA mais consistente.",
+  date: "2026-11-05",
+  updated: "2026-11-19",
+  author: "Guy Sartori",
+  readingTime: "8 min de leitura",
+  tags: ["Agent Skills", "IA", "Automação", "Processos de negócio"],
+  lang: "pt-PT",
+  translations: { en: "what-are-agent-skills" },
+  faq: [
+    {
+      question: "As Agent Skills treinam o modelo de IA?",
+      answer: "Não. Uma skill fornece instruções e recursos de apoio quando o agente executa uma tarefa. Não altera os pesos treinados do modelo nem garante que o agente siga todas as instruções corretamente.",
+    },
+    {
+      question: "É preciso saber programar para criar uma Agent Skill?",
+      answer: "Uma skill básica pode ser escrita em linguagem simples num ficheiro SKILL.md. Os scripts são opcionais. Ligar sistemas da empresa, impor permissões e executar tarefas sem supervisão pode ainda exigir trabalho técnico.",
+    },
+    {
+      question: "As Agent Skills são o mesmo que agentes de IA?",
+      answer: "Não. Um agente é o sistema que executa o trabalho com um modelo e ferramentas. Uma skill é um conjunto reutilizável de instruções e recursos que o agente pode carregar para uma tarefa específica.",
+    },
+    {
+      question: "É possível reutilizar uma skill em diferentes ferramentas de IA?",
+      answer: "O formato aberto permite a reutilização entre ferramentas compatíveis, mas o ambiente continua a contar. Uma skill que depende de um conector, de um ambiente de execução de scripts ou de uma ferramenta de ficheiros específicos precisa dessas capacidades no novo anfitrião. Teste-a novamente depois de a mudar.",
+    },
+  ],
+};
+
+Pede a uma IA que prepare uma proposta para um cliente. Depois explica os seus serviços, a estrutura que prefere, o estilo de escrita e as regras de preços. Na semana seguinte, explica tudo outra vez.
+
+**As Agent Skills reúnem instruções, exemplos e ficheiros de apoio para que um agente de IA compatível os possa reutilizar quando uma tarefa o exige.** Dão ao agente uma forma documentada de abordar o trabalho. Não treinam um novo modelo nem garantem um resultado correto.
+
+Para quem gere uma empresa, a pergunta interessante é simples: que partes do conhecimento da sua equipa poderiam tornar-se um procedimento reutilizável em vez de mais um prompt longo?
+
+## O que são Agent Skills?
+
+Uma Agent Skill é uma pasta com um ficheiro `SKILL.md` que descreve uma tarefa e como executá-la. Pode também conter modelos, documentos de referência e scripts. A [documentação do formato aberto](https://agentskills.io/home) descreve como um agente descobre uma skill a partir do nome e da descrição e depois carrega as instruções completas quando precisa delas.
+
+Pense numa skill de propostas que contém a estrutura de proposta aprovada, um catálogo de serviços e instruções para lidar com informação em falta. As notas do cliente mudam a cada pedido. O procedimento continua disponível para ser reutilizado.
+
+A vantagem prática é ter um único sítio onde manter esse procedimento. Quando a estrutura das suas propostas muda, atualiza a skill e as respetivas referências, em vez de procurar o melhor prompt em conversas antigas.
+
+## Porque é que as Agent Skills estão a atrair atenção?
+
+Há um desenvolvimento recente por trás deste interesse. A 22 de outubro de 2026, a Anthropic [anunciou a doação das Agent Skills à Agentic AI Foundation](https://www.anthropic.com/news/donating-agent-skills-to-the-agentic-ai-foundation), sob a alçada da Linux Foundation. Indicou que mais de 70 plataformas de agentes tinham integrado o padrão.
+
+As skills em si são mais antigas. A Anthropic [apresentou-as em outubro de 2025](https://www.anthropic.com/research/equipping-agents-for-the-real-world-with-agent-skills) e publicou o padrão aberto em dezembro desse ano. O anúncio de outubro de 2026 diz respeito à governação e à interoperabilidade contínua, não à invenção de uma nova funcionalidade.
+
+Esses números de adoção vêm da Anthropic. Mostram atividade no ecossistema, não provam que uma skill vá poupar dinheiro à sua empresa. Para isso é preciso um teste com o seu próprio trabalho.
+
+Para equipas que já estão a experimentar [agentes de IA para empresas](/blog/ai-agents-for-business), as skills oferecem um passo seguinte concreto: documentar como deve ser feito um trabalho recorrente e depois medir se o agente o faz melhor com essas instruções.
+
+## Agent Skills vs. prompts vs. MCP: qual é a diferença?
+
+Estes termos descrevem partes diferentes de uma configuração em funcionamento.
+
+| Componente | O que acrescenta | Exemplo de proposta |
+|---|---|---|
+| Prompt | O pedido para esta tarefa concreta | "Redija uma proposta a partir destas notas da reunião inicial." |
+| Agent Skill | Um procedimento reutilizável e recursos de apoio | Seguir a estrutura aprovada e assinalar requisitos em falta. |
+| Ligação MCP | Uma forma padrão de aceder a ferramentas ou dados externos | Ler um registo de cliente autorizado no CRM. |
+| Automação | Um gatilho configurado e uma sequência de ações | Criar uma tarefa de revisão quando um rascunho de proposta está pronto. |
+
+O [Model Context Protocol](https://modelcontextprotocol.io/docs/getting-started/intro), ou MCP, padroniza as ligações entre aplicações de IA e sistemas externos. Uma skill pode descrever como usar uma ligação disponível, mas escrever essa instrução não cria a ligação nem concede acesso.
+
+Um prompt guardado pode bastar para uma tarefa curta que faz de vez em quando. Uma skill torna-se útil quando o procedimento precisa de vários ficheiros de referência, tem exceções a tratar ou deve ser mantido por uma equipa.
+
+## Cinco exemplos de Agent Skills para pequenas empresas
+
+Estes são procedimentos ilustrativos, não afirmações sobre resultados de clientes. Cada um começa com informação fornecida e termina com um rascunho que uma pessoa pode rever.
+
+| Tarefa | O que entra | O que a skill define | O que uma pessoa verifica |
+|---|---|---|---|
+| Propostas a clientes | Notas da reunião inicial e detalhes de serviços aprovados | Secções, limites do âmbito e regras para informação em falta | Preços, compromissos e datas de entrega |
+| Relatórios semanais | Uma exportação datada de métricas do negócio | Definições, comparações e estrutura do relatório | Cálculos e explicações para as variações |
+| Respostas de suporte | Uma pergunta do cliente e a política em vigor | Tom, política aplicável e condições de escalamento | Exceções e promessas aos clientes |
+| Seguimento de reuniões | Notas da reunião ou uma transcrição | Formato das ações a realizar e regras para responsáveis desconhecidos | Quem se comprometeu a fazer o quê e até quando |
+| Revisões de marketing | Um rascunho e um guia de marca | Terminologia, voz e afirmações a assinalar | Rigor, provas e redação final |
+
+Escolha uma tarefa com uma resposta boa reconhecível. Se duas pessoas da sua equipa não conseguem concordar sobre o que o resultado deve conter, o primeiro trabalho é pôr o processo por escrito.
+
+## Um exemplo prático: das notas da reunião a um rascunho de proposta
+
+Imagine que uma pequena agência recebe as notas da reunião inicial para um site de marcações. As notas mencionam lembretes de marcação e pagamentos online, mas não especificam o fornecedor de pagamentos nem as regras de cancelamento.
+
+Uma skill de propostas útil deve expor essas lacunas. Uma proposta bem acabada que inventa as respostas em silêncio dá mais trabalho mais tarde.
+
+Eis um modelo de instruções inicial para esse procedimento. É o procedimento que colocaria dentro de uma skill, não um pacote de instalação completo:
+
+```text
+Tarefa: Preparar um rascunho de proposta a partir das notas da reunião inicial fornecidas.
+
+Entradas:
+- Notas da reunião inicial
+- Catálogo de serviços aprovado
+- Modelo de proposta aprovado
+- Detalhes de preços e prazos de entrega, se fornecidos explicitamente
+
+Procedimento:
+1. Identificar o problema descrito pelo cliente e o resultado pretendido.
+2. Separar os requisitos confirmados dos pressupostos.
+3. Associar os requisitos confirmados ao catálogo de serviços.
+4. Redigir: Resumo, Âmbito, Entregáveis, Exclusões,
+   Questões em aberto e Próximos passos.
+5. Marcar a informação em falta como "Precisa de confirmação."
+6. Não inventar preços, prazos nem compromissos do cliente.
+7. Devolver o rascunho e uma lista de verificação separada para o revisor.
+
+Manter o resultado como rascunho. Não o enviar ao cliente.
+```
+
+Para o site de marcações, a lista de verificação do revisor deve perguntar pelo fornecedor de pagamentos e pela política de cancelamento. Não deve escolher discretamente nenhum dos dois.
+
+Acrescente uma proposta de exemplo aprovada como referência. Retire os dados confidenciais dos clientes antes de partilhar a skill com outros utilizadores. Mantenha o catálogo de serviços datado, para que um revisor possa ver se o rascunho usou informação atual.
+
+Depois experimente o procedimento em cinco projetos anteriores, incluindo um com notas contraditórias e outro com informação incompleta. Isto é um teste inicial sugerido, não uma referência estatística. Conte as promessas sem fundamento, as perguntas que ficaram por fazer e os minutos necessários para chegar a um rascunho aceitável. Compare esses resultados com a sua abordagem atual.
+
+Se o resultado parecer melhor mas demorar mais a corrigir, reveja o procedimento antes de o alargar.
+
+## Quando basta uma skill e quando é preciso automação?
+
+Uma skill pode bastar quando é a própria pessoa a iniciar a tarefa, a fornecer as entradas e a rever o resultado. Redigir uma proposta a partir de notas carregadas é um bom exemplo.
+
+Precisa de mais infraestrutura quando o processo tem de correr todas as segundas-feiras, ir buscar registos a vários sistemas, atualizar um CRM ou enviar um email. Isso exige gatilhos, ligações, permissões, tratamento de erros e uma forma de ver o que aconteceu.
+
+Por exemplo, um processo de relatório semanal pode recolher dados de forma agendada, validar os totais, pedir a um agente que redija um comentário com uma skill e colocar o resultado numa fila de revisão. A skill trata do procedimento de escrita. O fluxo à volta trata da execução e da entrega.
+
+É aqui que as [automações e integrações](/services/automations-and-integrations) se tornam relevantes. Comece por mapear o processo completo, incluindo as falhas, em vez de assumir que um ficheiro de instruções mais longo vai executar o processo de negócio por si.
+
+Se ainda está a validar uma ideia de produto, a mesma disciplina aplica-se a [criar um MVP com IA](/blog/how-to-create-an-mvp): defina as regras antes de pedir à ferramenta que construa à volta delas.
+
+## O que pode correr mal com as Agent Skills?
+
+**Instruções antigas podem produzir trabalho convincente mas desatualizado.** Atribua um responsável a cada skill da empresa. Reveja-a quando o processo, a política ou o serviço em que se baseia mudar.
+
+**Uma skill pode depender de ferramentas que o agente não tem.** Verifique o ambiente de destino antes de a partilhar. Um formato de ficheiro portátil não torna todas as integrações portáteis.
+
+**As skills descarregadas podem incluir código executável.** O [guia de engenharia](https://www.anthropic.com/research/equipping-agents-for-the-real-world-with-agent-skills) da Anthropic aconselha a usar fontes de confiança e a auditar skills desconhecidas. Reveja os scripts e as ligações externas antes de lhes dar acesso a dados da empresa.
+
+**Instruções não são um sistema de controlo de acessos.** Uma frase a dizer "não enviar" é uma orientação útil, mas um fluxo em produção deve impor esse limite através de permissões das ferramentas ou de um passo de aprovação. Dê a um agente de redação apenas o acesso de que a sua tarefa precisa.
+
+**O agente pode ainda assim compreender mal a tarefa.** Guarde exemplos de falhas e volte a executá-los depois de alterar a skill. Meça o resultado final, incluindo o tempo de revisão, em vez de contar quantas skills a sua equipa instalou.
+
+## Perguntas frequentes
+
+<PostFaq items={meta.faq} />
+
+## Que tarefa já não quer voltar a explicar à IA?
+
+A melhor primeira candidata é uma tarefa que repete com frequência, com entradas que consegue identificar e um resultado que sabe verificar. Escreva o procedimento, teste-o em trabalho já feito e mantenha as partes que melhoram o resultado.
+
+Envie-me um exemplo de uma tarefa repetitiva, as ferramentas que usa e como é um bom resultado. Posso ajudá-lo a perceber se o mais adequado é uma Agent Skill, uma automação ou uma integração à medida.
+
+**[Envie um email ao Guy para guysartori96@gmail.com](mailto:guysartori96@gmail.com?subject=Agent%20Skills%20para%20a%20minha%20empresa).**

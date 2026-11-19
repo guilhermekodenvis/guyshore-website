@@ -19,6 +19,7 @@ import {
   portfolioCover,
   portfolioImageSrc,
 } from "@/lib/portfolio";
+import { clampDescription, pageTitle } from "@/lib/seo";
 import { site } from "@/lib/site";
 
 type Params = { params: Promise<{ lang: string; slug: string }> };
@@ -53,9 +54,11 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
     alt: cover.alt,
   };
 
+  const description = clampDescription(item.summary);
+
   return {
-    title: item.name,
-    description: item.summary,
+    title: pageTitle(item.name),
+    description,
     alternates: alternates(lang, `/portfolio/${slug}`),
     openGraph: {
       type: "article",
@@ -63,13 +66,13 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
       locale: ogLocale[lang],
       url: `${site.url}${localePath(lang, `/portfolio/${slug}`)}`,
       title: `${item.name} · ${site.name}`,
-      description: item.summary,
+      description,
       images: [image],
     },
     twitter: {
       card: "summary_large_image",
       title: `${item.name} · ${site.name}`,
-      description: item.summary,
+      description,
       images: [image.url],
     },
   };

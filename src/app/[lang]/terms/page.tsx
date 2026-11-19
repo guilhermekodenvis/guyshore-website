@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { PageHeader } from "@/components/page-header";
-import { alternates, localePath, resolveLang } from "@/lib/i18n";
+import { localePath, resolveLang } from "@/lib/i18n";
+import { pageMetadata } from "@/lib/seo";
 import { site } from "@/lib/site";
 
 type Props = { params: Promise<{ lang: string }> };
@@ -9,13 +10,14 @@ type Props = { params: Promise<{ lang: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const lang = await resolveLang(params);
   const pt = lang === "pt";
-  return {
+  return pageMetadata({
+    lang,
+    path: "/terms",
     title: pt ? "Termos de Utilização" : "Terms of Use",
     description: pt
       ? "Os termos que se aplicam à utilização do website da GuyShore: o que pode fazer com o conteúdo, o que o site promete e não promete, e qual a lei aplicável."
       : "The terms that apply to using the GuyShore website: what you may do with the content, what the site does and does not promise, and which law governs it.",
-    alternates: alternates(lang, "/terms"),
-  };
+  });
 }
 
 const UPDATED = "2026-09-15";

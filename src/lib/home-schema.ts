@@ -3,6 +3,7 @@ import { getFeasibility } from "@/lib/feasibility";
 import { homeCopy } from "@/lib/home";
 import { htmlLang, localePath, type Locale } from "@/lib/i18n";
 import { getHomeServices } from "@/lib/services";
+import { GOOGLE_PROFILE_URL } from "@/lib/seo";
 import { site } from "@/lib/site";
 import { getFounder } from "@/lib/team";
 
@@ -69,20 +70,26 @@ export function getHomeSchema(lang: Locale) {
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "Organization",
+        // ProfessionalService is the LocalBusiness type for a services firm
+        // with an office; with the Google profile in `sameAs` it lets search
+        // engines match the site to the listing.
+        "@type": ["Organization", "ProfessionalService"],
         "@id": `${ORIGIN}/#organization`,
         name: site.listingName,
         alternateName: site.name,
         url: ORIGIN,
         email: site.email,
         telephone: site.phone.e164,
-        logo: `${ORIGIN}/og-image.png`,
+        logo: `${ORIGIN}/logo-mark.png`,
+        image: `${ORIGIN}/og-image.png`,
+        sameAs: [GOOGLE_PROFILE_URL],
         description: home.about,
         founder: {
           "@type": "Person",
           name: founder.name,
           jobTitle: founder.role,
           description: FOUNDER_DESCRIPTION[lang],
+          sameAs: [founder.linkedin],
         },
         address: {
           "@type": "PostalAddress",

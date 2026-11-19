@@ -19,6 +19,7 @@ import {
   postPath,
   postPaths,
 } from "@/lib/posts";
+import { clampDescription } from "@/lib/seo";
 import { site } from "@/lib/site";
 import { postComponents } from "@/mdx-components";
 import { getFounder } from "@/lib/team";
@@ -50,6 +51,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
   if (!post) return {};
 
   const { meta } = post;
+  const snippet = clampDescription(meta.description);
   const url = `${site.url}${postPath(lang, slug)}`;
   // A post may carry a search-facing title distinct from its h1. When it
   // does, it is used verbatim rather than run through the `%s · GuyShore`
@@ -59,7 +61,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
 
   return {
     title: meta.seoTitle ? { absolute: meta.seoTitle } : meta.title,
-    description: meta.description,
+    description: snippet,
     // hreflang only lists a translation the post names and that exists.
     alternates: alternatesFor(lang, await postPaths(post)),
     openGraph: {
@@ -68,7 +70,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
       locale: ogLocale[lang],
       url,
       title: searchTitle,
-      description: meta.description,
+      description: snippet,
       publishedTime: meta.date,
       modifiedTime: meta.updated ?? meta.date,
       authors: [meta.author],
@@ -84,7 +86,7 @@ export async function generateMetadata({ params }: Params): Promise<Metadata> {
     twitter: {
       card: "summary_large_image",
       title: searchTitle,
-      description: meta.description,
+      description: snippet,
       images: [image],
     },
   };
