@@ -104,7 +104,7 @@ export default async function BlogPostPage({ params }: Params) {
   const url = `${site.url}${postPath(lang, slug)}`;
 
   /**
-   * Article, BreadcrumbList and, when the post carries one, FAQPage. All of it
+   * BlogPosting, BreadcrumbList and, when the post carries one, FAQPage. All of it
    * is derived from `meta`, so the markup cannot say something the page does
    * not. The author node is enriched with the founder's profile when the post
    * is his, which is every post so far.
@@ -114,7 +114,7 @@ export default async function BlogPostPage({ params }: Params) {
     "@context": "https://schema.org",
     "@graph": [
       {
-        "@type": "Article",
+        "@type": "BlogPosting",
         "@id": `${url}#article`,
         mainEntityOfPage: { "@type": "WebPage", "@id": url },
         headline: meta.title,
@@ -126,6 +126,7 @@ export default async function BlogPostPage({ params }: Params) {
           ? {
               "@type": "Person",
               name: founder.name,
+              url: `${site.url}${localePath(lang, "/about")}`,
               jobTitle: founder.role,
               worksFor: { "@type": "Organization", name: site.name },
               sameAs: [founder.linkedin],
@@ -157,7 +158,12 @@ export default async function BlogPostPage({ params }: Params) {
             name: dict.nav.blog,
             item: `${site.url}${localePath(lang, "/blog")}`,
           },
-          { "@type": "ListItem", position: 3, name: meta.title, item: url },
+          {
+            "@type": "ListItem",
+            position: 3,
+            name: meta.breadcrumb ?? meta.title,
+            item: url,
+          },
         ],
       },
       ...(meta.faq && meta.faq.length > 0
@@ -185,12 +191,39 @@ export default async function BlogPostPage({ params }: Params) {
 
       <article>
         <header className="mx-auto max-w-[76rem] px-6 pt-20 pb-12 lg:px-10 lg:pt-28">
-          <Link
-            href={localePath(lang, "/blog")}
-            className="eyebrow text-slate transition-colors hover:text-ink"
-          >
-            ← {dict.posts.allPosts}
-          </Link>
+          {meta.breadcrumb ? (
+            // Visible trail for posts that ask for one, matching the
+            // BreadcrumbList in the schema.
+            <nav
+              aria-label={dict.common.breadcrumb}
+              className="eyebrow flex flex-wrap items-center gap-x-3 gap-y-1 text-slate"
+            >
+              <Link
+                href={localePath(lang, "/")}
+                className="transition-colors hover:text-ink"
+              >
+                {dict.common.home}
+              </Link>
+              <span aria-hidden>/</span>
+              <Link
+                href={localePath(lang, "/blog")}
+                className="transition-colors hover:text-ink"
+              >
+                {dict.nav.blog}
+              </Link>
+              <span aria-hidden>/</span>
+              <span aria-current="page" className="text-ink">
+                {meta.breadcrumb}
+              </span>
+            </nav>
+          ) : (
+            <Link
+              href={localePath(lang, "/blog")}
+              className="eyebrow text-slate transition-colors hover:text-ink"
+            >
+              ← {dict.posts.allPosts}
+            </Link>
+          )}
 
           <h1 className="mt-10 max-w-[22ch] text-title">{meta.title}</h1>
           <p className="mt-7 max-w-[54ch] text-lead text-steel">
@@ -198,7 +231,18 @@ export default async function BlogPostPage({ params }: Params) {
           </p>
 
           <p className="mt-10 flex flex-wrap items-center gap-x-4 gap-y-2 font-label text-[0.6875rem] tracking-[0.08em] text-slate uppercase">
-            <span>{meta.author}</span>
+            {isFounder ? (
+              // The author's real bio is the About page.
+              <Link
+                href={localePath(lang, "/about")}
+                rel="author"
+                className="transition-colors hover:text-ink"
+              >
+                {meta.author}
+              </Link>
+            ) : (
+              <span>{meta.author}</span>
+            )}
             <span aria-hidden>·</span>
             <time dateTime={meta.date}>{formatPostDate(meta.date, lang)}</time>
             <span aria-hidden>·</span>

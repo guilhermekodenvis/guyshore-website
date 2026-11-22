@@ -97,10 +97,11 @@ Three things a post author needs to know, learned publishing the first one:
 - Internal links must be **relative** (`/services/mvp-development`). `mdx-components.tsx` only routes `/`-prefixed hrefs through `<Link>`; an absolute `https://guyshore.com/...` is treated as external and opens in a new tab.
 - MDX comments are `{/* ... */}`. HTML comments `<!-- -->` are a syntax error in MDX.
 
-**Three rich blocks are available as bare tags in MDX**, exposed through `mdx-components.tsx` so a post needs no import line. They are the only components a post may use; everything else stays Markdown.
+**Four rich blocks are available as bare tags in MDX**, exposed through `mdx-components.tsx` so a post needs no import line. They are the only components a post may use; everything else stays Markdown.
 
 - `<PostFaq items={meta.faq} />` renders the accordion, reusing the site-wide `FaqList`. Feed it `meta.faq` and nothing else, so the visible answers and the FAQPage schema come from one array and cannot drift.
 - `<PostCta title body href label />` is the black slab. `href` is treated as external and opens in a new tab.
+- `<PostButton href label note position variant />` is an in-site button (an anchor on the page or `/contact`), same tab, with an optional note under it. A click sends `click_cta_blog` (`article_slug`, `cta_position`) to the Google tag; nothing personal. Leads are counted separately: `ContactForm` sends `generate_lead` only when the server action confirms the send.
 - `<PostImage src alt caption width height priority />` is a figure. `width`/`height` are the file's intrinsic pixels and must be real, because they reserve the space that stops the article jumping while it loads.
 
 Each of the three carries a hook class (`post-faq`, `post-cta`, `post-figure`) that `globals.css` uses to undo the `.prose` rules that would otherwise reach inside them, in particular `.prose h3` spacing and `.prose a:hover`.
@@ -109,6 +110,8 @@ Two traps those overrides sit on:
 
 - **A `.prose` rule cannot override a Tailwind utility on the same element.** The `.prose` block lives in `@layer components` and utilities live in the later `@layer utilities`, so the utility wins no matter how specific the selector is. Only properties the element does not already set as a utility can be corrected there, which is why `.prose .post-faq h3` sets `margin-top` and nothing else. Size the heading in `faq-list.tsx` instead.
 - **The focus ring is `outline: 2px solid currentColor` at a 3px offset.** On a white button sitting on the black `PostCta` slab that draws a black ring on black, invisible. `globals.css` repaints it with `.post-cta a:focus-visible { outline-color: var(--color-paper) }`. Any future light-on-dark control needs the same treatment.
+
+**A post can carry a table of contents**: write its sections as `<h2 id="...">` in the MDX (there is no slug plugin) and link to `#id`; `.prose [id]` keeps the heading clear of the sticky header. `meta.breadcrumb` (a short title) swaps the "All posts" link for a visible Home / Blog / title trail. The author name links to the About page, which is the author bio the BlogPosting schema points at.
 
 **Images live in `public/blog/<slug>/`**, one folder per post, so deleting a post means deleting one folder. Export at 2x the rendered width: the prose column is 68ch, roughly 800px, so 1600px wide is the right source. Filenames are kebab-case and describe the content, not the position (`four-walls-diagram.png`, not `image-1.png`).
 

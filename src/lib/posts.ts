@@ -62,6 +62,11 @@ export type PostMeta = {
    * a translation exists in its own language only.
    */
   translations?: Partial<Record<Locale, string>>;
+  /**
+   * Short title for a visible breadcrumb trail (Home / Blog / this) in place
+   * of the "All posts" link, and the last item of the BreadcrumbList.
+   */
+  breadcrumb?: string;
 };
 
 export type Post = {

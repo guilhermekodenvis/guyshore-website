@@ -1,5 +1,6 @@
 import type { MDXComponents } from "mdx/types";
 import Link from "next/link";
+import { PostButton } from "@/components/post-button";
 import { PostCta } from "@/components/post-cta";
 import { PostFaq } from "@/components/post-faq";
 import { PostImage } from "@/components/post-image";
@@ -30,6 +31,7 @@ const components: MDXComponents = {
       </a>
     );
   },
+  PostButton,
   PostCta,
   PostFaq,
   PostImage,
@@ -73,6 +75,9 @@ export function postComponents(lang: Locale): MDXComponents {
           {children}
         </a>
       ),
+    PostButton: (props: ComponentProps<typeof PostButton>) => (
+      <PostButton {...props} href={localize(props.href)} />
+    ),
     PostCta: (props: ComponentProps<typeof PostCta>) => (
       <PostCta newTab={getDictionary(lang).common.opensNewTab} {...props} />
     ),

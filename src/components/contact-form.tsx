@@ -1,6 +1,6 @@
 "use client";
 
-import { useActionState, useId } from "react";
+import { useActionState, useEffect, useId } from "react";
 import { submitContact } from "@/app/actions/contact";
 import {
   CONTACT_NEEDS,
@@ -35,6 +35,14 @@ export function ContactForm({
   );
   const id = useId();
   const t = getDictionary(lang).contactForm;
+
+  // A lead is counted only once the server action has confirmed delivery,
+  // never on a click or a failed submit. No form data goes with it.
+  useEffect(() => {
+    if (state.status === "success") {
+      window.gtag?.("event", "generate_lead", { form_source: source, lang });
+    }
+  }, [state.status, source, lang]);
 
   if (state.status === "success") {
     return (

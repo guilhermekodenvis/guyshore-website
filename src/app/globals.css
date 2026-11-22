@@ -139,6 +139,11 @@
     line-height: 1.15;
   }
 
+  /* Headings a table of contents links to land below the sticky header. */
+  .prose [id] {
+    scroll-margin-top: 6rem;
+  }
+
   .prose h3 {
     margin-top: 2em;
     font-size: 1.3125rem;
