@@ -1,0 +1,103 @@
+export const faq = [
+  {
+    question: "O ChatGPT pode emitir recibos verdes?",
+    answer:
+      "O ChatGPT pode ajudar a preparar a descrição do serviço e a lista de dados a confirmar. A emissão do documento fiscal é feita no Portal das Finanças ou por outro meio de faturação aplicável à sua atividade.",
+  },
+  {
+    question: "Qual é a diferença entre fatura, fatura-recibo e recibo?",
+    answer:
+      "A fatura regista a operação quando o pagamento ocorre mais tarde. A fatura-recibo regista a operação e o pagamento quando ambos coincidem. O recibo comprova o pagamento de uma fatura já emitida.",
+  },
+  {
+    question: "Que dados posso usar no ChatGPT para preparar um recibo verde?",
+    answer:
+      "Use dados fictícios ou marcadores como [cliente] e [valor]. Para redigir uma descrição de serviço, normalmente basta indicar o trabalho realizado e o período a que se refere.",
+  },
+];
+
+export const meta = {
+  title: "Como usar o ChatGPT e a inteligência artificial na gestão de recibos verdes",
+  seoTitle: "ChatGPT e recibos verdes em Portugal | GuyShore",
+  description:
+    "Saiba como usar o ChatGPT para preparar recibos verdes em Portugal, distinguir fatura de fatura-recibo e automatizar lembretes de pagamento com n8n.",
+  date: "2026-11-24",
+  author: "Guy Sartori",
+  readingTime: "5 min de leitura",
+  tags: ["ChatGPT", "Inteligência artificial", "Recibos verdes", "n8n"],
+  breadcrumb: "ChatGPT e recibos verdes",
+  lang: "pt-PT",
+  faq,
+};
+
+_Fontes fiscais consultadas a 24 de novembro de 2026._
+
+**Use o ChatGPT para redigir descrições de serviços, preparar listas de verificação e escrever lembretes de pagamento.** Se trabalha a recibos verdes em Portugal, pode usar a inteligência artificial para preparar a parte administrativa e depois confirmar os dados antes de emitir o documento no Portal das Finanças. O exemplo abaixo mostra como aplicar isto a um serviço pago depois da entrega.
+
+<PostButton href="#exemplo-chatgpt" label="Ver o exemplo para o ChatGPT" position="intro" variant="ghost" />
+
+**Neste artigo**
+
+- [Que documento deve emitir?](#documentos)
+- [Como usar o ChatGPT na gestão de recibos verdes?](#exemplo-chatgpt)
+- [Que dados deve confirmar antes de emitir?](#antes-de-emitir)
+- [Como automatizar lembretes com n8n?](#n8n)
+- [Perguntas frequentes](#faq)
+
+<h2 id="documentos">Que documento deve emitir?</h2>
+
+**Para uma prestação de serviços, a escolha depende do momento do pagamento.** Se o cliente paga quando o serviço é prestado, emite uma fatura-recibo. Se paga depois, emite primeiro a fatura no prazo aplicável e, quando receber, emite o recibo associado. A Autoridade Tributária e Aduaneira explica também como proceder em caso de adiantamento. [Autoridade Tributária e Aduaneira: Fatura e recibo](https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Atividade_profissional/Fatura_e_recibo/Paginas/default.aspx).
+
+| Situação | Documento | O que regista |
+|---|---|---|
+| Presta o serviço e recebe no mesmo dia | Fatura-recibo | O serviço e o pagamento |
+| Presta o serviço e o cliente paga mais tarde | Fatura | O serviço prestado |
+| Recebe o pagamento de uma fatura já emitida | Recibo | O pagamento da fatura |
+
+Por exemplo, se entregar a revisão de um catálogo e o cliente pagar 15 dias depois, regista o serviço na fatura e associa-lhe o recibo quando receber o pagamento. Se usa o Portal das Finanças, procure **Faturas e recibos** e escolha **Emitir**. [gov.pt: Guia para trabalhadores independentes](https://www.gov.pt/guias/trabalhar-por-conta-propria-guia-para-trabalhadores-independentes/obrigacoes-fiscais-e-pagamentos-impostos-e-contribuicoes).
+
+<h2 id="exemplo-chatgpt">Como usar o ChatGPT na gestão de recibos verdes?</h2>
+
+**Dê ao ChatGPT apenas a informação necessária para a tarefa.** Se precisa de uma descrição para a fatura, indique o trabalho realizado e, se for relevante, o período a que se refere. Pode experimentar este pedido com dados fictícios.
+
+> Escreve uma descrição de uma linha, em português de Portugal, para uma fatura relativa à revisão editorial de um catálogo de produtos em novembro. Usa apenas os detalhes fornecidos. Em seguida, escreve um lembrete de pagamento cordial com os campos [referência da fatura] e [data de vencimento].
+
+Uma descrição possível seria «Revisão editorial de catálogo de produtos realizada em novembro». Reveja a frase antes de a usar. Para o lembrete, substitua os marcadores depois de confirmar a referência e o vencimento no seu registo de faturação.
+
+<h2 id="antes-de-emitir">Que dados deve confirmar antes de emitir?</h2>
+
+**Confirme a informação comercial nos seus registos e o enquadramento fiscal em fonte oficial.** A descrição gerada pela IA é um rascunho. Antes de emitir, verifique a data e o valor do serviço, os dados do cliente e, quando se aplicar, a fatura a que corresponde o pagamento. Para o IVA e a retenção na fonte de IRS, consulte as regras da Autoridade Tributária e confirme o seu enquadramento com um contabilista se tiver dúvidas. [Autoridade Tributária e Aduaneira: Fatura e recibo](https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Atividade_profissional/Fatura_e_recibo/Paginas/default.aspx).
+
+Para preparar textos no chat, use marcadores em vez de colar documentos fiscais completos. Dados como o NIF, a morada e os detalhes bancários podem ser preenchidos na aplicação em que forem necessários.
+
+<h2 id="n8n">Como automatizar lembretes de recibos verdes com n8n?</h2>
+
+**O n8n pode consultar um registo de faturas e criar uma tarefa quando uma fatura vence e está por pagar.** O fluxo funciona a partir dos estados que mantém na sua folha de cálculo ou aplicação de faturação.
+
+1. Registe a referência, a data de vencimento e o estado de cada fatura.
+2. Configure uma verificação diária das faturas vencidas com o estado «Por pagar».
+3. Crie uma tarefa por fatura com a sua referência. Guarde essa referência para evitar uma nova tarefa para a mesma fatura no dia seguinte.
+4. Confirme se o pagamento entrou. Se entrou, atualize o estado e emita o recibo correspondente. Se continua em falta, reveja o rascunho do lembrete antes de o enviar.
+
+A verificação de datas e estados pode seguir regras fixas. A inteligência artificial pode entrar na redação do lembrete, caso seja preciso adaptar o tom ou o idioma. Para estimar os custos de ligar o n8n às ferramentas que já usa, consulte o guia de [preços e exemplos de automação com n8n para PME](/pt/blog/n8n-preco-automacao-empresas).
+
+<h2 id="faq">Perguntas frequentes</h2>
+
+<PostFaq items={faq} />
+
+<PostButton
+  href="/contact"
+  label="Quero automatizar o acompanhamento de pagamentos"
+  note="Conte-nos como regista as faturas e acompanha os pagamentos."
+  position="end"
+/>
+
+**Fontes**
+
+- [Autoridade Tributária e Aduaneira: Fatura e recibo](https://info.portaldasfinancas.gov.pt/pt/apoio_ao_contribuinte/Cidadaos/Atividade_profissional/Fatura_e_recibo/Paginas/default.aspx)
+- [gov.pt: Obrigações fiscais e pagamentos de trabalhadores independentes](https://www.gov.pt/guias/trabalhar-por-conta-propria-guia-para-trabalhadores-independentes/obrigacoes-fiscais-e-pagamentos-impostos-e-contribuicoes)
+
+**Artigos relacionados**
+
+- [ChatGPT, Claude ou Gemini? Qual escolher para começar a usar IA na sua empresa?](/pt/blog/chatgpt-claude-ou-gemini)
+- [GPT-6: Astra, Sol ou Luna? Qual escolher para a sua empresa?](/pt/blog/gpt-6-astra-sol-luna)
