@@ -28,6 +28,12 @@ export const meta = {
   breadcrumb: "ChatGPT e recibos verdes",
   lang: "pt-PT",
   faq,
+  contact: {
+    title: "Não sabe como organizar as faturas e os pagamentos com a ajuda da IA?",
+    subtitle:
+      "Se quer preparar este trabalho com IA ou automatizar os lembretes de pagamento, envie uma mensagem diretamente a quem escreveu o artigo.",
+    cta: "Falar com quem escreveu o artigo",
+  },
 };
 
 _Fontes fiscais consultadas a 24 de novembro de 2026._
@@ -70,6 +76,8 @@ Uma descrição possível seria «Revisão editorial de catálogo de produtos re
 
 Para preparar textos no chat, use marcadores em vez de colar documentos fiscais completos. Dados como o NIF, a morada e os detalhes bancários podem ser preenchidos na aplicação em que forem necessários.
 
+<PostContact />
+
 <h2 id="n8n">Como automatizar lembretes de recibos verdes com n8n?</h2>
 
 **O n8n pode consultar um registo de faturas e criar uma tarefa quando uma fatura vence e está por pagar.** O fluxo funciona a partir dos estados que mantém na sua folha de cálculo ou aplicação de faturação.
@@ -84,13 +92,6 @@ A verificação de datas e estados pode seguir regras fixas. A inteligência art
 <h2 id="faq">Perguntas frequentes</h2>
 
 <PostFaq items={faq} />
-
-<PostButton
-  href="/contact"
-  label="Quero automatizar o acompanhamento de pagamentos"
-  note="Conte-nos como regista as faturas e acompanha os pagamentos."
-  position="end"
-/>
 
 **Fontes**
 

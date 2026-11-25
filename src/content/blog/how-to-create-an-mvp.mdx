@@ -7,6 +7,12 @@ export const meta = {
   author: "Guy Sartori",
   readingTime: "8 min read",
   tags: ["MVP", "AI", "Founders"],
+  contact: {
+    title: "Stuck on security, keys or uploads while building your MVP with AI?",
+    subtitle:
+      "If your AI-built MVP is stuck on a step or you are unsure it is safe to launch, talk directly to the person who wrote this guide.",
+    cta: "Talk to the person who wrote this",
+  },
   faq: [
     {
       question: "How much does it cost to create an MVP?",
@@ -68,13 +74,6 @@ Phase 1 is the smallest version a real customer can use.
 
 Keep `BLUEPRINT.md`, a plain text file, in the project. Ask the AI to create the file your tool reads each session (`CLAUDE.md` for Claude Code, `AGENTS.md` for Codex and Cursor) with two instructions: read the blueprint before any task, and commit to Git after each working change so you can undo mistakes. When a rule changes, update the blueprint first.
 
-<PostCta
-  title="Need help planning your MVP?"
-  body="Tell us about your idea and the problem it solves. We can help define the first version, the integrations it needs and the scope of the build."
-  href="/services/mvp-development"
-  label="Explore MVP development"
-/>
-
 ## Step 3: Structure your database in Supabase
 
 [Supabase](https://supabase.com/pricing) gives you a database, user logins and file storage in one account. As of September 2026 the Free plan includes a 500 MB database, 1 GB of storage and 50,000 monthly active users. It has no backups, and free projects pause after a week of inactivity. Pro starts at $25 a month.
@@ -123,6 +122,8 @@ Before you approve, check the component page in a full browser window and in one
 **Store user uploads.** Past Supabase's free 1 GB, use [R2](https://developers.cloudflare.com/r2/pricing/), Cloudflare's file storage. It is free up to 10 GB-month of storage plus a monthly allowance of operations, and downloads (egress) cost nothing. Cloudflare bills usage past that. With [presigned URLs](https://developers.cloudflare.com/r2/api/s3/presigned-urls/), your server checks the user is signed in, then gives the browser a short-lived upload link. Anyone holding it can use it until it expires, so keep the bucket private. Ask the AI to add your domain to the bucket's [CORS](https://developers.cloudflare.com/r2/buckets/cors/) rules, or uploads fail.
 
 **Keep keys out of the frontend.** The Supabase publishable key can sit in browser code, which anyone can read, because RLS guards the data. R2 access keys, the Turnstile secret key and Supabase secret keys belong in server environment variables, never in one whose name starts with `NEXT_PUBLIC_`, which Next.js [sends to the browser](https://nextjs.org/docs/app/guides/environment-variables). Before each deploy, have the AI scan the frontend for secrets. Our guide to [vibe coding security risks](/blog/vibe-coding) covers other ways AI-built apps leak data.
+
+<PostContact />
 
 ## Step 6: Host your MVP for free on Vercel or Netlify
 

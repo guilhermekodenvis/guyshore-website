@@ -1,11 +1,13 @@
 import type { MDXComponents } from "mdx/types";
 import Link from "next/link";
+import { AuthorContact } from "@/components/author-contact";
 import { PostButton } from "@/components/post-button";
 import { PostCta } from "@/components/post-cta";
 import { PostFaq } from "@/components/post-faq";
 import { PostImage } from "@/components/post-image";
 import type { ComponentProps } from "react";
 import { getDictionary } from "@/lib/dictionary";
+import type { PostContactCopy } from "@/lib/author-contact";
 import { localePath, type Locale } from "@/lib/i18n";
 
 // Global component map for every MDX file. Prose styling lives in the
@@ -54,8 +56,23 @@ export function useMDXComponents(): MDXComponents {
  * (`/blog/<slug>`) is kept as written, because posts are not all translated
  * and the author chose that article.
  */
-export function postComponents(lang: Locale): MDXComponents {
-  if (lang === "en") return {};
+export function postComponents(
+  lang: Locale,
+  post: { title: string; url: string; contact?: PostContactCopy },
+): MDXComponents {
+  // `<PostContact />` takes no props: the copy is the post's `meta.contact`,
+  // shared with the end-of-article line in the template.
+  const PostContact = () =>
+    post.contact ? (
+      <AuthorContact
+        lang={lang}
+        variant="inline"
+        copy={post.contact}
+        articleTitle={post.title}
+        articleUrl={post.url}
+      />
+    ) : null;
+  if (lang === "en") return { PostContact };
   const localize = (href: string) =>
     href.startsWith("/") &&
     !href.startsWith("/pt/") &&
@@ -65,6 +82,7 @@ export function postComponents(lang: Locale): MDXComponents {
       : href;
 
   return {
+    PostContact,
     a: ({ href = "", children, ...props }) =>
       href.startsWith("/") || href.startsWith("#") ? (
         <Link href={localize(href)} {...props}>

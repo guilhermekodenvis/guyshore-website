@@ -2,6 +2,7 @@ import { readdir } from "node:fs/promises";
 import path from "node:path";
 import type { MDXComponents } from "mdx/types";
 import type { ComponentType } from "react";
+import type { PostContactCopy } from "@/lib/author-contact";
 import { htmlLang, type Locale } from "@/lib/i18n";
 
 /**
@@ -67,6 +68,13 @@ export type PostMeta = {
    * of the "All posts" link, and the last item of the BreadcrumbList.
    */
   breadcrumb?: string;
+  /**
+   * The "talk to the author" block: `<PostContact />` renders it where the
+   * MDX places it (once per post, at a point of high attention), and the
+   * fixed end-of-article line opens the same form with this title and
+   * subtitle. Subtitle at most 40 words; `cta` is also the submit text.
+   */
+  contact?: PostContactCopy;
 };
 
 export type Post = {

@@ -47,3 +47,29 @@ The workflow rejects anything missing `email` or `message` and answers
 `{"ok": false, ...}`. The site treats that body as a failure regardless of the
 HTTP status, because `responseCode` on the *Respond to Webhook* node is not
 honoured by every n8n version — a rejection can come back as 200.
+
+## "Talk to the author" (blog posts)
+
+`n8n-author-contact.workflow.json` is the workflow **GuyShore blog: talk to the author** on the
+`black-elephant` n8n Cloud instance. It receives the form that opens from the contact block inside
+every blog post and from the line at the end of the article, and sends two Gmail messages through
+the `business@guyshore.com` Gmail OAuth2 credential:
+
+1. **To the team** (business@guyshore.com): the message, the reader's name and email, the article,
+   the language, which button they used, and whether they opted in to new posts. Reply-To is the reader.
+2. **To the reader**, in their language (en or pt-PT), with **business@guyshore.com in cc** and
+   Reply-To business@: a copy of their message and a link back to the blog.
+
+The HTML of both emails is built in the *Build emails* Code node, which escapes everything the
+visitor typed and only ever links back to guyshore.com. If the copy to the reader fails (a bad
+address), the node continues, so the team email still counts as delivered.
+
+The site posts to `N8N_AUTHOR_WEBHOOK_URL` (production URL:
+`https://black-elephant.app.n8n.cloud/webhook/guyshore-author-contact`), set in `.env.local` and,
+before this ships, in Netlify. Payload: `name`, `email`, `message`, `newsletter` (boolean),
+`lang`, `articleTitle`, `articleUrl`, `position` (`middle` or `end`), `source`
+(`blog-author`), `submittedAt`. A missing name, invalid email or empty message gets
+`{"ok": false}` with a 400.
+
+Note: the live contact-form workflow also sends through Gmail now; the SMTP node in
+`n8n-contact-form.workflow.json` is older than what runs in n8n.

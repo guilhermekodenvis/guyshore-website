@@ -263,6 +263,14 @@
     margin-top: 2.5em;
   }
 
+  .prose .post-contact {
+    margin-top: 2.5em;
+  }
+
+  .prose .post-contact + * {
+    margin-top: 2.5em;
+  }
+
   .prose .post-cta a:hover {
     background-color: transparent;
   }
@@ -798,6 +806,31 @@
       linear-gradient(#000 0 0) content-box,
       linear-gradient(#000 0 0);
     mask-composite: exclude;
+  }
+
+  /* The "talk to the author" form (author-contact.tsx): the cookie card's
+     glass, one step more frosted and more opaque, because a form with
+     fields has to read over anything the page shows behind it. The page
+     behind is dimmed by the dialog's own backdrop. */
+  .author-glass {
+    --consent-blur: 30px;
+    --consent-tint: 84%;
+  }
+
+  .author-dialog::backdrop {
+    background-color: rgba(24, 24, 27, 0.32);
+    -webkit-backdrop-filter: blur(2px);
+    backdrop-filter: blur(2px);
+  }
+
+  .author-dialog[open] {
+    animation: author-dialog-in 0.32s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  @keyframes author-dialog-in {
+    from {
+      transform: translateY(12px) scale(0.98);
+    }
   }
 
   /* Chromium desktop only, set by glass-card-lens.tsx after it has drawn the

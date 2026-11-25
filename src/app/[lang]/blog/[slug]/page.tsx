@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { AuthorContact } from "@/components/author-contact";
 import { PostSubscribe } from "@/components/post-subscribe";
 import { getDictionary } from "@/lib/dictionary";
 import {
@@ -254,13 +255,31 @@ export default async function BlogPostPage({ params }: Params) {
 
         <div className="mx-auto max-w-[76rem] px-6 pb-24 lg:px-10 lg:pb-32">
           <div className="prose max-w-[68ch]">
-            <Content components={postComponents(lang)} />
+            <Content
+              components={postComponents(lang, {
+                title: meta.title,
+                url,
+                contact: meta.contact,
+              })}
+            />
           </div>
         </div>
       </article>
 
       {/* Every post ends here. Lives in the template, not in the MDX, so a
           new article cannot ship without it. */}
+      {/* Fixed line for readers who reached the end: the same form as the
+          block inside the article, with the post's own title and subtitle. */}
+      {meta.contact ? (
+        <AuthorContact
+          lang={lang}
+          variant="end"
+          copy={meta.contact}
+          articleTitle={meta.title}
+          articleUrl={url}
+        />
+      ) : null}
+
       <PostSubscribe lang={lang} />
     </>
   );

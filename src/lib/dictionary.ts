@@ -250,6 +250,27 @@ const en = {
     ctaButton: "Tell us about your project",
   },
   blog: { metaTitle: "Blog" },
+  authorContact: {
+    endText: "Want to go deeper? Talk directly to the person who wrote this.",
+    endCta: "Talk to the author",
+    name: "Your name",
+    email: "Your email",
+    message: "Message",
+    placeholder: "What are you working on, and where are you stuck?",
+    newsletter: "Send me new articles by email",
+    close: "Close",
+    sending: "Sending…",
+    sentTitle: "Message sent",
+    sent: "Thanks. We reply within one working day, and a copy of your message is on its way to your inbox.",
+    nameRequired: "Tell us who you are.",
+    emailRequired: "We need an address to reply to.",
+    emailInvalid: "That address does not look complete.",
+    messageRequired: "Write a short message.",
+    messageShort: "A couple more sentences will get you a better answer.",
+    checkFields: "Check the highlighted fields.",
+    failed: (email: string) =>
+      `Something went wrong on our side. Please email us at ${email}.`,
+  },
 };
 
 export type Dictionary = typeof en;
@@ -493,6 +514,27 @@ const pt: Dictionary = {
     ctaButton: "Fale-nos do seu projeto",
   },
   blog: { metaTitle: "Blog" },
+  authorContact: {
+    endText: "Quer aprofundar o assunto? Fale diretamente com quem escreveu.",
+    endCta: "Falar com quem escreveu",
+    name: "O seu nome",
+    email: "O seu email",
+    message: "Mensagem",
+    placeholder: "Em que está a trabalhar e onde ficou bloqueado?",
+    newsletter: "Aceito receber novos artigos no meu email",
+    close: "Fechar",
+    sending: "A enviar…",
+    sentTitle: "Mensagem enviada",
+    sent: "Obrigado. Respondemos no prazo de um dia útil e enviámos uma cópia da sua mensagem para o seu email.",
+    nameRequired: "Diga-nos quem é.",
+    emailRequired: "Precisamos de um endereço para responder.",
+    emailInvalid: "Esse endereço não parece estar completo.",
+    messageRequired: "Escreva uma mensagem curta.",
+    messageShort: "Mais algumas frases ajudam-nos a dar uma resposta melhor.",
+    checkFields: "Verifique os campos assinalados.",
+    failed: (email: string) =>
+      `Ocorreu um erro do nosso lado. Escreva-nos para ${email}.`,
+  },
 };
 
 const dictionaries: Record<Locale, Dictionary> = { en, pt };

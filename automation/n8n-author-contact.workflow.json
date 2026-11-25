@@ -1,0 +1,219 @@
+{
+  "name": "GuyShore blog: talk to the author",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "guyshore-author-contact",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "a1",
+      "name": "Author contact webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "guyshore-author-contact"
+    },
+    {
+      "parameters": {
+        "jsCode": "// \"Talk to the author\" from a blog post on guyshore.com.\n// The site posts JSON; n8n nests it under body for webhook calls.\nconst raw = $input.first().json;\nconst b = raw.body ?? raw;\nconst str = (v, max = 5000) => (v ?? '').toString().trim().slice(0, max);\nconst esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/\"/g, '&quot;');\n\nconst lang = str(b.lang) === 'pt' ? 'pt' : 'en';\nconst name = str(b.name, 120);\nconst email = str(b.email, 200);\nconst message = str(b.message);\nconst articleTitle = str(b.articleTitle, 300);\nconst rawUrl = str(b.articleUrl, 300);\n// Only ever link back to this site.\nconst articleUrl = rawUrl.startsWith('https://guyshore.com/') ? rawUrl : 'https://guyshore.com/blog';\nconst newsletter = b.newsletter === true || b.newsletter === 'true';\nconst position = str(b.position, 20) || 'unknown';\nconst valid = /^[^\\s@]+@[^\\s@]+\\.[^\\s@]{2,}$/.test(email) && message.length > 0 && name.length > 0;\n\nconst ink = '#18181b', steel = '#3f3f46', slate = '#6b6b74', mist = '#f4f4f5', line = '#e4e4e7';\nconst font = \"-apple-system, BlinkMacSystemFont, 'Segoe UI', Helvetica, Arial, sans-serif\";\nconst msgHtml = esc(message).replace(/\\n/g, '<br>');\n\nconst shell = (preheader, inner) => '<!doctype html><html><body style=\"margin:0;padding:0;background:' + mist + ';\">'\n  + '<span style=\"display:none;max-height:0;overflow:hidden;\">' + esc(preheader) + '</span>'\n  + '<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"background:' + mist + ';padding:32px 12px;\"><tr><td align=\"center\">'\n  + '<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" style=\"max-width:560px;background:#ffffff;border:1px solid ' + line + ';border-radius:16px;font-family:' + font + ';color:' + ink + ';\">'\n  + '<tr><td style=\"padding:28px 32px 0 32px;font-size:18px;font-weight:700;letter-spacing:-0.3px;\">guyshore.com</td></tr>'\n  + '<tr><td style=\"padding:24px 32px 32px 32px;\">' + inner + '</td></tr>'\n  + '<tr><td style=\"padding:20px 32px;border-top:1px solid ' + line + ';font-size:12px;line-height:18px;color:' + slate + ';\">'\n  + 'GuyShore · Av. Elias Garcia, 123-A, 1050-098 Lisboa, Portugal · <a href=\"mailto:business@guyshore.com\" style=\"color:' + slate + ';\">business@guyshore.com</a></td></tr>'\n  + '</table></td></tr></table></body></html>';\n\nconst quote = '<div style=\"margin:20px 0;padding:16px 18px;background:' + mist + ';border-left:3px solid ' + ink + ';border-radius:4px;font-size:15px;line-height:23px;color:' + steel + ';\">' + msgHtml + '</div>';\nconst button = (href, label) => '<a href=\"' + esc(href) + '\" style=\"display:inline-block;background:' + ink + ';color:#ffffff;text-decoration:none;font-weight:600;font-size:14px;padding:12px 22px;border-radius:999px;\">' + esc(label) + '</a>';\n\n// To the team\nconst teamSubject = 'Blog: ' + (name || 'someone') + ' wrote about \"' + (articleTitle || 'an article') + '\"';\nconst row = (k, v) => '<tr><td style=\"padding:6px 12px 6px 0;font-size:13px;color:' + slate + ';white-space:nowrap;vertical-align:top;\">' + k + '</td><td style=\"padding:6px 0;font-size:14px;color:' + ink + ';\">' + v + '</td></tr>';\nconst teamHtml = shell('New message from ' + name + ' on the blog',\n  '<p style=\"margin:0 0 6px 0;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:' + slate + ';\">New message from the blog</p>'\n  + '<h1 style=\"margin:0;font-size:22px;line-height:28px;letter-spacing:-0.4px;\">' + esc(name) + ' wants to talk</h1>'\n  + quote\n  + '<table role=\"presentation\" cellpadding=\"0\" cellspacing=\"0\" style=\"margin:0 0 22px 0;\">'\n  + row('Name', esc(name))\n  + row('Email', '<a href=\"mailto:' + esc(email) + '\" style=\"color:' + ink + ';\">' + esc(email) + '</a>')\n  + row('Article', '<a href=\"' + esc(articleUrl) + '\" style=\"color:' + ink + ';\">' + esc(articleTitle || articleUrl) + '</a>')\n  + row('Language', lang === 'pt' ? 'Portuguese' : 'English')\n  + row('Button', position === 'end' ? 'End of the article' : 'Middle of the article')\n  + row('New posts by email', newsletter ? '<strong>Yes, opted in</strong>' : 'No')\n  + '</table>'\n  + button('mailto:' + email + '?subject=' + encodeURIComponent('Re: ' + (articleTitle || 'guyshore.com')), 'Reply to ' + (name.split(' ')[0] || 'them'))\n  + '<p style=\"margin:18px 0 0 0;font-size:12px;color:' + slate + ';\">A copy went to ' + esc(email) + ' with business@ in cc. Replying to this email also reaches them.</p>');\n\n// To the reader, in their language\nconst first = esc(name.split(' ')[0] || name);\nconst T = lang === 'pt'\n  ? {\n      subject: 'Recebemos a sua mensagem sobre \"' + articleTitle + '\"',\n      pre: 'Respondemos no prazo de um dia útil.',\n      eyebrow: 'Mensagem recebida',\n      h1: 'Olá ' + first + ', obrigado por escrever.',\n      p1: 'Recebemos a sua mensagem sobre o artigo <a href=\"' + esc(articleUrl) + '\" style=\"color:' + ink + ';\">' + esc(articleTitle) + '</a>. Quem escreveu o artigo lê todas as mensagens e responde no prazo de um dia útil, a partir de business@guyshore.com.',\n      copy: 'A sua mensagem',\n      p2: 'Se quiser acrescentar contexto, como ferramentas, prazos ou um exemplo, basta responder a este email.',\n      news: '<p style=\"margin:16px 0 0 0;font-size:14px;line-height:22px;color:' + steel + ';\">Também vai receber os novos artigos neste email. Para deixar de os receber, basta responder a este email.</p>',\n      cta: 'Ver mais artigos', blog: 'https://guyshore.com/pt/blog',\n    }\n  : {\n      subject: 'We got your message about \"' + articleTitle + '\"',\n      pre: 'We reply within one working day.',\n      eyebrow: 'Message received',\n      h1: 'Hi ' + first + ', thanks for writing.',\n      p1: 'We received your message about <a href=\"' + esc(articleUrl) + '\" style=\"color:' + ink + ';\">' + esc(articleTitle) + '</a>. The person who wrote the article reads every message and replies within one working day, from business@guyshore.com.',\n      copy: 'Your message',\n      p2: 'If you want to add context, such as tools, deadlines or an example, just reply to this email.',\n      news: '<p style=\"margin:16px 0 0 0;font-size:14px;line-height:22px;color:' + steel + ';\">You will also get new articles at this address. To stop them, just reply to this email.</p>',\n      cta: 'Read more articles', blog: 'https://guyshore.com/blog',\n    };\n\nconst readerHtml = shell(T.pre,\n  '<p style=\"margin:0 0 6px 0;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:' + slate + ';\">' + T.eyebrow + '</p>'\n  + '<h1 style=\"margin:0;font-size:22px;line-height:28px;letter-spacing:-0.4px;\">' + T.h1 + '</h1>'\n  + '<p style=\"margin:16px 0 0 0;font-size:15px;line-height:23px;color:' + steel + ';\">' + T.p1 + '</p>'\n  + '<p style=\"margin:22px 0 0 0;font-size:12px;letter-spacing:1.5px;text-transform:uppercase;color:' + slate + ';\">' + T.copy + '</p>'\n  + quote\n  + '<p style=\"margin:0;font-size:15px;line-height:23px;color:' + steel + ';\">' + T.p2 + '</p>'\n  + (newsletter ? T.news : '')\n  + '<p style=\"margin:24px 0 0 0;\">' + button(T.blog, T.cta) + '</p>'\n  + '<p style=\"margin:24px 0 0 0;font-size:15px;color:' + ink + ';\">Guy Sartori<br><span style=\"color:' + slate + ';font-size:13px;\">GuyShore</span></p>');\n\nreturn [{ json: { valid, name, email, message, lang, articleTitle, articleUrl, newsletter, position,\n  teamSubject, teamHtml, readerSubject: T.subject, readerHtml, submittedAt: str(b.submittedAt) || new Date().toISOString() } }];"
+      },
+      "id": "a2",
+      "name": "Build emails",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "valid",
+              "leftValue": "={{ $json.valid }}",
+              "rightValue": true,
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "id": "a3",
+      "name": "Valid message?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        440,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "business@guyshore.com",
+        "subject": "={{ $json.teamSubject }}",
+        "emailType": "html",
+        "message": "={{ $json.teamHtml }}",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "GuyShore blog",
+          "replyTo": "={{ $json.email }}"
+        }
+      },
+      "id": "a4",
+      "name": "Notify the team",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        660,
+        -100
+      ],
+      "webhookId": "a4-gmail"
+    },
+    {
+      "parameters": {
+        "resource": "message",
+        "operation": "send",
+        "sendTo": "={{ $('Build emails').item.json.email }}",
+        "subject": "={{ $('Build emails').item.json.readerSubject }}",
+        "emailType": "html",
+        "message": "={{ $('Build emails').item.json.readerHtml }}",
+        "options": {
+          "appendAttribution": false,
+          "senderName": "Guy Sartori, GuyShore",
+          "ccList": "business@guyshore.com",
+          "replyTo": "business@guyshore.com"
+        }
+      },
+      "id": "a5",
+      "name": "Copy to the reader (cc business@)",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.1,
+      "position": [
+        880,
+        -100
+      ],
+      "webhookId": "a5-gmail",
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ ok: true }) }}",
+        "options": {}
+      },
+      "id": "a6",
+      "name": "Respond 200",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        1100,
+        -100
+      ]
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ ok: false, error: 'name, a valid email and a message are required' }) }}",
+        "options": {
+          "responseCode": 400
+        }
+      },
+      "id": "a7",
+      "name": "Respond 400",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        660,
+        120
+      ]
+    }
+  ],
+  "connections": {
+    "Author contact webhook": {
+      "main": [
+        [
+          {
+            "node": "Build emails",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build emails": {
+      "main": [
+        [
+          {
+            "node": "Valid message?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Valid message?": {
+      "main": [
+        [
+          {
+            "node": "Notify the team",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Respond 400",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Notify the team": {
+      "main": [
+        [
+          {
+            "node": "Copy to the reader (cc business@)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Copy to the reader (cc business@)": {
+      "main": [
+        [
+          {
+            "node": "Respond 200",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "pinData": {}
+}

@@ -32,6 +32,12 @@ export const meta = {
   readingTime: "16 min read",
   image: "/blog/openfort-vs-coinbase-embedded-wallets/og.png",
   tags: ["Embedded wallets", "Openfort", "Coinbase CDP", "Pricing"],
+  contact: {
+    title: "Hitting silent failures with Openfort or Coinbase embedded wallets?",
+    subtitle:
+      "If your embedded wallet integration fails without errors, or you are unsure which architecture fits your volume, talk directly to the person who built both flows and wrote this article.",
+    cta: "Talk to the person who wrote this",
+  },
   faq: [
     {
       question: "Is Openfort free?",
@@ -468,6 +474,8 @@ mistakes do not throw.
    reachable through the account's `execute` function, as the exit links above
    show, but a non-technical user could not do it unaided.
 
+<PostContact />
+
 ## The same flow, built twice
 
 Same job on both platforms: sign in, silent wallet, a `$0.50` payment forwarded
@@ -597,13 +605,6 @@ Four questions. Each answer points one way.
    month and Openfort above roughly 28,100, with the gap between those two figures
    depending on whether Openfort bills the one operation per payment we measured
    or the two it documents. Ask them in writing before you choose.
-
-<PostCta
-  title="Building something with embedded wallets?"
-  body="Bring your architecture to a one-hour session. We will go through the wallet layer, the cost model at your projected volume, and what it takes to get it to production."
-  href="https://calendly.com/guilherme-blackelephant/vibe-coding-consulting"
-  label="Book an hour with us"
-/>
 
 ## Can you build all of this with Claude Code alone?
 
