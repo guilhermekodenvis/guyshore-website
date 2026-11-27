@@ -1,10 +1,8 @@
 import bhg from "../../public/portfolio/bhg/details.json";
-import hubfive from "../../public/portfolio/hubfive/details.json";
 import kz from "../../public/portfolio/kz/details.json";
 import sabas from "../../public/portfolio/sabas/details.json";
 import solumart from "../../public/portfolio/solumart/details.json";
 import bhgPt from "../../public/portfolio/bhg/details.pt.json";
-import hubfivePt from "../../public/portfolio/hubfive/details.pt.json";
 import kzPt from "../../public/portfolio/kz/details.pt.json";
 import sabasPt from "../../public/portfolio/sabas/details.pt.json";
 import solumartPt from "../../public/portfolio/solumart/details.pt.json";
@@ -63,10 +61,9 @@ export type PortfolioDetails = {
 export type PortfolioItem = PortfolioDetails & { slug: string };
 
 const entries: Record<Locale, Record<string, PortfolioDetails>> = {
-  en: { bhg, hubfive, kz, sabas, solumart },
+  en: { bhg, kz, sabas, solumart },
   pt: {
     bhg: bhgPt,
-    hubfive: hubfivePt,
     kz: kzPt,
     sabas: sabasPt,
     solumart: solumartPt,
